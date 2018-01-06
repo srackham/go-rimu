@@ -1,31 +1,21 @@
 package rimu
 
-import "github.com/srackham/rimu-go/api"
+import (
+	"github.com/srackham/rimu-go/api"
+	"github.com/srackham/rimu-go/options"
+)
 
-type CallbackMessage struct {
-	kind string
-	text string
-}
+// CallbackMessage TODO
+type CallbackMessage = options.CallbackMessage
 
 // CallbackFunction TODO
-type CallbackFunction func(message CallbackMessage)
-
-// DoNothing TODO
-var DoNothing CallbackFunction = func(message CallbackMessage) {} // Default render() callback.
+type CallbackFunction = options.CallbackFunction
 
 // RenderOptions TODO
-type RenderOptions struct {
-	safeMode        int
-	htmlReplacement string
-	reset           bool
-	callback        CallbackFunction
-}
+type RenderOptions = options.RenderOptions
 
 // Render is public API to translate Rimu Markup to HTML.
-func Render(text string, options RenderOptions) string {
-	// Force object instantiation before Options.update().
-	// Otherwise the ensuing Api.render() will instanitate Api and the Api init{} block will reset Options.
-
-	// Api // Ensure Api is instantiated.
+func Render(text string, opts RenderOptions) string {
+	options.Update(opts)
 	return api.Render(text)
 }

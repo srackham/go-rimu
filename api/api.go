@@ -1,7 +1,12 @@
 package api
 
-func init() {
-	println("init")
+import (
+	"github.com/srackham/rimu-go/options"
+)
+
+// Init TODO
+func Init() {
+	options.Init()
 }
 
 // Render TODO
