@@ -1,3 +1,5 @@
 .idea
+.vscode
 debug
+debug.test
 TODO.md
