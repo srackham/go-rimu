@@ -1,9 +1,16 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/srackham/rimu-go/rimu"
 )
 
+// Mocked by tests.
+var osExit = os.Exit
+
 func main() {
-	println(rimu.Render("Hello *rimu-go!*", rimu.RenderOptions{}))
+	fmt.Print(rimu.Render("*Hello World!*", rimu.RenderOptions{}))
+	osExit(0)
 }
