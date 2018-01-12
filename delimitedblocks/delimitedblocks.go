@@ -10,6 +10,6 @@ func Init() {
 // Render TODO
 func Render(reader *iotext.Reader, writer *iotext.Writer) bool {
 	reader.Next()
-	writer.Write("<p>Hello <em>rimu-go!</em></p>")
+	writer.Write("<p><em>Hello World!</em></p>")
 	return true
 }
