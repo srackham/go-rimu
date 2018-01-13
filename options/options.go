@@ -1,15 +1,15 @@
 package options
 
 type RenderOptions struct {
-	safeMode        int
-	htmlReplacement string
-	reset           bool
-	callback        CallbackFunction
+	SafeMode        int
+	HtmlReplacement string
+	Reset           bool
+	Callback        CallbackFunction
 }
 
 type CallbackMessage struct {
-	kind string
-	text string
+	Kind string
+	Text string
 }
 
 // CallbackFunction TODO

@@ -1,0 +1,11 @@
+[
+  {
+    "description": "basic test",
+    "input": "*Hello World!*",
+    "expectedOutput": "<p><em>Hello World!</em></p>",
+    "expectedCallback": "",
+    "options": {
+      "reset": true
+    }
+  }
+]

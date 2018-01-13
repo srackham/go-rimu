@@ -1,0 +1,18 @@
+[
+  {
+    "description": "rimuc basic test",
+    "args": "-p \"foo bar\" \"baz qux\"",
+    "input": "*Hello World!*",
+    "expectedOutput": "<p><em>Hello World!</em></p>",
+    "predicate": "equals",
+    "exitCode": 0
+  },
+  {
+    "description": "rimuc illegal option test",
+    "args": "--illegal",
+    "input": "*Hello World!*",
+    "expectedOutput": "illegal option: --illegal",
+    "predicate": "equals",
+    "exitCode": 1
+  }
+]

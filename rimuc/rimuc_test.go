@@ -1,12 +1,22 @@
 package main
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
 	"testing"
 )
+
+type TestCase struct {
+	Description string `json:"description"`
+	Args        string `json:"args"`
+	Input       string `json:"input"`
+	Expected    string `json:"expectedOutput"`
+	Predicate   string `json:"predicate"`
+	ExitCode    int    `json:"exitCode"`
+}
 
 // Convert command-line arguments string to array of arguments.
 // Arguments can be double-quoted.
@@ -30,16 +40,15 @@ func TrimQuotes(s string, quote string) string {
 }
 
 func TestRimuc(t *testing.T) {
-	cases := []struct {
-		description string
-		args        string
-		input       string
-		expected    string
-		exitCode    int
-	}{
-		{"rimuc basic test", `-p "foo bar" "baz qux"`, "*Hello World!", "<p><em>Hello World!</em></p>", 0},
-		{"rimuc illegal option test", `--illegal`, "*Hello World!", "illegal option: --illegal", 1},
+	// Read JSON test cases.
+	raw, err := ioutil.ReadFile("./fixtures/rimuc-tests.json")
+	if err != nil {
+		t.Error(err.Error())
+		return
 	}
+	var cases []TestCase
+	json.Unmarshal(raw, &cases)
+	// Run test cases.
 	for _, c := range cases {
 		// Save and set os.Exit mock to capture exit code
 		// (see https://stackoverflow.com/a/40801733 and https://npf.io/2015/06/testing-exec-command/).
@@ -50,7 +59,7 @@ func TestRimuc(t *testing.T) {
 		}
 		// Save and set command-line arguments.
 		savedArgs := os.Args
-		os.Args = append([]string{"rimuc"}, parseArgs(c.args)...)
+		os.Args = append([]string{"rimuc"}, parseArgs(c.Args)...)
 		// Capture sdtout from main() (see https://stackoverflow.com/a/29339052).
 		savedStdout := os.Stdout
 		defer func() { os.Stdout = savedStdout }() // Ensures restore after a panic.
@@ -77,11 +86,11 @@ func TestRimuc(t *testing.T) {
 		os.Stderr = savedStderr
 		os.Args = savedArgs
 		osExit = savedExit
-		if out != c.expected {
-			t.Errorf("%s: got %q, expected %q", c.description, out, c.expected)
+		if out != c.Expected {
+			t.Errorf("%s: got %q, expected %q", c.Description, out, c.Expected)
 		}
-		if exitCode != c.exitCode {
-			t.Errorf("%s: exit code %d, expected %d", c.description, exitCode, c.exitCode)
+		if exitCode != c.ExitCode {
+			t.Errorf("%s: exit code %d, expected %d", c.Description, exitCode, c.ExitCode)
 		}
 	}
 }
