@@ -32,7 +32,7 @@ func TestRimuTestCases(t *testing.T) {
 		opts := RenderOptions{Reset: c.Options.Reset}
 		got := Render(c.Input, opts)
 		if got != c.Expected {
-			t.Errorf("TestRimuBasic(%q) == %q, expected %q", c.Input, got, c.Expected)
+			t.Errorf("TestRimuTestCases(%q) == %q, expected %q", c.Input, got, c.Expected)
 		}
 	}
 }
