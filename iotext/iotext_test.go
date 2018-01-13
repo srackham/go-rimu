@@ -50,4 +50,15 @@ func TestReader(t *testing.T) {
 	assert.Equal(t, 2, len(lines))
 	assert.Equal(t, "World!", lines[1])
 	assert.Equal(t, true, reader.Eof())
+	assert.Panics(t, func() { reader.Cursor() })
+	assert.Panics(t, func() { reader.SetCursor("foo") })
+}
+
+func TestWriter(t *testing.T) {
+	writer := NewWriter()
+	writer.Write("Hello")
+	assert.Equal(t, "Hello", writer.buffer[0])
+	writer.Write("World!")
+	assert.Equal(t, "World!", writer.buffer[1])
+	assert.Equal(t, "HelloWorld!", writer.String())
 }
