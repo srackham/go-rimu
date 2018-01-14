@@ -4,7 +4,6 @@ import (
 	"github.com/srackham/rimu-go/blockattributes"
 	"github.com/srackham/rimu-go/delimitedblocks"
 	"github.com/srackham/rimu-go/iotext"
-	"github.com/srackham/rimu-go/lineblocks"
 	"github.com/srackham/rimu-go/lists"
 	"github.com/srackham/rimu-go/macros"
 	"github.com/srackham/rimu-go/options"
@@ -31,9 +30,10 @@ func Render(source string) string {
 		if reader.Eof() {
 			break
 		}
-		if lineblocks.Render(reader, writer) {
-			continue
-		}
+		// TODO
+		// if lineblocks.Render(reader, writer) {
+		// 	continue
+		// }
 		if lists.Render(reader, writer) {
 			continue
 		}
