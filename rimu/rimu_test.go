@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type TestCase struct {
@@ -31,8 +33,6 @@ func TestRimuTestCases(t *testing.T) {
 	for _, c := range cases {
 		opts := RenderOptions{Reset: c.Options.Reset}
 		got := Render(c.Input, opts)
-		if got != c.Expected {
-			t.Errorf("TestRimuTestCases(%q) == %q, expected %q", c.Input, got, c.Expected)
-		}
+		assert.Equal(t, c.Expected, got)
 	}
 }

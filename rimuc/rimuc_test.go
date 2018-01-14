@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type TestCase struct {
@@ -31,7 +33,7 @@ func parseArgs(args string) []string {
 	return result
 }
 
-// TODO put in local package utils/str
+// ??? TODO put in local package utils/str
 func TrimQuotes(s string, quote string) string {
 	if len(s) >= 2*len(quote) && strings.HasPrefix(s, quote) && strings.HasSuffix(s, quote) {
 		return strings.TrimPrefix(strings.TrimSuffix(s, quote), quote)
@@ -60,20 +62,18 @@ func TestRimuc(t *testing.T) {
 		// Save and set command-line arguments.
 		savedArgs := os.Args
 		os.Args = append([]string{"rimuc"}, parseArgs(c.Args)...)
-		// Capture sdtout from main() (see https://stackoverflow.com/a/29339052).
+		// Capture sdtout (see https://stackoverflow.com/a/29339052).
 		savedStdout := os.Stdout
 		defer func() { os.Stdout = savedStdout }() // Ensures restore after a panic.
 		rout, wout, _ := os.Pipe()
 		os.Stdout = wout
-
+		// Capture sdterr.
 		savedStderr := os.Stderr
 		defer func() { os.Stderr = savedStderr }() // Ensures restore after a panic.
 		rerr, werr, _ := os.Pipe()
 		os.Stderr = werr
-
 		// Execute rimuc.
 		main()
-
 		// Get stdout and stderr.
 		wout.Close()
 		werr.Close()
@@ -86,11 +86,8 @@ func TestRimuc(t *testing.T) {
 		os.Stderr = savedStderr
 		os.Args = savedArgs
 		osExit = savedExit
-		if out != c.Expected {
-			t.Errorf("%s: got %q, expected %q", c.Description, out, c.Expected)
-		}
-		if exitCode != c.ExitCode {
-			t.Errorf("%s: exit code %d, expected %d", c.Description, exitCode, c.ExitCode)
-		}
+		// Test outputs and exit code.
+		assert.Equal(t, c.Expected, out)
+		assert.Equal(t, c.ExitCode, exitCode)
 	}
 }

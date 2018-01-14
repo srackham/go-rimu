@@ -2,76 +2,42 @@ package stringlist
 
 import (
 	"testing"
-)
 
-/* Helpers */
-// Compares list to expected list and reports error if they are not equal.
-func eqTest(t *testing.T, list, expected []string) {
-	if len(list) != len(expected) {
-		t.Errorf("len(list) == %q, expected %q", len(list), len(expected))
-	} else {
-		for i, v := range list {
-			if v != expected[i] {
-				t.Errorf("list[%d] == %q, expected %q", i, v, expected[i])
-			}
-		}
-	}
-}
+	"github.com/stretchr/testify/assert"
+)
 
 func TestStackMutators(t *testing.T) {
 	list := StringList{}
-	eqTest(t, list, StringList{})
+	assert.EqualValues(t, []string{}, list)
 	list.Push("foo")
-	eqTest(t, list, StringList{"foo"})
+	assert.EqualValues(t, []string{"foo"}, list)
 	list.Push("bar")
-	eqTest(t, list, StringList{"foo", "bar"})
+	assert.EqualValues(t, []string{"foo", "bar"}, list)
 	s := list.Pop()
-	if s != "bar" {
-		t.Errorf("Pop() == %q, expected %q", s, "bar")
-	}
-	eqTest(t, list, StringList{"foo"})
+	assert.Equal(t,"bar",s)
+	assert.EqualValues(t, []string{"foo"}, list)
 	list = list.Concat([]string{"foo", "bar"})
-	eqTest(t, list, StringList{"foo", "foo", "bar"})
+	assert.EqualValues(t, []string{"foo", "foo", "bar"}, list)
 	list.Unshift("pre")
-	eqTest(t, list, StringList{"pre", "foo", "foo", "bar"})
+	assert.EqualValues(t, []string{"pre", "foo", "foo", "bar"}, list)
 	s = list.Shift()
-	if s != "pre" {
-		t.Errorf("Shift() == %q, expected %q", s, "pre")
-	}
-	eqTest(t, list, StringList{"foo", "foo", "bar"})
+	assert.Equal(t,"pre",s)
+	assert.EqualValues(t, []string{"foo", "foo", "bar"}, list)
 	list = list.Concat(list)
-	eqTest(t, list, StringList{"foo", "foo", "bar", "foo", "foo", "bar"})
+	assert.EqualValues(t, []string{"foo", "foo", "bar", "foo", "foo", "bar"}, list)
 }
 
 func TestCollectionFunctions(t *testing.T) {
 	list := StringList{"x", "y", "z", "x", "x"}
 	got := list.Filter(func(s string) bool { return s != "x" })
-	eqTest(t, got, []string{"y", "z"})
+	assert.EqualValues(t, []string{"y", "z"}, got)
 	got = got.Map(func(s string) string { return s + s })
-	eqTest(t, got, []string{"yy", "zz"})
-	if list.IndexOf("z") != 2 {
-		t.Errorf("IndexOf(\"z\") == %q, expected %q", list.IndexOf("z"), 2)
-	}
-	if list.IndexOf("XXX") != -1 {
-		t.Errorf("IndexOf(\"XXX\") == %q, expected %q", list.IndexOf("XXX"), -1)
-	}
-	if list.Contains("XXX") {
-		t.Errorf("Contains(\"XXX\") == %t, expected %t", list.Contains("XXX"), false)
-	}
-	b := list.Any(func(s string) bool { return s == "XXX" })
-	if b {
-		t.Errorf("Any(\"XXX\") == %t, expected %t", b, false)
-	}
-	b = !list.Any(func(s string) bool { return s == "z" })
-	if b {
-		t.Errorf("Any(\"z\") == %t, expected %t", b, true)
-	}
-	b = list.All(func(s string) bool { return s == "XXX" })
-	if b {
-		t.Errorf("All(s == \"XXX\") == %t, expected %t", b, false)
-	}
-	b = !list.All(func(s string) bool { return len(s) == 1 })
-	if b {
-		t.Errorf("All(len(s) ==1) == %t, expected %t", b, true)
-	}
+	assert.EqualValues(t, []string{"yy", "zz"}, got)
+	assert.EqualValues(t, 2, list.IndexOf("z"))
+	assert.EqualValues(t, -1, list.IndexOf("XXX"))
+	assert.True(t, !list.Contains("XXX"))
+	assert.True(t, !list.Any(func(s string) bool { return s == "XXX" }))
+	assert.True(t, list.Any(func(s string) bool { return s == "z" }))
+	assert.True(t, !list.All(func(s string) bool { return s == "XXX" }))
+	assert.True(t, list.All(func(s string) bool { return len(s) == 1 }))
 }
