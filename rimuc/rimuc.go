@@ -7,13 +7,10 @@ import (
 	"github.com/srackham/rimu-go/rimu"
 )
 
-// Mocked by tests.
-var osExit = os.Exit
+var osExit = os.Exit // Mocked by tests.
 
 func die(message string) {
 	if message != "" {
-		// println(message)
-		// fmt.Print(message)
 		fmt.Fprint(os.Stderr, message)
 	}
 	osExit(1)
