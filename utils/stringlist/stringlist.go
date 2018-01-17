@@ -96,7 +96,12 @@ func (list StringList) Map(f func(string) string) StringList {
 	return result
 }
 
-// Returns a new slice containing the concatenation of the receiver and the appendage.
-func (list StringList) Concat(appendage []string) StringList {
-	return append(list, appendage...)
+// Returns a new slice containing the concatenation of the receiver and values.
+func (list StringList) Concat(values ...string) StringList {
+	return append(list, values...)
+}
+
+// Returns a new slice containing the receiver with values inserted at index.
+func (list StringList) InsertAt(index int, values ...string) StringList {
+	return append(list[:index], append(values, list[index:]...)...)
 }

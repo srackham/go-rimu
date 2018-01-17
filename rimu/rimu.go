@@ -16,6 +16,6 @@ type RenderOptions = options.RenderOptions
 
 // Render is public API to translate Rimu Markup to HTML.
 func Render(text string, opts RenderOptions) string {
-	options.Update(opts)
+	options.UpdateOptions(opts)
 	return api.Render(text)
 }

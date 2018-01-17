@@ -10,13 +10,13 @@ import (
 func TestReader(t *testing.T) {
 	reader := NewReader("")
 	assert.Equal(t, false, reader.Eof())
-	assert.Equal(t, 1, len(reader.lines))
+	assert.Equal(t, 1, len(reader.Lines))
 	assert.Equal(t, "", reader.Cursor())
 	reader.Next()
 	assert.Equal(t, true, reader.Eof())
 
 	reader = NewReader("Hello\nWorld!")
-	assert.Equal(t, 2, len(reader.lines))
+	assert.Equal(t, 2, len(reader.Lines))
 	assert.Equal(t, "Hello", reader.Cursor())
 	reader.Next()
 	assert.Equal(t, "World!", reader.Cursor())
@@ -25,7 +25,7 @@ func TestReader(t *testing.T) {
 	assert.Equal(t, true, reader.Eof())
 
 	reader = NewReader("\n\nHello")
-	assert.Equal(t, 3, len(reader.lines))
+	assert.Equal(t, 3, len(reader.Lines))
 	reader.SkipBlankLines()
 	assert.Equal(t, "Hello", reader.Cursor())
 	assert.Equal(t, false, reader.Eof())
@@ -33,7 +33,7 @@ func TestReader(t *testing.T) {
 	assert.Equal(t, true, reader.Eof())
 
 	reader = NewReader("Hello\n*\nWorld!\nHello\n< Goodbye >")
-	assert.Equal(t, 5, len(reader.lines))
+	assert.Equal(t, 5, len(reader.Lines))
 	lines := reader.ReadTo(regexp.MustCompile(`\*`))
 	assert.Equal(t, 1, len(lines))
 	assert.Equal(t, "Hello", lines[0])
@@ -44,7 +44,7 @@ func TestReader(t *testing.T) {
 	assert.Equal(t, true, reader.Eof())
 
 	reader = NewReader("\n\nHello\nWorld!")
-	assert.Equal(t, 4, len(reader.lines))
+	assert.Equal(t, 4, len(reader.Lines))
 	reader.SkipBlankLines()
 	lines = reader.ReadTo(regexp.MustCompile(`^$`))
 	assert.Equal(t, 2, len(lines))

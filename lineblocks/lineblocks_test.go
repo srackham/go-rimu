@@ -10,6 +10,7 @@ import (
 
 func TestRender(t *testing.T) {
 	api.Init()
+	// Header.
 	input := "# Test"
 	reader := iotext.NewReader(input)
 	writer := iotext.NewWriter()

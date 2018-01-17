@@ -10,20 +10,20 @@ import (
 */
 // Reader TODO
 type Reader struct {
-	lines []string
-	pos   int // Line index of current line.
+	Lines []string
+	Pos   int // Line index of current line.
 }
 
 // NewReader TODO
 func NewReader(text string) *Reader {
 	r := new(Reader)
-	r.lines = regexp.MustCompile(`\r\n|\r|\n`).Split(text, -1)
+	r.Lines = regexp.MustCompile(`\r\n|\r|\n`).Split(text, -1)
 	return r
 }
 
 // Eof TODO
 func (r *Reader) Eof() bool {
-	return r.pos >= len(r.lines)
+	return r.Pos >= len(r.Lines)
 }
 
 // SetCursor TODO
@@ -31,7 +31,7 @@ func (r *Reader) SetCursor(value string) {
 	if r.Eof() {
 		panic("unexpected eof")
 	}
-	r.lines[r.pos] = value
+	r.Lines[r.Pos] = value
 }
 
 // Cursor TODO
@@ -39,13 +39,13 @@ func (r *Reader) Cursor() string {
 	if r.Eof() {
 		panic("unexpected eof")
 	}
-	return r.lines[r.pos]
+	return r.Lines[r.Pos]
 }
 
 // Next moves cursor to next input line.
 func (r *Reader) Next() {
 	if !r.Eof() {
-		r.pos++
+		r.Pos++
 	}
 }
 
