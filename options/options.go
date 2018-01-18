@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/srackham/rimu-go/proxies"
+	"github.com/srackham/rimu-go/utils"
 	// "github.com/srackham/rimu-go/utils"
 )
 
@@ -104,8 +105,7 @@ func HtmlSafeModeFilter(html string) string {
 	case 2: // Replace HTML with 'htmlReplacement' option string.
 		return htmlReplacement
 	case 3: // Render HTML as text.
-		// TODO: Nasty import cycle needs fixing!!!
-		// return utils.ReplaceSpecialChars(html)
+		return utils.ReplaceSpecialChars(html)
 		return html
 	default:
 		return ""

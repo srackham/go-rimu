@@ -5,16 +5,15 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/srackham/rimu-go/expansion"
 	"github.com/srackham/rimu-go/utils/stringlist"
-
-	"github.com/srackham/rimu-go/utils"
 )
 
 var Classes string    // Space separated HTML class names.
 var Id string         // HTML element id.
 var Css string        // HTML CSS styles.
 var Attributes string // Other HTML element attributes.
-var Options utils.ExpansionOptions
+var Options expansion.ExpansionOptions
 
 var ids stringlist.StringList // List of allocated HTML ids.
 
@@ -25,7 +24,7 @@ func Init() {
 	Id = ""
 	Css = ""
 	Attributes = ""
-	Options = utils.ExpansionOptions{}
+	Options = expansion.ExpansionOptions{}
 	ids = nil
 }
 
