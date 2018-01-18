@@ -7,9 +7,16 @@ import (
 	"github.com/srackham/rimu-go/lists"
 	"github.com/srackham/rimu-go/macros"
 	"github.com/srackham/rimu-go/options"
+	"github.com/srackham/rimu-go/proxies"
 	"github.com/srackham/rimu-go/quotes"
 	"github.com/srackham/rimu-go/replacements"
 )
+
+func init() {
+	// So we can use these functions in imported packages without incuring import cycle errors.
+	proxies.ApiInit = Init
+	proxies.ApiRender = Render
+}
 
 // Init TODO
 func Init() {

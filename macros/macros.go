@@ -62,7 +62,7 @@ func GetValue(name string) (value string, found bool) {
 // `quote` is a single character: ' if a literal value, ` if an expression value.
 func SetValue(name string, value string, quote string) {
 	// TODO: Implement this as Options.skipMacroDefs() c.f. rimu-kt
-	if options.SafeMode != 0 && options.SafeMode&0x8 == 0 {
+	if options.SkipMacroDefs() {
 		return // Skip if a safe mode is set.
 	}
 	existential := false
