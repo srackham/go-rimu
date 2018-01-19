@@ -44,7 +44,7 @@ func Render(source string) string {
 		if lists.Render(reader, writer) {
 			continue
 		}
-		if delimitedblocks.Render(reader, writer) {
+		if delimitedblocks.Render(reader, writer, nil) {
 			continue
 		}
 		// This code should never be executed (normal paragraphs should match anything).

@@ -1,184 +1,360 @@
 package delimitedblocks
 
-import "github.com/srackham/rimu-go/iotext"
+import (
+	"regexp"
+	"strings"
 
-// TODO
-// Stubs
+	"github.com/srackham/rimu-go/proxies"
+	"github.com/srackham/rimu-go/utils/stringlist"
 
-func Init() {
-	// TODO
+	"github.com/srackham/rimu-go/blockattributes"
+	"github.com/srackham/rimu-go/expansion"
+	"github.com/srackham/rimu-go/iotext"
+	"github.com/srackham/rimu-go/macros"
+	"github.com/srackham/rimu-go/options"
+)
+
+var MATCH_INLINE_TAG = regexp.MustCompile(`(?i)^(a|abbr|acronym|address|b|bdi|bdo|big|blockquote|br|cite|code|del|dfn|em|i|img|ins|kbd|mark|q|s|samp|small|span|strike|strong|sub|sup|time|tt|u|var|wbr)$`)
+
+// Multi-line block element definition.
+type Definition struct {
+	name             string // Optional unique identifier.
+	openMatch        *regexp.Regexp
+	closeMatch       *regexp.Regexp // $1 (if defined) is appended to block content.
+	openTag          string
+	closeTag         string
+	verify           func(match []string) bool                   // Additional match verification checks.
+	delimiterFilter  func(match []string, def Definition) string // Process opening delimiter. Return any delimiter content.
+	contentFilter    func(text string, match []string, expansionOptions expansion.ExpansionOptions) string
+	expansionOptions expansion.ExpansionOptions
 }
 
-func Render(reader *iotext.Reader, writer *iotext.Writer) bool {
-	reader.Next()
-	writer.Write("<p><em>Hello World!</em></p>")
-	return true
+var defs []Definition // Mutable definitions initialized by DEFAULT_DEFS.
+
+var DEFAULT_DEFS = []Definition{
+	// Delimited blocks cannot be escaped with a backslash.
+
+	// Multi-line macro literal value definition.
+	{
+		openMatch:  macros.LITERAL_DEF_OPEN, // $1 is first line of macro.
+		closeMatch: macros.LITERAL_DEF_CLOSE,
+		openTag:    "",
+		closeTag:   "",
+		expansionOptions: expansion.ExpansionOptions{
+			Macros: true,
+		},
+		delimiterFilter: delimiterTextFilter,
+		contentFilter:   macroDefContentFilter,
+	},
+	// Multi-line macro expression value definition.
+	{
+		openMatch:  macros.EXPRESSION_DEF_OPEN, // $1 is first line of macro.
+		closeMatch: macros.EXPRESSION_DEF_CLOSE,
+		openTag:    "",
+		closeTag:   "",
+		expansionOptions: expansion.ExpansionOptions{
+			Macros: true,
+		},
+		delimiterFilter: delimiterTextFilter,
+		contentFilter:   macroDefContentFilter,
+	},
+	// Comment block.
+	{
+		name:       "comment",
+		openMatch:  regexp.MustCompile(`^\\?\/\*+$`),
+		closeMatch: regexp.MustCompile(`^\*+\/$`),
+		openTag:    "",
+		closeTag:   "",
+		expansionOptions: expansion.ExpansionOptions{
+			Skip:     true,
+			Specials: true, // Fall-back if skip is disabled.
+		},
+	},
+	// Division block.
+	{
+		name:      "division",
+		openMatch: regexp.MustCompile(`^\\?(\.{2,})([\w\s-]*)$`), // $1 is delimiter text, $2 is optional class names.
+		openTag:   "<div>",
+		closeTag:  "</div>",
+		expansionOptions: expansion.ExpansionOptions{
+			Container: true,
+			Specials:  true, // Fall-back if container is disabled.
+		},
+		delimiterFilter: classInjectionFilter,
+	},
+	// Quote block.
+	{
+		name:      "quote",
+		openMatch: regexp.MustCompile(`^\\?("{2,})([\w\s-]*)$`), // $1 is delimiter text, $2 is optional class names.
+		openTag:   "<blockquote>",
+		closeTag:  "</blockquote>",
+		expansionOptions: expansion.ExpansionOptions{
+			Container: true,
+			Specials:  true, // Fall-back if container is disabled.
+		},
+		delimiterFilter: classInjectionFilter,
+	},
+	// Code block.
+	{
+		name:      "code",
+		openMatch: regexp.MustCompile(`^\\?(-{2,}|` + "`" + `{2,})([\w\s-]*)$`), // $1 is delimiter text, $2 is optional class names.
+		openTag:   "<pre><code>",
+		closeTag:  "</code></pre>",
+		expansionOptions: expansion.ExpansionOptions{
+			Macros:   false,
+			Specials: true,
+		},
+		verify: func(match []string) bool {
+			// The deprecated '-' delimiter does not support appended class names.
+			return !(match[1][0] == '-' && strings.Trim(match[2], " \n") != "")
+		},
+		delimiterFilter: classInjectionFilter,
+	},
+	// HTML block.
+	{
+		name: "html",
+		// Block starts with HTML comment, DOCTYPE directive or block-level HTML start or end tag.
+		// $1 is first line of block.
+		// $2 is the alphanumeric tag name.
+		openMatch:  regexp.MustCompile(`(?i)^(<!--.*|<!DOCTYPE(?:\s.*)?|<\/?([a-z][a-z0-9]*)(?:[\s>].*)?)$`),
+		closeMatch: regexp.MustCompile(`^$`), // Blank line or EOF.
+		openTag:    "",
+		closeTag:   "",
+		expansionOptions: expansion.ExpansionOptions{
+			Macros: true,
+		},
+		verify: func(match []string) bool {
+			// Return false if the HTML tag is an inline (non-block) HTML tag.
+			if match[2] != "" { // Matched alphanumeric tag name.
+				return !MATCH_INLINE_TAG.MatchString(match[2])
+			} else {
+				return true // Matched HTML comment or doctype tag.
+			}
+		},
+		delimiterFilter: delimiterTextFilter,
+		// contentFilter:   options.HtmlSafeModeFilter,
+		contentFilter: func(text string, _ []string, _ expansion.ExpansionOptions) string {
+			return options.HtmlSafeModeFilter(text)
+		},
+	},
+	// Indented paragraph.
+	{
+		name:       "indented",
+		openMatch:  regexp.MustCompile(`^\\?(\s+.*)$`), // $1 is first line of block.
+		closeMatch: regexp.MustCompile(`^$`),           // Blank line or EOF.
+		openTag:    "<pre><code>",
+		closeTag:   "</code></pre>",
+		expansionOptions: expansion.ExpansionOptions{
+			Macros:   false,
+			Specials: true,
+		},
+		delimiterFilter: delimiterTextFilter,
+		contentFilter: func(text string, _ []string, _ expansion.ExpansionOptions) string {
+			// Strip indent from start of each line.
+			firstIndent := regexp.MustCompile(`\S`).FindStringIndex(text)[0]
+			result := ""
+			for _, line := range strings.Split(text, "\n") {
+				// Strip first line indent width or up to first non-space character.
+				indent := regexp.MustCompile(`\S|$`).FindStringIndex(line)[0]
+				if indent > firstIndent {
+					indent = firstIndent
+				}
+				result += line[indent:] + "\n"
+			}
+			return strings.TrimSuffix(result, "\n")
+		},
+	},
+	// Quote paragraph.
+	{
+		name:       "quote-paragraph",
+		openMatch:  regexp.MustCompile(`^\\?(>.*)$`), // $1 is first line of block.
+		closeMatch: regexp.MustCompile(`^$`),         // Blank line or EOF.
+		openTag:    "<blockquote><p>",
+		closeTag:   "</p></blockquote>",
+		expansionOptions: expansion.ExpansionOptions{
+			Macros:   true,
+			Spans:    true,
+			Specials: true, // Fall-back if spans is disabled.
+		},
+		delimiterFilter: delimiterTextFilter,
+		contentFilter: func(text string, _ []string, _ expansion.ExpansionOptions) string {
+			// Strip leading > from start of each line and unescape escaped leading >.
+			result := ""
+			for _, line := range strings.Split(text, "\n") {
+				line = regexp.MustCompile(`^>`).ReplaceAllString(line, "")
+				line = regexp.MustCompile(`^\\>`).ReplaceAllString(line, "")
+				result += line + "\n"
+			}
+			return strings.TrimSuffix(result, "\n")
+		},
+	},
+	// Paragraph (lowest priority, cannot be escaped).
+	{
+		name:       "paragraph",
+		openMatch:  regexp.MustCompile(`(.*)`), // $1 is first line of block.
+		closeMatch: regexp.MustCompile(`^$`),   // Blank line or EOF.
+		openTag:    "<p>",
+		closeTag:   "</p>",
+		expansionOptions: expansion.ExpansionOptions{
+			Macros:   true,
+			Spans:    true,
+			Specials: true, // Fall-back if spans is disabled.
+		},
+		delimiterFilter: delimiterTextFilter,
+	},
 }
 
-func SetDefinition(name string, value string) {
-}
-
-/*
 // Reset definitions to defaults.
-export function init(): void {
-  defs = DEFAULT_DEFS.map(def => Utils.copy(def))
-  // Copy definition object fields.
-  defs.forEach((def, i) => def.expansionOptions = Utils.copy(DEFAULT_DEFS[i].expansionOptions))
+func Init() {
+	defs = make([]Definition, len(DEFAULT_DEFS))
+	for i := range defs {
+		defs[i] = Definition(DEFAULT_DEFS[i])                                                   // Clone default definition.
+		defs[i].expansionOptions = expansion.ExpansionOptions(DEFAULT_DEFS[i].expansionOptions) // Clone expansion options.
+	}
 }
 
 // If the next element in the reader is a valid delimited block render it
 // and return true, else return false.
-export function render(reader: Io.Reader, writer: Io.Writer, allowed: string[] = []): boolean {
-  if (reader.eof()) Options.panic('premature eof')
-  for (let def of defs) {
-    if (allowed.length > 0 && allowed.indexOf(def.name ? def.name : '') === -1) continue
-    let match = reader.cursor.match(def.openMatch)
-    if (match) {
-      // Escape non-paragraphs.
-      if (match[0][0] === '\\' && def.name !== 'paragraph') {
-        // Drop backslash escape and continue.
-        reader.cursor = reader.cursor.slice(1)
-        continue
-      }
-      if (def.verify && !def.verify(match)) {
-        continue
-      }
-      // Process opening delimiter.
-      let delimiterText = def.delimiterFilter ? def.delimiterFilter(match) : ''
-      // Read block content into lines.
-      let lines: string[] = []
-      if (delimiterText) {
-        lines.push(delimiterText)
-      }
-      // Read content up to the closing delimiter.
-      reader.next()
-      let content = reader.readTo(def.closeMatch as RegExp)
-      if (content === null) {
-        Options.errorCallback('unterminated delimited block: ' + match[0])
-      }
-      if (content) {
-        lines = [...lines, ...content]
-      }
-      // Calculate block expansion options.
-      let expansionOptions: Utils.ExpansionOptions = {
-        macros: false,
-        spans: false,
-        specials: false,
-        container: false,
-        skip: false
-      }
-      Utils.merge(expansionOptions, def.expansionOptions)
-      Utils.merge(expansionOptions, BlockAttributes.options)
-      // Translate block.
-      if (!expansionOptions.skip) {
-        let text = lines.join('\n')
-        if (def.contentFilter) {
-          text = def.contentFilter(text, match, expansionOptions)
-        }
-        let opentag = def.openTag
-        if (def.name === 'html') {
-          text = BlockAttributes.inject(text)
-        }
-        else {
-          opentag = BlockAttributes.inject(opentag)
-        }
-        if (expansionOptions.container) {
-          delete BlockAttributes.options.container  // Consume before recursion.
-          text = Api.render(text)
-        }
-        else {
-          text = Utils.replaceInline(text, expansionOptions)
-        }
-        let closetag = def.closeTag
-        if (def.name === 'division' && opentag === '<div>') {
-          // Drop div tags if the opening div has no attributes.
-          opentag = ''
-          closetag = ''
-        }
-        writer.write(opentag)
-        writer.write(text)
-        writer.write(closetag)
-        if ((opentag || text || closetag) && !reader.eof()) {
-          // Add a trailing '\n' if we've written a non-blank line and there are more source lines left.
-          writer.write('\n')
-        }
-      }
-      // Reset consumed Block Attributes expansion options.
-      BlockAttributes.options = {}
-      return true
-    }
-  }
-  return false  // No matching delimited block found.
+func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool {
+	if reader.Eof() {
+		panic("premature eof")
+	}
+	for _, def := range defs {
+		if len(allowed) > 0 && stringlist.StringList(allowed).IndexOf(def.name) == -1 {
+			continue
+		}
+		matches := def.openMatch.FindAllStringSubmatch(reader.Cursor(), 1)
+		if matches != nil {
+			match := matches[0]
+			// Escape non-paragraphs.
+			if match[0][0] == '\\' && def.name != "paragraph" {
+				// Drop backslash escape and continue.
+				reader.SetCursor(reader.Cursor()[1:])
+				continue
+			}
+			if def.verify != nil && !def.verify(match) {
+				continue
+			}
+			// Process opening delimiter.
+			delimiterText := ""
+			if def.delimiterFilter != nil {
+				delimiterText = def.delimiterFilter(match, def)
+			}
+			// Read block content into lines.
+			lines := []string{}
+			if delimiterText != "" {
+				lines = append(lines, delimiterText)
+			}
+			// Read content up to the closing delimiter.
+			reader.Next()
+			content := reader.ReadTo(def.closeMatch)
+			if content == nil {
+				options.ErrorCallback("unterminated delimited block: " + match[0])
+			}
+			lines = append(lines, content...)
+			// Calculate block expansion options.
+			expansionOptions := expansion.ExpansionOptions{
+				Macros:    false,
+				Spans:     false,
+				Specials:  false,
+				Container: false,
+				Skip:      false,
+			}
+			expansionOptions.Merge(def.expansionOptions)
+			expansionOptions.Merge(blockattributes.Options)
+			// Translate block.
+			if !expansionOptions.Skip {
+				text := strings.Join(lines, "\n")
+				if def.contentFilter != nil {
+					text = def.contentFilter(text, match, expansionOptions)
+				}
+				opentag := def.openTag
+				if def.name == "html" {
+					text = blockattributes.Inject(text)
+				} else {
+					opentag = blockattributes.Inject(opentag)
+				}
+				if expansionOptions.Container {
+					// TODO in rimu-kt this set null, in rimu-js it is deleted.
+					blockattributes.Options.Container = false // Consume before recursion.
+					text = proxies.ApiRender(text)
+				} else {
+					text = expansion.ReplaceInline(text, expansionOptions)
+				}
+				closetag := def.closeTag
+				if def.name == "division" && opentag == "<div>" {
+					// Drop div tags if the opening div has no attributes.
+					opentag = ""
+					closetag = ""
+				}
+				text = opentag + text + closetag
+				writer.Write(text)
+				if text != "" && !reader.Eof() {
+					// Add a trailing "\n" if we"ve written a non-blank line and there are more source lines left.
+					writer.Write("\n")
+				}
+			}
+			// Reset consumed Block Attributes expansion options.
+			blockattributes.Options = expansion.ExpansionOptions{}
+			return true
+		}
+	}
+	return false // No matching delimited block found.
 }
 
-// Return block definition or undefined if not found.
-export function getDefinition(name: string): Definition {
-  return defs.filter(def => def.name === name)[0]
-}
-
-// Parse block-options string into blockOptions.
-export function setBlockOptions(blockOptions: Utils.ExpansionOptions, optionsString: string): void {
-  if (optionsString) {
-    let opts = optionsString.trim().split(/\s+/)
-    for (let opt of opts) {
-      if (Options.isSafeModeNz() && opt === '-specials') {
-        Options.errorCallback('-specials block option not valid in safeMode')
-        continue
-      }
-      if (/^[+-](macros|spans|specials|container|skip)$/.test(opt)) {
-        blockOptions[opt.slice(1)] = opt[0] === '+'
-      }
-      else {
-        Options.errorCallback('illegal block option: ' + opt)
-      }
-    }
-  }
+// Return block definition or nil if not found.
+func GetDefinition(name string) *Definition {
+	for _, def := range defs {
+		if def.name == name {
+			return &def
+		}
+	}
+	return nil
 }
 
 // Update existing named definition.
 // Value syntax: <open-tag>|<close-tag> block-options
-export function setDefinition(name: string, value: string): void {
-  let def = getDefinition(name)
-  if (!def) {
-    Options.errorCallback('illegal delimited block name: ' + name + ': |' + name + '|=\'' + value + '\'')
-    return
-  }
-  let match = value.trim().match(/^(?:(<[a-zA-Z].*>)\|(<[a-zA-Z/].*>))?(?:\s*)?([+-][ \w+-]+)?$/)
-  if (match) {
-    if (match[1]) {
-      def.openTag = match[1]
-      def.closeTag = match[2]
-    }
-    setBlockOptions(def.expansionOptions, match[3])
-  }
+func SetDefinition(name string, value string) {
+	def := GetDefinition(name)
+	if def == nil {
+		options.ErrorCallback("illegal delimited block name: " + name + ": |" + name + "|='" + value + "'")
+		return
+	}
+	match := regexp.MustCompile(`^(?:(<[a-zA-Z].*>)\|(<[a-zA-Z/].*>))?(?:\s*)?([+-][ \w+-]+)?$`).FindAllString(strings.Trim(value, " "), 1)
+	// TODO does not match should callback error (other ports to).
+	if match != nil {
+		if strings.Contains(value, "|") {
+			def.openTag = match[1]
+			def.closeTag = match[2]
+		}
+		if match[3] != "" {
+			def.expansionOptions.Parse(match[3])
+		}
+	}
 }
 
 // delimiterFilter that returns opening delimiter line text from match group $1.
-function delimiterTextFilter(match: string[]): string {
-  return match[1]
+func delimiterTextFilter(match []string, _ Definition) string {
+	return match[1]
 }
 
 // delimiterFilter for code, division and quote blocks.
 // Inject $2 into block class attribute, set close delimiter to $1.
-function classInjectionFilter(match: string[]): string {
-  if (match[2]) {
-    let p1: string
-    if ((p1 = match[2].trim())) {
-      BlockAttributes.classes = p1
-    }
-  }
-  this.closeMatch = RegExp('^' + Utils.escapeRegExp(match[1]) + '$')
-  return ''
+func classInjectionFilter(match []string, def Definition) string {
+	if p1 := strings.Trim(match[2], " \n"); p1 != "" {
+		blockattributes.Classes = p1
+	}
+	def.closeMatch = regexp.MustCompile("^" + regexp.QuoteMeta(match[1]) + "$")
+	return ""
 }
 
 // contentFilter for multi-line macro definitions.
-function macroDefContentFilter(text: string, match: string[], expansionOptions: Utils.ExpansionOptions): string {
-  let quote = match[0][match[0].length - match[1].length - 1]                            // The leading macro value quote character.
-  let name = (match[0].match(/^{([\w\-]+\??)}/) as RegExpMatchArray)[1]           // Extract macro name from opening delimiter.
-  text = text.replace(RegExp('(' + quote + ') *\\\\\\n', 'g'), '$1\n')        // Unescape line-continuations.
-  text = text.replace(RegExp('(' + quote + ' *[\\\\]+)\\\\\\n', 'g'), '$1\n') // Unescape escaped line-continuations.
-  text = Utils.replaceInline(text, expansionOptions)                                     // Expand macro invocations.
-  Macros.setValue(name, text, quote)
-  return ''
+func macroDefContentFilter(text string, match []string, expansionOptions expansion.ExpansionOptions) string {
+	quote := string(match[0][len(match[0])-len(match[1])-1])                           // The leading macro value quote character.
+	name := regexp.MustCompile(`^{([\w\-]+\??)}`).FindStringSubmatch(match[0])[1]      // Extract macro name from opening delimiter.
+	text = regexp.MustCompile("("+quote+`) *\\\n`).ReplaceAllString(text, "$1\n")      // Unescape line-continuations.
+	text = regexp.MustCompile("("+quote+` *[\\]+)\\\n`).ReplaceAllString(text, "$1\n") // Unescape escaped line-continuations.
+	text = expansion.ReplaceInline(text, expansionOptions)                             // Expand macro invocations.
+	macros.SetValue(name, text, quote)
+	return ""
 }
-*/

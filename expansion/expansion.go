@@ -3,8 +3,10 @@ package expansion
 import (
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/srackham/rimu-go/macros"
+	"github.com/srackham/rimu-go/options"
 	"github.com/srackham/rimu-go/spans"
 	"github.com/srackham/rimu-go/utils"
 	"github.com/srackham/rimu-go/utils/re"
@@ -20,6 +22,46 @@ type ExpansionOptions struct {
 	Skip      bool
 	Spans     bool // Span substitution also expands special characters.
 	Specials  bool
+}
+
+func (to *ExpansionOptions) Merge(from ExpansionOptions) {
+	/*
+		        this.macros = from.macros ?: this.macros
+		        this.container = from.container ?: this.container
+		        this.skip = from.skip ?: this.skip
+		        this.spans = from.spans ?: this.spans
+				this.specials = from.specials ?: this.specials
+	*/
+}
+
+// Parse block-options string into blockOptions.
+func (blockOptions *ExpansionOptions) Parse(optionsString string) {
+	if optionsString != "" {
+		opts := regexp.MustCompile(`\s+`).Split(strings.Trim(optionsString, " "), -1)
+		for _, opt := range opts {
+			if options.IsSafeModeNz() && opt == "-specials" {
+				options.ErrorCallback("-specials block option not valid in safeMode")
+				continue
+			}
+			if regexp.MustCompile(`^[+-](macros|spans|specials|container|skip)$`).MatchString(opt) {
+				value := opt[0] == '+'
+				switch opt[1:] {
+				case "macros":
+					blockOptions.Macros = value
+				case "spans":
+					blockOptions.Spans = value
+				case "specials":
+					blockOptions.Specials = value
+				case "container":
+					blockOptions.Container = value
+				case "skip":
+					blockOptions.Skip = value
+				}
+			} else {
+				options.ErrorCallback("illegal block option: " + opt)
+			}
+		}
+	}
 }
 
 // Replace pattern "$1" or "$$1", "$2" or "$$2"... in `replacement` with corresponding match groups
