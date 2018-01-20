@@ -17,25 +17,41 @@ import (
 // They are assumed false if they are not explicitly defined.
 // If a custom filter is specified their use depends on the filter.
 type ExpansionOptions struct {
-	Macros    bool
 	Container bool
+	Macros    bool
 	Skip      bool
 	Spans     bool // Span substitution also expands special characters.
 	Specials  bool
+	// xxxSet specify if the Xxx field is included blockattributes.Options and only in the Merge method.
+	containerSet bool
+	macrosSet    bool
+	skipSet      bool
+	spansSet     bool
+	specialsSet  bool
 }
 
+// Merge copies expansion options that are set from from to to.
 func (to *ExpansionOptions) Merge(from ExpansionOptions) {
-	/*
-		        this.macros = from.macros ?: this.macros
-		        this.container = from.container ?: this.container
-		        this.skip = from.skip ?: this.skip
-		        this.spans = from.spans ?: this.spans
-				this.specials = from.specials ?: this.specials
-	*/
+	if from.containerSet {
+		to.Container = from.Container
+	}
+	if from.macrosSet {
+		to.Macros = from.Macros
+	}
+	if from.skipSet {
+		to.Skip = from.Skip
+	}
+	if from.spansSet {
+		to.Spans = from.Spans
+	}
+	if from.specialsSet {
+		to.Specials = from.Specials
+	}
 }
 
-// Parse block-options string into blockOptions.
-func (blockOptions *ExpansionOptions) Parse(optionsString string) {
+// Parse block-options string and return ExpansionOptions.
+func Parse(optionsString string) ExpansionOptions {
+	result := ExpansionOptions{}
 	if optionsString != "" {
 		opts := regexp.MustCompile(`\s+`).Split(strings.Trim(optionsString, " "), -1)
 		for _, opt := range opts {
@@ -46,22 +62,28 @@ func (blockOptions *ExpansionOptions) Parse(optionsString string) {
 			if regexp.MustCompile(`^[+-](macros|spans|specials|container|skip)$`).MatchString(opt) {
 				value := opt[0] == '+'
 				switch opt[1:] {
-				case "macros":
-					blockOptions.Macros = value
-				case "spans":
-					blockOptions.Spans = value
-				case "specials":
-					blockOptions.Specials = value
 				case "container":
-					blockOptions.Container = value
+					result.Container = value
+					result.containerSet = true
+				case "macros":
+					result.Macros = value
+					result.macrosSet = true
 				case "skip":
-					blockOptions.Skip = value
+					result.Skip = value
+					result.skipSet = true
+				case "specials":
+					result.Specials = value
+					result.specialsSet = true
+				case "spans":
+					result.Spans = value
+					result.spansSet = true
 				}
 			} else {
 				options.ErrorCallback("illegal block option: " + opt)
 			}
 		}
 	}
+	return result
 }
 
 // Replace pattern "$1" or "$$1", "$2" or "$$2"... in `replacement` with corresponding match groups

@@ -3,10 +3,13 @@ package options
 import (
 	"strconv"
 
-	"github.com/srackham/rimu-go/proxies"
+	"github.com/srackham/rimu-go/api"
 	"github.com/srackham/rimu-go/utils"
-	// "github.com/srackham/rimu-go/utils"
 )
+
+func init() {
+	api.RegisterInit(Init)
+}
 
 // RenderOptions sole use is for passing options into the public API.
 // All fields can be nil so that options can be selectively updated (if nil then don't update).
@@ -57,7 +60,7 @@ func UpdateOptions(opts RenderOptions) {
 	// Reset takes priority.
 	if opts.Reset != nil {
 		if opts.Reset.(bool) {
-			proxies.ApiInit()
+			api.Init()
 		}
 	}
 	if opts.SafeMode != nil {
@@ -88,7 +91,7 @@ func SetOption(name string, value string) {
 			panic(err)
 		}
 		if b {
-			proxies.ApiInit()
+			api.Init()
 		}
 	default:
 		panic("illegal API option name: " + name)

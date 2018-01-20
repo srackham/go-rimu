@@ -5,9 +5,14 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/srackham/rimu-go/api"
 	"github.com/srackham/rimu-go/expansion"
 	"github.com/srackham/rimu-go/utils/stringlist"
 )
+
+func init() {
+	api.RegisterInit(Init)
+}
 
 var Classes string    // Space separated HTML class names.
 var Id string         // HTML element id.

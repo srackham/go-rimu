@@ -4,8 +4,13 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/srackham/rimu-go/api"
 	"github.com/srackham/rimu-go/options"
 )
+
+func init() {
+	api.RegisterInit(Init)
+}
 
 // Matches a line starting with a macro invocation. $1 = macro invocation.
 var MATCH_LINE = regexp.MustCompile(`^({(?:[\w\-]+)(?:[!=|?](?:|.*?[^\\]))?}).*$`)

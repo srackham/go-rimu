@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/srackham/rimu-go/proxies"
+	"github.com/srackham/rimu-go/api"
 	"github.com/srackham/rimu-go/utils/stringlist"
 
 	"github.com/srackham/rimu-go/blockattributes"
@@ -13,6 +13,14 @@ import (
 	"github.com/srackham/rimu-go/macros"
 	"github.com/srackham/rimu-go/options"
 )
+
+func init() {
+	Init()
+	api.RegisterInit(Init)
+	api.RegisterRender(func(reader *iotext.Reader, writer *iotext.Writer) bool {
+		return Render(reader, writer, nil)
+	})
+}
 
 var MATCH_INLINE_TAG = regexp.MustCompile(`(?i)^(a|abbr|acronym|address|b|bdi|bdo|big|blockquote|br|cite|code|del|dfn|em|i|img|ins|kbd|mark|q|s|samp|small|span|strike|strong|sub|sup|time|tt|u|var|wbr)$`)
 
@@ -145,7 +153,6 @@ var DEFAULT_DEFS = []Definition{
 		openTag:    "<pre><code>",
 		closeTag:   "</code></pre>",
 		expansionOptions: expansion.ExpansionOptions{
-			Macros:   false,
 			Specials: true,
 		},
 		delimiterFilter: delimiterTextFilter,
@@ -253,14 +260,7 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 			}
 			lines = append(lines, content...)
 			// Calculate block expansion options.
-			expansionOptions := expansion.ExpansionOptions{
-				Macros:    false,
-				Spans:     false,
-				Specials:  false,
-				Container: false,
-				Skip:      false,
-			}
-			expansionOptions.Merge(def.expansionOptions)
+			expansionOptions := def.expansionOptions
 			expansionOptions.Merge(blockattributes.Options)
 			// Translate block.
 			if !expansionOptions.Skip {
@@ -275,9 +275,9 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 					opentag = blockattributes.Inject(opentag)
 				}
 				if expansionOptions.Container {
-					// TODO in rimu-kt this set null, in rimu-js it is deleted.
-					blockattributes.Options.Container = false // Consume before recursion.
-					text = proxies.ApiRender(text)
+					savedOptions := blockattributes.Options
+					text = api.Render(text)
+					blockattributes.Options = savedOptions
 				} else {
 					text = expansion.ReplaceInline(text, expansionOptions)
 				}
@@ -328,7 +328,7 @@ func SetDefinition(name string, value string) {
 			def.closeTag = match[2]
 		}
 		if match[3] != "" {
-			def.expansionOptions.Parse(match[3])
+			def.expansionOptions.Merge(expansion.Parse(match[3]))
 		}
 	}
 }

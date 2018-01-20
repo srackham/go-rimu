@@ -7,5 +7,14 @@
     "options": {
       "reset": true
     }
+  },
+  {
+    "description": "header test",
+    "input": "# Title",
+    "expectedOutput": "<h1>Title</h1>",
+    "expectedCallback": "",
+    "options": {
+      "reset": true
+    }
   }
 ]

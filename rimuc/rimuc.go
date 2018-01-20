@@ -20,7 +20,8 @@ func main() {
 	if len(os.Args) > 1 && os.Args[1] == "--illegal" {
 		die("illegal option: --illegal")
 	} else {
-		fmt.Print(rimu.Render("*Hello World!*", rimu.RenderOptions{}))
+		output := rimu.Render("*Hello World!*", rimu.RenderOptions{})
+		fmt.Print(output)
 		osExit(0)
 	}
 }

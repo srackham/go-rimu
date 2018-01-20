@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"testing"
 
+	_ "github.com/srackham/rimu-go/delimitedblocks"
+	_ "github.com/srackham/rimu-go/lineblocks"
 	"github.com/stretchr/testify/assert"
 )
 
