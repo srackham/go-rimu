@@ -3,13 +3,14 @@ package options
 import (
 	"strconv"
 
-	"github.com/srackham/rimu-go/api"
 	"github.com/srackham/rimu-go/utils"
 )
 
+// api package dependency injection.
+var ApiInit func()
+
 func init() {
 	Init()
-	api.OptionsInit = Init
 }
 
 // RenderOptions sole use is for passing options into the public API.
@@ -61,7 +62,7 @@ func UpdateOptions(opts RenderOptions) {
 	// Reset takes priority.
 	if opts.Reset != nil {
 		if opts.Reset.(bool) {
-			api.Init()
+			ApiInit()
 		}
 	}
 	if opts.SafeMode != nil {
@@ -92,7 +93,7 @@ func SetOption(name string, value string) {
 			panic(err)
 		}
 		if b {
-			api.Init()
+			ApiInit()
 		}
 	default:
 		panic("illegal API option name: " + name)

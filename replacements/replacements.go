@@ -1,10 +1,7 @@
 package replacements
 
-import "github.com/srackham/rimu-go/api"
-
 func init() {
 	Init()
-	api.ReplacementsInit = Init
 }
 
 // TODO

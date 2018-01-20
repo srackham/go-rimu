@@ -1,12 +1,5 @@
 package quotes
 
-import "github.com/srackham/rimu-go/api"
-
-func init() {
-	Init()
-	api.QuotesInit = Init
-}
-
 type Definition struct {
 	Quote    string // Single quote character.
 	OpenTag  string

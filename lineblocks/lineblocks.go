@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/srackham/rimu-go/api"
 	"github.com/srackham/rimu-go/blockattributes"
 	"github.com/srackham/rimu-go/delimitedblocks"
 	"github.com/srackham/rimu-go/expansion"
@@ -16,12 +15,6 @@ import (
 	"github.com/srackham/rimu-go/replacements"
 	"github.com/srackham/rimu-go/utils/stringlist"
 )
-
-func init() {
-	api.LineBlocksRender = func(reader *iotext.Reader, writer *iotext.Writer) bool {
-		return Render(reader, writer, nil)
-	}
-}
 
 type LineBlockFilter = func(match []string, reader *iotext.Reader, def Definition) string
 type LineBlockVerify = func(match []string, reader *iotext.Reader) bool // Additional match verification checks.

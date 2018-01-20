@@ -5,14 +5,12 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/srackham/rimu-go/api"
 	"github.com/srackham/rimu-go/expansion"
 	"github.com/srackham/rimu-go/utils/stringlist"
 )
 
 func init() {
 	Init()
-	api.BlockAttributesInit = Init
 }
 
 var Classes string    // Space separated HTML class names.
