@@ -10,6 +10,7 @@ import (
 
 	_ "github.com/srackham/rimu-go/delimitedblocks"
 	_ "github.com/srackham/rimu-go/lineblocks"
+	_ "github.com/srackham/rimu-go/lists"
 	"github.com/stretchr/testify/assert"
 )
 

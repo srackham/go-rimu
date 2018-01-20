@@ -5,21 +5,20 @@ import (
 	"strings"
 
 	"github.com/srackham/rimu-go/api"
-	"github.com/srackham/rimu-go/utils/stringlist"
-
 	"github.com/srackham/rimu-go/blockattributes"
 	"github.com/srackham/rimu-go/expansion"
 	"github.com/srackham/rimu-go/iotext"
 	"github.com/srackham/rimu-go/macros"
 	"github.com/srackham/rimu-go/options"
+	"github.com/srackham/rimu-go/utils/stringlist"
 )
 
 func init() {
 	Init()
-	api.RegisterInit(Init)
-	api.RegisterRender(func(reader *iotext.Reader, writer *iotext.Writer) bool {
+	api.DelimitedBlocksInit = Init
+	api.DelimitedBlocksRender = func(reader *iotext.Reader, writer *iotext.Writer) bool {
 		return Render(reader, writer, nil)
-	})
+	}
 }
 
 var MATCH_INLINE_TAG = regexp.MustCompile(`(?i)^(a|abbr|acronym|address|b|bdi|bdo|big|blockquote|br|cite|code|del|dfn|em|i|img|ins|kbd|mark|q|s|samp|small|span|strike|strong|sub|sup|time|tt|u|var|wbr)$`)

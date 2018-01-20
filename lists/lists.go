@@ -6,18 +6,12 @@ import (
 )
 
 func init() {
-	api.RegisterInit(Init)
-	api.RegisterRender(Render)
+	api.ListsRender = Render
 }
 
 // TODO
 // Stubs
 
-func Init() {
-	// TODO
-}
-
-// func Render(reader iotext.Reader, writer iotext.Writer) bool {
 func Render(reader *iotext.Reader, writer *iotext.Writer) bool {
 	return false
 }

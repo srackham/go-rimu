@@ -6,22 +6,21 @@ import (
 	"strings"
 
 	"github.com/srackham/rimu-go/api"
-	"github.com/srackham/rimu-go/expansion"
-	"github.com/srackham/rimu-go/replacements"
-
 	"github.com/srackham/rimu-go/blockattributes"
 	"github.com/srackham/rimu-go/delimitedblocks"
+	"github.com/srackham/rimu-go/expansion"
 	"github.com/srackham/rimu-go/iotext"
 	"github.com/srackham/rimu-go/macros"
 	"github.com/srackham/rimu-go/options"
 	"github.com/srackham/rimu-go/quotes"
+	"github.com/srackham/rimu-go/replacements"
 	"github.com/srackham/rimu-go/utils/stringlist"
 )
 
 func init() {
-	api.RegisterRender(func(reader *iotext.Reader, writer *iotext.Writer) bool {
+	api.LineBlocksRender = func(reader *iotext.Reader, writer *iotext.Writer) bool {
 		return Render(reader, writer, nil)
-	})
+	}
 }
 
 type LineBlockFilter = func(match []string, reader *iotext.Reader, def Definition) string

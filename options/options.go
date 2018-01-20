@@ -8,7 +8,8 @@ import (
 )
 
 func init() {
-	api.RegisterInit(Init)
+	Init()
+	api.OptionsInit = Init
 }
 
 // RenderOptions sole use is for passing options into the public API.

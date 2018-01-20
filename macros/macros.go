@@ -9,7 +9,8 @@ import (
 )
 
 func init() {
-	api.RegisterInit(Init)
+	Init()
+	api.MacrosInit = Init
 }
 
 // Matches a line starting with a macro invocation. $1 = macro invocation.

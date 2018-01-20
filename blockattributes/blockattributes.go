@@ -11,7 +11,8 @@ import (
 )
 
 func init() {
-	api.RegisterInit(Init)
+	Init()
+	api.BlockAttributesInit = Init
 }
 
 var Classes string    // Space separated HTML class names.
