@@ -1,10 +1,16 @@
 package quotes
 
+import (
+	"regexp"
+	"strings"
+)
+
 type Definition struct {
 	Quote    string // Single quote character.
 	OpenTag  string
 	CloseTag string
 	Spans    bool // Allow span elements inside quotes.
+	re       *regexp.Regexp
 }
 
 var defs []Definition // Mutable definitions initialized by DEFAULT_DEFS.
@@ -54,68 +60,86 @@ var DEFAULT_DEFS = []Definition{
 	},
 }
 
-// TODO
-// Stubs
-func Init() {
-	// TODO
-}
-
-func SetDefinition(def Definition) {
-}
-
-/*
-
-export let quotesRe: RegExp // Searches for quoted text.
-let unescapeRe: RegExp      // Searches for escaped quotes.
-
 // Reset definitions to defaults.
-export function init(): void {
-  defs = DEFAULT_DEFS.map(def => Utils.copy(def))
-  initializeRegExps()
+func Init() {
+	defs = make([]Definition, len(DEFAULT_DEFS))
+	for i, def := range DEFAULT_DEFS {
+		defs[i] = def
+	}
+	initRegExps()
 }
 
-// Synthesise re's to find and unescape quotes.
-export function initializeRegExps(): void {
-  let quotes = defs.map(def => Utils.escapeRegExp(def.Quote))
-  // $1 is quote character(s), $2 is quoted text.
-  // Quoted text cannot begin or end with whitespace.
-  // Quoted can span multiple lines.
-  // Quoted text cannot end with a backslash.
-  quotesRe = RegExp('\\\\?(' + quotes.join('|') + ')([^\\s\\\\]|\\S[\\s\\S]*?[^\\s\\\\])\\1', 'g')
-  // $1 is quote character(s).
-  unescapeRe = RegExp('\\\\(' + quotes.join('|') + ')', 'g')
+// Synthesise re's to find quotes.
+func initRegExps() {
+	// $1 is quote character(s), $2 is quoted text.
+	// Quoted text cannot begin or end with whitespace.
+	// Quoted can span multiple lines.
+	// Quoted text cannot end with a backslash.
+	for i, def := range defs {
+		defs[i].re = regexp.MustCompile("(" + regexp.QuoteMeta(def.Quote) + `)([^\s\\]|\S[\s\S]*?[^\s\\])` + regexp.QuoteMeta(def.Quote))
+	}
 }
 
-// Return the quote definition corresponding to 'quote' character, return undefined if not found.
-export function getDefinition(quote: string): Definition {
-  return defs.filter(def => def.Quote === quote)[0]
-}
-
-// Strip backslashes from quote characters.
-export function unescape(s: string): string {
-  return s.replace(unescapeRe, '$1')
+// Return the quote definition corresponding to 'quote', return nil if not found.
+func GetDefinition(quote string) *Definition {
+	for _, def := range defs {
+		if def.Quote == quote {
+			return &def
+		}
+	}
+	return nil
 }
 
 // Update existing or add new quote definition.
-export function setDefinition(def: Definition): void {
-  for (let d of defs) {
-    if (d.quote === def.quote) {
-      // Update existing definition.
-      d.openTag = def.openTag
-      d.closeTag = def.closeTag
-      d.spans = def.spans
-      return
-    }
-  }
-  // Double-quote definitions are prepended to the array so they are matched
-  // before single-quote definitions (which are appended to the array).
-  if (def.quote.length === 2) {
-    defs.unshift(def)
-  }
-  else {
-    defs.push(def)
-  }
-  initializeRegExps()
+func SetDefinition(def Definition) {
+	for i := range defs {
+		if defs[i].Quote == def.Quote {
+			// Update existing definition.
+			defs[i].OpenTag = def.OpenTag
+			defs[i].CloseTag = def.CloseTag
+			defs[i].Spans = def.Spans
+			return
+		}
+	}
+	// Double-quote definitions are prepended to the array so they are matched
+	// before single-quote definitions (which are appended to the array).
+	if len(def.Quote) == 2 {
+		defs = append([]Definition{def}, defs...)
+	} else {
+		defs = append(defs, def)
+	}
+	initRegExps()
 }
 
-*/
+// Strip backslashes from quote characters.
+func Unescape(s string) string {
+	for _, def := range defs {
+		s = strings.Replace(s, "\\"+def.Quote, def.Quote, -1)
+	}
+	return s
+}
+
+// Find looks for the first quote in `text` starting from `start`.
+// Quotes prefixed with a backslash are ignored.
+// Returns slice holding thre index pairs identifying:
+// - The entire match: s[loc[0]:loc[1]]
+// - The left quote    s[loc[2]:loc[3]]
+// - The quoted text   s[loc[4]:loc[5]]
+// Returns nil if not found.
+func Find(text string) []int {
+	// Find the leftmost quoted string.
+	var match []int = nil
+	for _, def := range defs {
+		nextMatch := def.re.FindStringSubmatchIndex(text)
+		if nextMatch == nil {
+			continue
+		}
+		if nextMatch[0] > 0 && text[nextMatch[0]-1] == '\\' {
+			continue
+		}
+		if match == nil || nextMatch[0] <= match[0] {
+			match = nextMatch
+		}
+	}
+	return match
+}
