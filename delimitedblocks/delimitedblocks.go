@@ -211,9 +211,9 @@ var DEFAULT_DEFS = []Definition{
 // Reset definitions to defaults.
 func Init() {
 	defs = make([]Definition, len(DEFAULT_DEFS))
-	for i := range defs {
-		defs[i] = Definition(DEFAULT_DEFS[i])                                                   // Clone default definition.
-		defs[i].expansionOptions = expansion.ExpansionOptions(DEFAULT_DEFS[i].expansionOptions) // Clone expansion options.
+	for i, def := range DEFAULT_DEFS {
+		defs[i] = def
+		defs[i].expansionOptions = expansion.ExpansionOptions(def.expansionOptions) // Clone expansion options.
 	}
 }
 

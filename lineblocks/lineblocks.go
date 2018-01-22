@@ -16,9 +16,6 @@ import (
 	"github.com/srackham/rimu-go/utils/stringlist"
 )
 
-type LineBlockFilter = func(match []string, reader *iotext.Reader, def Definition) string
-type LineBlockVerify = func(match []string, reader *iotext.Reader) bool // Additional match verification checks.
-
 type Definition struct {
 	match       *regexp.Regexp
 	replacement string
@@ -26,6 +23,9 @@ type Definition struct {
 	filter      LineBlockFilter
 	verify      LineBlockVerify // Additional match verification checks.
 }
+
+type LineBlockFilter = func(match []string, reader *iotext.Reader, def Definition) string
+type LineBlockVerify = func(match []string, reader *iotext.Reader) bool // Additional match verification checks.
 
 var defs = []Definition{
 	// Prefix match with backslash to allow escaping.

@@ -128,7 +128,7 @@ func Unescape(s string) string {
 // Returns nil if not found.
 func Find(text string) []int {
 	// Find the leftmost quoted string.
-	var match []int = nil
+	var match []int
 	for _, def := range defs {
 		nextMatch := def.re.FindStringSubmatchIndex(text)
 		if nextMatch == nil {
