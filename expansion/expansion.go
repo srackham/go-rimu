@@ -5,12 +5,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/srackham/rimu-go/macros"
 	"github.com/srackham/rimu-go/options"
-	"github.com/srackham/rimu-go/spans"
 	"github.com/srackham/rimu-go/utils"
 	"github.com/srackham/rimu-go/utils/re"
 )
+
+// macros and spans package dependency injections.
+var MacrosRender func(text string, silent bool) string
+var SpansRender func(text string) string
 
 // Processing priority (highest to lowest): container, skip, spans and specials.
 // If spans is true then both spans and specials are processed.
@@ -107,12 +109,12 @@ func ReplaceMatch(match []string, replacement string, expansionOptions Expansion
 // Replace the inline elements specified in options in text and return the result.
 func ReplaceInline(text string, expansionOptions ExpansionOptions) string {
 	if expansionOptions.Macros {
-		text = macros.Render(text, false)
+		text = MacrosRender(text, false)
 	}
 	// Spans also expand special characters.
 	switch {
 	case expansionOptions.Spans:
-		text = spans.Render(text)
+		text = SpansRender(text)
 	case expansionOptions.Specials:
 		text = utils.ReplaceSpecialChars(text)
 	}

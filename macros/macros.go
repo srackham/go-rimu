@@ -4,11 +4,13 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/srackham/rimu-go/expansion"
 	"github.com/srackham/rimu-go/options"
 )
 
 func init() {
 	Init()
+	expansion.MacrosRender = Render
 }
 
 // Matches a line starting with a macro invocation. $1 = macro invocation.
