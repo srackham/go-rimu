@@ -44,7 +44,7 @@ func TrimQuotes(s string, quote string) string {
 
 func TestRimuc(t *testing.T) {
 	// Read JSON test cases.
-	raw, err := ioutil.ReadFile("./fixtures/rimuc-tests.json")
+	raw, err := ioutil.ReadFile("./testdata/rimuc-tests.json")
 	if err != nil {
 		t.Error(err.Error())
 		return

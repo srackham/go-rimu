@@ -13,6 +13,7 @@ import (
 	"github.com/srackham/rimu-go/options"
 	"github.com/srackham/rimu-go/quotes"
 	"github.com/srackham/rimu-go/replacements"
+	"github.com/srackham/rimu-go/spans"
 	"github.com/srackham/rimu-go/utils/stringlist"
 )
 
@@ -62,7 +63,7 @@ var defs = []Definition{
 			if options.IsSafeModeNz() {
 				return "" // Skip if a safe mode is set.
 			}
-			match[2] = expansion.ReplaceInline(match[2], expansion.ExpansionOptions{Macros: true})
+			match[2] = spans.ReplaceInline(match[2], expansion.Options{Macros: true})
 			delimitedblocks.SetDefinition(match[1], match[2])
 			return ""
 		},
@@ -77,8 +78,8 @@ var defs = []Definition{
 			}
 			quotes.SetDefinition(quotes.Definition{
 				Quote:    match[1],
-				OpenTag:  expansion.ReplaceInline(match[2], expansion.ExpansionOptions{Macros: true}),
-				CloseTag: expansion.ReplaceInline(match[4], expansion.ExpansionOptions{Macros: true}),
+				OpenTag:  spans.ReplaceInline(match[2], expansion.Options{Macros: true}),
+				CloseTag: spans.ReplaceInline(match[4], expansion.Options{Macros: true}),
 				Spans:    match[3] == "|",
 			})
 			return ""
@@ -95,7 +96,7 @@ var defs = []Definition{
 			pattern := match[1]
 			flags := match[2]
 			replacement := match[3]
-			replacement = expansion.ReplaceInline(replacement, expansion.ExpansionOptions{Macros: true})
+			replacement = spans.ReplaceInline(replacement, expansion.Options{Macros: true})
 			replacements.SetDefinition(pattern, flags, replacement)
 			return ""
 		},
@@ -112,7 +113,7 @@ var defs = []Definition{
 			name := match[1]
 			quote := match[2]
 			value := match[3]
-			value = expansion.ReplaceInline(value, expansion.ExpansionOptions{Macros: true})
+			value = spans.ReplaceInline(value, expansion.Options{Macros: true})
 			macros.SetValue(name, value, quote)
 			return ""
 		},
@@ -131,7 +132,7 @@ var defs = []Definition{
 			if macros.IsDefined("--header-ids") && blockattributes.Id == "" {
 				blockattributes.Id = blockattributes.Slugify(match[2])
 			}
-			return expansion.ReplaceMatch(match, def.replacement, expansion.ExpansionOptions{Macros: true})
+			return spans.ReplaceMatch(match, def.replacement, expansion.Options{Macros: true})
 		},
 	},
 	// Comment line.
@@ -161,7 +162,7 @@ var defs = []Definition{
 				return ""
 			} else {
 				// Default (non-filter) replacement processing.
-				return expansion.ReplaceMatch(match, def.replacement, expansion.ExpansionOptions{Macros: true})
+				return spans.ReplaceMatch(match, def.replacement, expansion.Options{Macros: true})
 			}
 		},
 	},
@@ -183,7 +184,7 @@ var defs = []Definition{
 			case !regexp.MustCompile(`^(safeMode|htmlReplacement|reset)$`).MatchString(match[1]):
 				options.ErrorCallback("illegal API option: " + match[1] + ": " + match[0])
 			case !options.IsSafeModeNz():
-				value := expansion.ReplaceInline(match[2], expansion.ExpansionOptions{Macros: true})
+				value := spans.ReplaceInline(match[2], expansion.Options{Macros: true})
 				options.SetOption(match[1], value)
 			}
 			return ""
@@ -213,7 +214,7 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed stringlist.Str
 			}
 			var text string
 			if def.filter == nil {
-				text = expansion.ReplaceMatch(match, def.replacement, expansion.ExpansionOptions{Macros: true})
+				text = spans.ReplaceMatch(match, def.replacement, expansion.Options{Macros: true})
 			} else {
 				text = def.filter(match, reader, def)
 			}

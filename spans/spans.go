@@ -2,17 +2,18 @@ package spans
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/srackham/rimu-go/expansion"
 	"github.com/srackham/rimu-go/quotes"
 	"github.com/srackham/rimu-go/replacements"
 	"github.com/srackham/rimu-go/utils"
+	"github.com/srackham/rimu-go/utils/re"
 )
 
-func init() {
-	expansion.SpansRender = Render
-}
+// macros and spans package dependency injections.
+var MacrosRender func(text string, silent bool) string
 
 type fragment struct {
 	text     string
@@ -24,7 +25,7 @@ func Render(source string) string {
 	result := preReplacements(source)
 	frags := []fragment{{text: result, done: false}}
 	frags = fragQuotes(frags)
-	fragSpecials(frags)
+	frags = fragSpecials(frags)
 	result = defrag(frags)
 	return postReplacements(result)
 }
@@ -165,7 +166,7 @@ func fragReplacement(frag fragment, def replacements.Definition) (result []fragm
 	} else {
 		submatches := def.Match.FindStringSubmatch(matched)
 		if def.Filter == nil {
-			replacement = expansion.ReplaceMatch(submatches, def.Replacement, expansion.ExpansionOptions{})
+			replacement = ReplaceMatch(submatches, def.Replacement, expansion.Options{})
 		} else {
 			replacement = def.Filter(submatches)
 		}
@@ -182,8 +183,41 @@ func fragSpecials(frags []fragment) (result []fragment) {
 	for i, frag := range frags {
 		if !frag.done {
 			frag.text = utils.ReplaceSpecialChars(frag.text)
-			result[i] = frag
 		}
+		result[i] = frag
 	}
 	return result
+}
+
+// Replace pattern "$1" or "$$1", "$2" or "$$2"... in `replacement` with corresponding match groups
+// from `match`. If pattern starts with one "$" character add specials to `opts`,
+// if it starts with two "$" characters add spans to `opts`.
+func ReplaceMatch(match []string, replacement string, opts expansion.Options) string {
+	return re.ReplaceAllStringSubmatchFunc(regexp.MustCompile(`(\${1,2})(\d)`), replacement, func(arguments []string) string {
+		// Replace $1, $2 ... with corresponding match groups.
+		switch {
+		case arguments[1] == "$$":
+			opts.Spans = true
+		default:
+			opts.Specials = true
+		}
+		i, _ := strconv.ParseInt(arguments[2], 10, 64) // match group number.
+		text := match[i]                               // match group text.
+		return ReplaceInline(text, opts)
+	})
+}
+
+// Replace the inline elements specified in options in text and return the result.
+func ReplaceInline(text string, opts expansion.Options) string {
+	if opts.Macros {
+		text = MacrosRender(text, false)
+	}
+	// Spans also expand special characters.
+	switch {
+	case opts.Spans:
+		text = Render(text)
+	case opts.Specials:
+		text = utils.ReplaceSpecialChars(text)
+	}
+	return text
 }

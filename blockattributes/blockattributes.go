@@ -17,7 +17,7 @@ var Classes string    // Space separated HTML class names.
 var Id string         // HTML element id.
 var Css string        // HTML CSS styles.
 var Attributes string // Other HTML element attributes.
-var Options expansion.ExpansionOptions
+var Options expansion.Options
 
 var ids stringlist.StringList // List of allocated HTML ids.
 
@@ -28,7 +28,7 @@ func Init() {
 	Id = ""
 	Css = ""
 	Attributes = ""
-	Options = expansion.ExpansionOptions{}
+	Options = expansion.Options{}
 	ids = nil
 }
 

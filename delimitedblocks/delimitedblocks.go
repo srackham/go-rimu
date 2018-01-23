@@ -9,6 +9,7 @@ import (
 	"github.com/srackham/rimu-go/iotext"
 	"github.com/srackham/rimu-go/macros"
 	"github.com/srackham/rimu-go/options"
+	"github.com/srackham/rimu-go/spans"
 	"github.com/srackham/rimu-go/utils/stringlist"
 )
 
@@ -23,15 +24,15 @@ var MATCH_INLINE_TAG = regexp.MustCompile(`(?i)^(a|abbr|acronym|address|b|bdi|bd
 
 // Multi-line block element definition.
 type Definition struct {
-	name             string // Optional unique identifier.
-	openMatch        *regexp.Regexp
-	closeMatch       *regexp.Regexp // $1 (if defined) is appended to block content.
-	openTag          string
-	closeTag         string
-	verify           func(match []string) bool                   // Additional match verification checks.
-	delimiterFilter  func(match []string, def Definition) string // Process opening delimiter. Return any delimiter content.
-	contentFilter    func(text string, match []string, expansionOptions expansion.ExpansionOptions) string
-	expansionOptions expansion.ExpansionOptions
+	name            string // Optional unique identifier.
+	openMatch       *regexp.Regexp
+	closeMatch      *regexp.Regexp // $1 (if defined) is appended to block content.
+	openTag         string
+	closeTag        string
+	verify          func(match []string) bool                   // Additional match verification checks.
+	delimiterFilter func(match []string, def Definition) string // Process opening delimiter. Return any delimiter content.
+	contentFilter   func(text string, match []string, opts expansion.Options) string
+	options         expansion.Options
 }
 
 var defs []Definition // Mutable definitions initialized by DEFAULT_DEFS.
@@ -45,7 +46,7 @@ var DEFAULT_DEFS = []Definition{
 		closeMatch: macros.LITERAL_DEF_CLOSE,
 		openTag:    "",
 		closeTag:   "",
-		expansionOptions: expansion.ExpansionOptions{
+		options: expansion.Options{
 			Macros: true,
 		},
 		delimiterFilter: delimiterTextFilter,
@@ -57,7 +58,7 @@ var DEFAULT_DEFS = []Definition{
 		closeMatch: macros.EXPRESSION_DEF_CLOSE,
 		openTag:    "",
 		closeTag:   "",
-		expansionOptions: expansion.ExpansionOptions{
+		options: expansion.Options{
 			Macros: true,
 		},
 		delimiterFilter: delimiterTextFilter,
@@ -70,7 +71,7 @@ var DEFAULT_DEFS = []Definition{
 		closeMatch: regexp.MustCompile(`^\*+\/$`),
 		openTag:    "",
 		closeTag:   "",
-		expansionOptions: expansion.ExpansionOptions{
+		options: expansion.Options{
 			Skip:     true,
 			Specials: true, // Fall-back if skip is disabled.
 		},
@@ -81,7 +82,7 @@ var DEFAULT_DEFS = []Definition{
 		openMatch: regexp.MustCompile(`^\\?(\.{2,})([\w\s-]*)$`), // $1 is delimiter text, $2 is optional class names.
 		openTag:   "<div>",
 		closeTag:  "</div>",
-		expansionOptions: expansion.ExpansionOptions{
+		options: expansion.Options{
 			Container: true,
 			Specials:  true, // Fall-back if container is disabled.
 		},
@@ -93,7 +94,7 @@ var DEFAULT_DEFS = []Definition{
 		openMatch: regexp.MustCompile(`^\\?("{2,})([\w\s-]*)$`), // $1 is delimiter text, $2 is optional class names.
 		openTag:   "<blockquote>",
 		closeTag:  "</blockquote>",
-		expansionOptions: expansion.ExpansionOptions{
+		options: expansion.Options{
 			Container: true,
 			Specials:  true, // Fall-back if container is disabled.
 		},
@@ -105,7 +106,7 @@ var DEFAULT_DEFS = []Definition{
 		openMatch: regexp.MustCompile(`^\\?(-{2,}|` + "`" + `{2,})([\w\s-]*)$`), // $1 is delimiter text, $2 is optional class names.
 		openTag:   "<pre><code>",
 		closeTag:  "</code></pre>",
-		expansionOptions: expansion.ExpansionOptions{
+		options: expansion.Options{
 			Macros:   false,
 			Specials: true,
 		},
@@ -125,7 +126,7 @@ var DEFAULT_DEFS = []Definition{
 		closeMatch: regexp.MustCompile(`^$`), // Blank line or EOF.
 		openTag:    "",
 		closeTag:   "",
-		expansionOptions: expansion.ExpansionOptions{
+		options: expansion.Options{
 			Macros: true,
 		},
 		verify: func(match []string) bool {
@@ -138,7 +139,7 @@ var DEFAULT_DEFS = []Definition{
 		},
 		delimiterFilter: delimiterTextFilter,
 		// contentFilter:   options.HtmlSafeModeFilter,
-		contentFilter: func(text string, _ []string, _ expansion.ExpansionOptions) string {
+		contentFilter: func(text string, _ []string, _ expansion.Options) string {
 			return options.HtmlSafeModeFilter(text)
 		},
 	},
@@ -149,11 +150,11 @@ var DEFAULT_DEFS = []Definition{
 		closeMatch: regexp.MustCompile(`^$`),           // Blank line or EOF.
 		openTag:    "<pre><code>",
 		closeTag:   "</code></pre>",
-		expansionOptions: expansion.ExpansionOptions{
+		options: expansion.Options{
 			Specials: true,
 		},
 		delimiterFilter: delimiterTextFilter,
-		contentFilter: func(text string, _ []string, _ expansion.ExpansionOptions) string {
+		contentFilter: func(text string, _ []string, _ expansion.Options) string {
 			// Strip indent from start of each line.
 			firstIndent := regexp.MustCompile(`\S`).FindStringIndex(text)[0]
 			result := ""
@@ -175,13 +176,13 @@ var DEFAULT_DEFS = []Definition{
 		closeMatch: regexp.MustCompile(`^$`),         // Blank line or EOF.
 		openTag:    "<blockquote><p>",
 		closeTag:   "</p></blockquote>",
-		expansionOptions: expansion.ExpansionOptions{
+		options: expansion.Options{
 			Macros:   true,
 			Spans:    true,
 			Specials: true, // Fall-back if spans is disabled.
 		},
 		delimiterFilter: delimiterTextFilter,
-		contentFilter: func(text string, _ []string, _ expansion.ExpansionOptions) string {
+		contentFilter: func(text string, _ []string, _ expansion.Options) string {
 			// Strip leading > from start of each line and unescape escaped leading >.
 			result := ""
 			for _, line := range strings.Split(text, "\n") {
@@ -199,7 +200,7 @@ var DEFAULT_DEFS = []Definition{
 		closeMatch: regexp.MustCompile(`^$`),   // Blank line or EOF.
 		openTag:    "<p>",
 		closeTag:   "</p>",
-		expansionOptions: expansion.ExpansionOptions{
+		options: expansion.Options{
 			Macros:   true,
 			Spans:    true,
 			Specials: true, // Fall-back if spans is disabled.
@@ -213,7 +214,7 @@ func Init() {
 	defs = make([]Definition, len(DEFAULT_DEFS))
 	for i, def := range DEFAULT_DEFS {
 		defs[i] = def
-		defs[i].expansionOptions = expansion.ExpansionOptions(def.expansionOptions) // Clone expansion options.
+		defs[i].options = expansion.Options(def.options) // Clone expansion options.
 	}
 }
 
@@ -257,13 +258,13 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 			}
 			lines = append(lines, content...)
 			// Calculate block expansion options.
-			expansionOptions := def.expansionOptions
-			expansionOptions.Merge(blockattributes.Options)
+			opts := def.options
+			opts.Merge(blockattributes.Options)
 			// Translate block.
-			if !expansionOptions.Skip {
+			if !opts.Skip {
 				text := strings.Join(lines, "\n")
 				if def.contentFilter != nil {
-					text = def.contentFilter(text, match, expansionOptions)
+					text = def.contentFilter(text, match, opts)
 				}
 				opentag := def.openTag
 				if def.name == "html" {
@@ -271,12 +272,12 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 				} else {
 					opentag = blockattributes.Inject(opentag)
 				}
-				if expansionOptions.Container {
+				if opts.Container {
 					savedOptions := blockattributes.Options
 					text = ApiRender(text)
 					blockattributes.Options = savedOptions
 				} else {
-					text = expansion.ReplaceInline(text, expansionOptions)
+					text = spans.ReplaceInline(text, opts)
 				}
 				closetag := def.closeTag
 				if def.name == "division" && opentag == "<div>" {
@@ -292,7 +293,7 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 				}
 			}
 			// Reset consumed Block Attributes expansion options.
-			blockattributes.Options = expansion.ExpansionOptions{}
+			blockattributes.Options = expansion.Options{}
 			return true
 		}
 	}
@@ -325,7 +326,7 @@ func SetDefinition(name string, value string) {
 			def.closeTag = match[2]
 		}
 		if match[3] != "" {
-			def.expansionOptions.Merge(expansion.Parse(match[3]))
+			def.options.Merge(expansion.Parse(match[3]))
 		}
 	}
 }
@@ -346,12 +347,12 @@ func classInjectionFilter(match []string, def Definition) string {
 }
 
 // contentFilter for multi-line macro definitions.
-func macroDefContentFilter(text string, match []string, expansionOptions expansion.ExpansionOptions) string {
+func macroDefContentFilter(text string, match []string, opts expansion.Options) string {
 	quote := string(match[0][len(match[0])-len(match[1])-1])                           // The leading macro value quote character.
 	name := regexp.MustCompile(`^{([\w\-]+\??)}`).FindStringSubmatch(match[0])[1]      // Extract macro name from opening delimiter.
 	text = regexp.MustCompile("("+quote+`) *\\\n`).ReplaceAllString(text, "$1\n")      // Unescape line-continuations.
 	text = regexp.MustCompile("("+quote+` *[\\]+)\\\n`).ReplaceAllString(text, "$1\n") // Unescape escaped line-continuations.
-	text = expansion.ReplaceInline(text, expansionOptions)                             // Expand macro invocations.
+	text = spans.ReplaceInline(text, opts)                                             // Expand macro invocations.
 	macros.SetValue(name, text, quote)
 	return ""
 }

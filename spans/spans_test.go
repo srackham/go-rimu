@@ -3,6 +3,7 @@ package spans
 import (
 	"testing"
 
+	"github.com/srackham/rimu-go/expansion"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -199,6 +200,40 @@ func Test_fragSpecials(t *testing.T) {
 	for _, tt := range tests {
 		frags := fragSpecials(tt.frags)
 		got := defrag(frags)
+		assert.Equal(t, tt.want, got)
+	}
+}
+
+func TestReplaceMatch(t *testing.T) {
+	tests := []struct {
+		match       []string
+		replacement string
+		options     expansion.Options
+		want        string
+	}{
+		{nil, "", expansion.Options{}, ""},
+		{[]string{"foo bar", "foo", "bar"}, "$2 $1", expansion.Options{}, "bar foo"},
+	}
+	for _, tt := range tests {
+		got := ReplaceMatch(tt.match, tt.replacement, tt.options)
+		assert.Equal(t, tt.want, got)
+	}
+}
+
+func TestReplaceInline(t *testing.T) {
+	tests := []struct {
+		text string
+		opts expansion.Options
+		want string
+	}{
+		{"", expansion.Options{}, ""},
+		{"<>& _foo_", expansion.Options{}, "<>& _foo_"},
+		{"<>& _foo_", expansion.Options{Specials: true}, "&lt;&gt;&amp; _foo_"},
+		{"<>& _foo_", expansion.Options{Spans: true}, "&lt;&gt;&amp; <em>foo</em>"},
+		{"[bar boo](#qux) _foo_", expansion.Options{Spans: true}, "<a href=\"#qux\">bar boo</a> <em>foo</em>"},
+	}
+	for _, tt := range tests {
+		got := ReplaceInline(tt.text, tt.opts)
 		assert.Equal(t, tt.want, got)
 	}
 }

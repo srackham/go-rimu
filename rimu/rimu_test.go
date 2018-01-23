@@ -23,7 +23,7 @@ type TestOptions struct {
 
 func TestRimuTestCases(t *testing.T) {
 	// Read JSON test cases.
-	raw, err := ioutil.ReadFile("./fixtures/rimu-tests.json")
+	raw, err := ioutil.ReadFile("./testdata/rimu-tests.json")
 	if err != nil {
 		t.Error(err.Error())
 		return
