@@ -22,32 +22,32 @@ type fragment struct {
 
 func Render(source string) string {
 	result := preReplacements(source)
-	fragments := []fragment{{text: result, done: false}}
-	fragments = fragQuotes(fragments)
-	fragSpecials(fragments)
-	result = defrag(fragments)
+	frags := []fragment{{text: result, done: false}}
+	frags = fragQuotes(frags)
+	fragSpecials(frags)
+	result = defrag(frags)
 	return postReplacements(result)
 }
 
 // Converts fragments to a string.
-func defrag(fragments []fragment) string {
+func defrag(frags []fragment) string {
 	result := ""
-	for _, f := range fragments {
-		result += f.text
+	for _, frag := range frags {
+		result += frag.text
 	}
 	return result
 }
 
 // Fragment quotes in all fragments and return resulting fragments array.
-func fragQuotes(fragments []fragment) []fragment {
+func fragQuotes(frags []fragment) []fragment {
 	result := []fragment{}
-	for _, f := range fragments {
-		result = append(result, fragQuote(f)...)
+	for _, frag := range frags {
+		result = append(result, fragQuote(frag)...)
 	}
 	// Strip backlash from escaped quotes in non-done fragments.
-	for _, f := range fragments {
-		if !f.done {
-			f.text = quotes.Unescape(f.text)
+	for _, frag := range frags {
+		if !frag.done {
+			frag.text = quotes.Unescape(frag.text)
 		}
 	}
 	return result
@@ -67,7 +67,7 @@ func fragQuote(frag fragment) (result []fragment) {
 	startIndex := match[0]
 	endIndex := match[1]
 	// Check for same closing quote one character further to the right.
-	for frag.text[endIndex] == quote[0] {
+	for endIndex < len(frag.text) && frag.text[endIndex] == quote[0] {
 		// Move to closing quote one character to right.
 		quoted += string(quote[0])
 		endIndex += 1
@@ -101,9 +101,9 @@ var savedReplacements []fragment
 // Return text with replacements replaced with placeholders (see `postReplacements()`).
 func preReplacements(text string) (result string) {
 	savedReplacements = nil
-	fragments := fragReplacements([]fragment{{text: text, done: false}})
+	frags := fragReplacements([]fragment{{text: text, done: false}})
 	// Reassemble text with replacement placeholders.
-	for _, frag := range fragments {
+	for _, frag := range frags {
 		if frag.done {
 			savedReplacements = append(savedReplacements, frag) // Save replaced text.
 			result += string('\u0000')                          // Placeholder for replaced text.
@@ -116,7 +116,7 @@ func preReplacements(text string) (result string) {
 
 // Replace replacements placeholders with replacements text from savedReplacements[].
 func postReplacements(text string) string {
-	return regexp.MustCompile(`[\u0000\u0001]`).ReplaceAllStringFunc(text, func(match string) string {
+	return regexp.MustCompile(`[\x{0000}\x{0001}]`).ReplaceAllStringFunc(text, func(match string) string {
 		var frag fragment
 		frag, savedReplacements = savedReplacements[0], savedReplacements[1:] // Remove frag from start of list.
 		if match == string('\u0000') {
@@ -129,8 +129,8 @@ func postReplacements(text string) string {
 }
 
 // Fragment replacements in all fragments and return resulting fragments array.
-func fragReplacements(fragments []fragment) (result []fragment) {
-	result = fragments
+func fragReplacements(frags []fragment) (result []fragment) {
+	result = frags
 	for _, def := range replacements.Defs {
 		var tmp []fragment
 		for _, frag := range result {
@@ -176,11 +176,14 @@ func fragReplacement(frag fragment, def replacements.Definition) (result []fragm
 	return result
 }
 
-func fragSpecials(fragments []fragment) {
+func fragSpecials(frags []fragment) (result []fragment) {
 	// Replace special characters in all non-done fragments.
-	for _, frag := range fragments {
+	result = make([]fragment, len(frags))
+	for i, frag := range frags {
 		if !frag.done {
 			frag.text = utils.ReplaceSpecialChars(frag.text)
+			result[i] = frag
 		}
 	}
+	return result
 }

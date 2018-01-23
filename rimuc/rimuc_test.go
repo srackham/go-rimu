@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	_ "github.com/srackham/rimu-go/spans"
 	"github.com/stretchr/testify/assert"
 )
 

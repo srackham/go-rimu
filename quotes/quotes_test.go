@@ -66,6 +66,7 @@ func TestFind(t *testing.T) {
 	}{
 		{``, nil},
 		{`*foo*`, []int{0, 5, 0, 1, 1, 4}},
+		{`**foo**`, []int{0, 7, 0, 2, 2, 5}},
 		{`\*foo*`, nil},
 		{`*bar* _foo_`, []int{0, 5, 0, 1, 1, 4}},
 		{`_bar_ *foo*`, []int{0, 5, 0, 1, 1, 4}},

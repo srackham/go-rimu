@@ -4,14 +4,25 @@ import (
 	"testing"
 
 	"github.com/srackham/rimu-go/iotext"
+	_ "github.com/srackham/rimu-go/spans"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRender(t *testing.T) {
-	// Header.
-	input := "# Test"
-	reader := iotext.NewReader(input)
-	writer := iotext.NewWriter()
-	Render(reader, writer, nil)
-	assert.Equal(t, "<h1>Test</h1>", writer.String())
+	tests := []struct {
+		source string
+		want   string
+	}{
+		{"# foo", "<h1>foo</h1>"},
+		{"// foo", ""},
+		{"<image:foo|bar>", `<img src="foo" alt="bar">`},
+		{"<image:foo|bar>", `<img src="foo" alt="bar">`},
+	}
+	for _, tt := range tests {
+		reader := iotext.NewReader(tt.source)
+		writer := iotext.NewWriter()
+		Render(reader, writer, nil)
+		got := writer.String()
+		assert.Equal(t, tt.want, got)
+	}
 }

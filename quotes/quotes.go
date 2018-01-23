@@ -5,6 +5,10 @@ import (
 	"strings"
 )
 
+func init() {
+	Init()
+}
+
 type Definition struct {
 	Quote    string // Single quote character.
 	OpenTag  string
@@ -137,7 +141,7 @@ func Find(text string) []int {
 		if nextMatch[0] > 0 && text[nextMatch[0]-1] == '\\' {
 			continue
 		}
-		if match == nil || nextMatch[0] <= match[0] {
+		if match == nil || nextMatch[0] < match[0] {
 			match = nextMatch
 		}
 	}

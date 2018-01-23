@@ -35,7 +35,7 @@ var DEFAULT_DEFS = []Definition{
 	// Image: <image:src|alt>
 	// src = $1, alt = $2
 	{
-		Match:       regexp.MustCompile(`(?m)\\?<image:([^\s|]+)\|(.*?)>`),
+		Match:       regexp.MustCompile(`\\?<image:([^\s|]+)\|((?s).*?)>`),
 		Replacement: `<img src="$1" alt="$2">`,
 	},
 
@@ -56,7 +56,7 @@ var DEFAULT_DEFS = []Definition{
 	// Email: <address|caption>
 	// address = $1, caption = $2
 	{
-		Match:       regexp.MustCompile(`(?m)\\?<(\S+@[\w.\-]+)\|(.+?)>`),
+		Match:       regexp.MustCompile(`\\?<(\S+@[\w.\-]+)\|((?s).+?)>`),
 		Replacement: `<a href="mailto:$1">$$2</a>`,
 	},
 
@@ -77,7 +77,7 @@ var DEFAULT_DEFS = []Definition{
 	// Link: <url|caption>
 	// url = $1, caption = $2
 	{
-		Match:       regexp.MustCompile(`(?m)\\?<(\S+?)\|(.*?)>`),
+		Match:       regexp.MustCompile(`\\?<(\S+?)\|((?s).*?)>`),
 		Replacement: `<a href="$1">$$2</a>`,
 	},
 
