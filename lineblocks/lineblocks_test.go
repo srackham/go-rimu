@@ -13,10 +13,16 @@ func TestRender(t *testing.T) {
 		source string
 		want   string
 	}{
-		{"# foo", "<h1>foo</h1>"},
-		{"// foo", ""},
-		{"<image:foo|bar>", `<img src="foo" alt="bar">`},
-		{"<image:foo|bar>", `<img src="foo" alt="bar">`},
+		{`# foo`, `<h1>foo</h1>`},
+		{`// foo`, ``},
+		{`<image:foo|bar>`, `<img src="foo" alt="bar">`},
+		{`<<#foo>>`, `<div id="foo"></div>`},
+		{`.class #id "css"`, ``},
+		{`.safeMode='0'`, ``},
+		{`|code|='<code>|</code>'`, ``},
+		{`^='<sup>|</sup>'`, ``},
+		{`/\.{3}/i = '&hellip;'`, ``},
+		{`{foo}='bar'`, ``},
 	}
 	for _, tt := range tests {
 		reader := iotext.NewReader(tt.source)

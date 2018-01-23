@@ -318,7 +318,7 @@ func SetDefinition(name string, value string) {
 		options.ErrorCallback("illegal delimited block name: " + name + ": |" + name + "|='" + value + "'")
 		return
 	}
-	match := regexp.MustCompile(`^(?:(<[a-zA-Z].*>)\|(<[a-zA-Z/].*>))?(?:\s*)?([+-][ \w+-]+)?$`).FindAllString(strings.Trim(value, " "), 1)
+	match := regexp.MustCompile(`^(?:(<[a-zA-Z].*>)\|(<[a-zA-Z/].*>))?(?:\s*)?([+-][ \w+-]+)?$`).FindStringSubmatch(strings.Trim(value, " "))
 	// TODO does not match should callback error (other ports to).
 	if match != nil {
 		if strings.Contains(value, "|") {
