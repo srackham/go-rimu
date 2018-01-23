@@ -16,5 +16,14 @@
     "options": {
       "reset": true
     }
+  },
+  {
+    "description": "macro value",
+    "input": "{macro} = 'macro value2'\n{macro}",
+    "expectedOutput": "<p>macro value2</p>",
+    "expectedCallback": "",
+    "options": {
+      "reset": false
+    }
   }
 ]
