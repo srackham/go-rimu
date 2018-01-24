@@ -1,7 +1,6 @@
 package macros
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -56,14 +55,14 @@ func IsDefined(name string) bool {
 	return false
 }
 
-// Return named macro value. If it is not defined err is non-nil.
-func Value(name string) (value string, err error) {
+// Return named macro value. If it is not defined found is false.
+func Value(name string) (value string, found bool) {
 	for _, def := range defs {
 		if def.name == name {
-			return def.value, nil
+			return def.value, true
 		}
 	}
-	return "", fmt.Errorf("undefined macro: %s", name)
+	return "", false
 }
 
 // Set named macro value or add it if it doesn't exist.
@@ -110,8 +109,8 @@ func Render(text string, silent bool) (result string) {
 				return match[0][1:]
 			}
 			name := match[1]
-			value, err := Value(name)
-			if err != nil {
+			value, found := Value(name)
+			if !found {
 				if !silent {
 					options.ErrorCallback("undefined macro: " + match[0] + ": " + text)
 				}

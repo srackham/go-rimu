@@ -65,6 +65,7 @@ var defs []Definition = []Definition{
 	},
 }
 
+// TODO: Return `ok` flag from renderList() and renderListItem() instead of this kludge.
 var NO_MATCH = ItemInfo{id: "NO_MATCH"}
 
 var ids []string // Stack of open list IDs.

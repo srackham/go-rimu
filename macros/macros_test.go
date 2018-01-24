@@ -9,26 +9,26 @@ import (
 func TestValues(t *testing.T) {
 	Init()
 	assert.Equal(t, 2, len(defs))
-	got, err := Value("--")
-	assert.Nil(t, err)
+	got, found := Value("--")
+	assert.True(t, found)
 	assert.Equal(t, "", got)
 
 	SetValue("foo", "bar", "'")
 	assert.Equal(t, 3, len(defs))
-	got, err = Value("foo")
-	assert.Nil(t, err)
+	got, found = Value("foo")
+	assert.True(t, found)
 	assert.Equal(t, "bar", got)
 
 	SetValue("foo?", "baz", "'")
 	assert.Equal(t, 3, len(defs))
-	got, err = Value("foo")
-	assert.Nil(t, err)
+	got, found = Value("foo")
+	assert.True(t, found)
 	assert.Equal(t, "bar", got)
 
 	SetValue("foo", "baz", "'")
 	assert.Equal(t, 3, len(defs))
-	got, err = Value("foo")
-	assert.Nil(t, err)
+	got, found = Value("foo")
+	assert.True(t, found)
 	assert.Equal(t, "baz", got)
 }
 
