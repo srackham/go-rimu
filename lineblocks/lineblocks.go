@@ -129,7 +129,7 @@ var defs = []Definition{
 		},
 		filter: func(match []string, _ *iotext.Reader, def Definition) string {
 			match[1] = fmt.Sprint(len(match[1])) // Replace $1 with header number.
-			if macros.Value("--header-ids") && blockattributes.Id == "" {
+			if macros.IsDefined("--header-ids") && blockattributes.Id == "" {
 				blockattributes.Id = blockattributes.Slugify(match[2])
 			}
 			return spans.ReplaceMatch(match, def.replacement, expansion.Options{Macros: true})

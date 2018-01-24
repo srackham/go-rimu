@@ -1,6 +1,7 @@
 package macros
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -45,8 +46,8 @@ func Init() {
 	}
 }
 
-// Return named macro value or nil if it doesn't exist.
-func Value(name string) bool {
+// Return true if macro is defined.
+func IsDefined(name string) bool {
 	for _, def := range defs {
 		if def.name == name {
 			return true
@@ -55,14 +56,14 @@ func Value(name string) bool {
 	return false
 }
 
-// Return named macro value or nil if it doesn't exist.
-func GetValue(name string) (value string, found bool) {
+// Return named macro value. If it is not defined err is non-nil.
+func Value(name string) (value string, err error) {
 	for _, def := range defs {
 		if def.name == name {
-			return def.value, true
+			return def.value, nil
 		}
 	}
-	return "", false
+	return "", fmt.Errorf("undefined macro: %s", name)
 }
 
 // Set named macro value or add it if it doesn't exist.
@@ -85,10 +86,10 @@ func SetValue(name string, value string, quote string) {
 	if quote == "`" {
 		options.ErrorCallback("unsupported: expression macro values: `" + value + "`")
 	}
-	for _, def := range defs {
+	for i, def := range defs {
 		if def.name == name {
 			if !existential {
-				def.value = value
+				defs[i].value = value
 			}
 			return
 		}
@@ -109,8 +110,8 @@ func Render(text string, silent bool) (result string) {
 				return match[0][1:]
 			}
 			name := match[1]
-			value, found := GetValue(name) // Macro value is null if macro is undefined.
-			if !found {
+			value, err := Value(name)
+			if err != nil {
 				if !silent {
 					options.ErrorCallback("undefined macro: " + match[0] + ": " + text)
 				}
@@ -190,7 +191,6 @@ func Render(text string, silent bool) (result string) {
 				}
 			default:
 				panic("illegal macro syntax: " + match[0])
-				return match[0]
 			}
 
 		})
