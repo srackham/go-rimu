@@ -88,7 +88,7 @@ func (r *Reader) SkipBlankLines() {
 */
 // Writer TODO
 type Writer struct {
-	buffer []string // Appending an array is faster than string concatenation.
+	Buffer []string // Appending an array is faster than string concatenation.
 }
 
 // NewWriter TODO
@@ -97,9 +97,9 @@ func NewWriter() *Writer {
 }
 
 func (w *Writer) Write(s string) {
-	w.buffer = append(w.buffer, s)
+	w.Buffer = append(w.Buffer, s)
 }
 
 func (w *Writer) String() string {
-	return strings.Join(w.buffer, "")
+	return strings.Join(w.Buffer, "")
 }

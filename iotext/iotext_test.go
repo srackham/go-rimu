@@ -57,8 +57,8 @@ func TestReader(t *testing.T) {
 func TestWriter(t *testing.T) {
 	writer := NewWriter()
 	writer.Write("Hello")
-	assert.Equal(t, "Hello", writer.buffer[0])
+	assert.Equal(t, "Hello", writer.Buffer[0])
 	writer.Write("World!")
-	assert.Equal(t, "World!", writer.buffer[1])
+	assert.Equal(t, "World!", writer.Buffer[1])
 	assert.Equal(t, "HelloWorld!", writer.String())
 }
