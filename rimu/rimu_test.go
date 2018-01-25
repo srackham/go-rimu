@@ -9,31 +9,35 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type TestCase struct {
-	Description string      `json:"description"`
-	Input       string      `json:"input"`
-	Expected    string      `json:"expectedOutput"`
-	Callback    string      `json:"expectedCallback"`
-	Options     TestOptions `json:"options"`
+type renderTest struct {
+	Description string     `json:"description"`
+	Input       string     `json:"input"`
+	Expected    string     `json:"expectedOutput"`
+	Callback    string     `json:"expectedCallback"`
+	Options     apiOptions `json:"options"`
+	Unsupported string     `json:"unsupported"`
 }
 
-type TestOptions struct {
+type apiOptions struct {
 	Reset bool `json:"reset"`
 }
 
-func TestRimuTestCases(t *testing.T) {
+func TestRender(t *testing.T) {
 	// Read JSON test cases.
 	raw, err := ioutil.ReadFile("./testdata/rimu-tests.json")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
-	var cases []TestCase
-	json.Unmarshal(raw, &cases)
+	var tests []renderTest
+	json.Unmarshal(raw, &tests)
 	// Run test cases.
-	for _, c := range cases {
-		opts := RenderOptions{Reset: c.Options.Reset}
-		got := Render(c.Input, opts)
-		assert.Equal(t, c.Expected, got)
+	for _, tt := range tests {
+		if tt.Unsupported != "" {
+			continue
+		}
+		opts := RenderOptions{Reset: tt.Options.Reset}
+		got := Render(tt.Input, opts)
+		assert.Equal(t, tt.Expected, got)
 	}
 }
