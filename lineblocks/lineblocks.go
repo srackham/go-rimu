@@ -172,7 +172,7 @@ var defs = []Definition{
 		name:  "attributes",
 		match: regexp.MustCompile(`^\\?\.[a-zA-Z#"\[+-].*$`), // A loose match because Block Attributes can contain macro references.
 		verify: func(match []string, _ *iotext.Reader) bool {
-			return blockattributes.Parse(match)
+			return blockattributes.Parse(match[0])
 		},
 	},
 	// API Option.
