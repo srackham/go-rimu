@@ -146,8 +146,7 @@ func renderListItem(item ItemInfo, reader *iotext.Reader, writer *iotext.Writer)
 		if attachedDone {
 			break // Multiple attached blocks are not permitted.
 		}
-		switch blankLines {
-		case 0:
+		if blankLines == 0 {
 			savedIds := ids
 			ids = nil
 			if delimitedblocks.Render(reader, attachedLines, []string{"comment", "code", "division", "html", "quote"}) {
@@ -158,7 +157,7 @@ func renderListItem(item ItemInfo, reader *iotext.Reader, writer *iotext.Writer)
 				reader.Next()
 			}
 			ids = savedIds
-		case 1:
+		} else if blankLines == 1 {
 			if delimitedblocks.Render(reader, attachedLines, []string{"indented", "quote-paragraph"}) {
 				attachedDone = true
 			} else {

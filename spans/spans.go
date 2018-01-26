@@ -46,9 +46,9 @@ func fragQuotes(frags []fragment) []fragment {
 		result = append(result, fragQuote(frag)...)
 	}
 	// Strip backlash from escaped quotes in non-done fragments.
-	for _, frag := range frags {
+	for i, frag := range result {
 		if !frag.done {
-			frag.text = quotes.Unescape(frag.text)
+			result[i].text = quotes.Unescape(frag.text)
 		}
 	}
 	return result
@@ -59,9 +59,25 @@ func fragQuote(frag fragment) (result []fragment) {
 	if frag.done {
 		return []fragment{frag}
 	}
-	match := quotes.Find(frag.text)
-	if match == nil {
-		return []fragment{frag}
+	var match []int
+	nextIndex := 0
+	for {
+		s := frag.text[nextIndex:]
+		match = quotes.Find(s)
+		if match == nil {
+			return []fragment{frag}
+		}
+		// Check if quote is escaped.
+		if s[match[0]] == '\\' {
+			// Restart search after escaped opening quote.
+			nextIndex += match[3]
+			continue
+		}
+		// Add frag.text offsets.
+		for i := range match {
+			match[i] += nextIndex
+		}
+		break
 	}
 	quote := frag.text[match[2]:match[3]]
 	quoted := frag.text[match[4]:match[5]]
@@ -153,6 +169,12 @@ func fragReplacement(frag fragment, def replacements.Definition) (result []fragm
 		return []fragment{frag}
 	}
 	// Arrive here if we have a matched replacement.
+	// The kluge is because Go regexp does not support `(?=re)`.
+	pattern := def.Match.String()
+	kludge := pattern == `\S\\`+"`" || pattern == `[a-zA-Z0-9]_[a-zA-Z0-9]`
+	if kludge {
+		match[1]--
+	}
 	// The replacement splits the input fragment into 3 output fragments:
 	// Text before the replacement, replaced text and text after the replacement.
 	before := frag.text[:match[0]]
@@ -160,7 +182,9 @@ func fragReplacement(frag fragment, def replacements.Definition) (result []fragm
 	after := frag.text[match[1]:]
 	result = append(result, fragment{text: before, done: false})
 	var replacement string
-	if strings.HasPrefix(matched, "\\") {
+	if kludge {
+		replacement = matched
+	} else if strings.HasPrefix(matched, "\\") {
 		// Remove leading backslash.
 		replacement = utils.ReplaceSpecialChars(matched[1:])
 	} else {

@@ -24,13 +24,13 @@ var MATCH_INLINE_TAG = regexp.MustCompile(`(?i)^(a|abbr|acronym|address|b|bdi|bd
 
 // Multi-line block element definition.
 type Definition struct {
-	name            string // Optional unique identifier.
-	openMatch       *regexp.Regexp
-	closeMatch      *regexp.Regexp // $1 (if defined) is appended to block content.
+	name            string         // Optional unique identifier.
+	openMatch       *regexp.Regexp // $1 (if defined) is prepended to block content.
+	closeMatch      *regexp.Regexp
 	openTag         string
 	closeTag        string
-	verify          func(match []string) bool                   // Additional match verification checks.
-	delimiterFilter func(match []string, def Definition) string // Process opening delimiter. Return any delimiter content.
+	verify          func(match []string) bool                    // Additional match verification checks.
+	delimiterFilter func(match []string, def *Definition) string // Process opening delimiter. Return any delimiter content.
 	contentFilter   func(text string, match []string, opts expansion.Options) string
 	options         expansion.Options
 }
@@ -215,6 +215,9 @@ func Init() {
 	for i, def := range DEFAULT_DEFS {
 		defs[i] = def
 		defs[i].options = expansion.Options(def.options) // Clone expansion options.
+		if def.closeMatch == nil {
+			defs[i].closeMatch = def.openMatch
+		}
 	}
 }
 
@@ -243,7 +246,7 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 			// Process opening delimiter.
 			delimiterText := ""
 			if def.delimiterFilter != nil {
-				delimiterText = def.delimiterFilter(match, def)
+				delimiterText = def.delimiterFilter(match, &def)
 			}
 			// Read block content into lines.
 			lines := []string{}
@@ -273,9 +276,8 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 					opentag = blockattributes.Inject(opentag)
 				}
 				if opts.Container {
-					savedOptions := blockattributes.Options
+					blockattributes.Options.Container = false // Consume before recursing.
 					text = ApiRender(text)
-					blockattributes.Options = savedOptions
 				} else {
 					text = spans.ReplaceInline(text, opts)
 				}
@@ -302,9 +304,9 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 
 // Return block definition or nil if not found.
 func GetDefinition(name string) *Definition {
-	for _, def := range defs {
+	for i, def := range defs {
 		if def.name == name {
-			return &def
+			return &defs[i]
 		}
 	}
 	return nil
@@ -332,16 +334,17 @@ func SetDefinition(name string, value string) {
 }
 
 // delimiterFilter that returns opening delimiter line text from match group $1.
-func delimiterTextFilter(match []string, _ Definition) string {
+func delimiterTextFilter(match []string, _ *Definition) string {
 	return match[1]
 }
 
 // delimiterFilter for code, division and quote blocks.
 // Inject $2 into block class attribute, set close delimiter to $1.
-func classInjectionFilter(match []string, def Definition) string {
+func classInjectionFilter(match []string, def *Definition) string {
 	if p1 := strings.Trim(match[2], " \n"); p1 != "" {
 		blockattributes.Classes = p1
 	}
+	// closeMatch must be set at runtime so we correctly match closing delimiter
 	def.closeMatch = regexp.MustCompile("^" + regexp.QuoteMeta(match[1]) + "$")
 	return ""
 }

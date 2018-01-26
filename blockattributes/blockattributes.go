@@ -54,10 +54,10 @@ func Parse(text string) bool {
 			}
 			Classes += m[1]
 		}
-		if (m[2]) != "" { // HTML element id.
+		if m[2] != "" { // HTML element id.
 			Id = m[2][1:]
 		}
-		if (m[3]) != "" { // CSS properties.
+		if m[3] != "" { // CSS properties.
 			if Css != "" && !strings.HasSuffix(Css, ";") {
 				Css += ";"
 			}
@@ -123,7 +123,7 @@ func Inject(tag string) string {
 	}
 	attrs = strings.TrimLeft(attrs, " \n")
 	if attrs != "" {
-		m := regexp.MustCompile(`(?i)^(<[a-z]+|h[1-6])(?:[ >])`).FindStringSubmatch(tag) // Match start tag.
+		m := regexp.MustCompile(`(?i)^(<[a-z]+|<h[1-6])(?:[ >])`).FindStringSubmatch(tag) // Match start tag.
 		if m != nil {
 			before := m[1]
 			after := tag[len(m[1]):]

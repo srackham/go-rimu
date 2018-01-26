@@ -27,10 +27,7 @@ var DEFAULT_DEFS = []Definition{
 
 	// DEPRECATED as of 3.4.0.
 	// Anchor: <<#id>>
-	{
-		Match:       regexp.MustCompile(`\\?<<#([a-zA-Z][\w\-]*)>>`),
-		Replacement: `<span id="$1"></span>`,
-	},
+	// NOTE: Main reason for dropping it from go-rimu was because the Filter introduced a cyclic import.
 
 	// Image: <image:src|alt>
 	// src = $1, alt = $2
@@ -124,17 +121,17 @@ var DEFAULT_DEFS = []Definition{
 	// verbatim (Markdown behaviour).
 	// Works by finding escaped closing code quotes and replacing the backslash and the character
 	// preceding the closing quote with itself.
-	// NOTE: match differs from rimu-js and rimu-kt because regxp does not support (?=X) look-ahead.
+	// NOTE: match differs from rimu-js and rimu-kt because regxp does not support (?=re) look-ahead.
 	{
-		Match:       regexp.MustCompile(`(\S\\` + "`" + `)`),
+		Match:       regexp.MustCompile(`\S\\` + "`"),
 		Replacement: `$1`,
 	},
 
 	// This hack ensures underscores within words rendered verbatim and are not treated as
 	// underscore emphasis quotes (GFM behaviour).
-	// NOTE: match differs from rimu-js and rimu-kt because regxp does not support (?=X) look-ahead.
+	// NOTE: match differs from rimu-js and rimu-kt because regxp does not support (?=re) look-ahead.
 	{
-		Match:       regexp.MustCompile(`([a-zA-Z0-9]_[a-zA-Z0-9])`),
+		Match:       regexp.MustCompile(`[a-zA-Z0-9]_[a-zA-Z0-9]`),
 		Replacement: `$1`,
 	},
 }

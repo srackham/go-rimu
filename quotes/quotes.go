@@ -80,7 +80,7 @@ func initRegExps() {
 	// Quoted can span multiple lines.
 	// Quoted text cannot end with a backslash.
 	for i, def := range defs {
-		defs[i].re = regexp.MustCompile("(" + regexp.QuoteMeta(def.Quote) + `)([^\s\\]|\S[\s\S]*?[^\s\\])` + regexp.QuoteMeta(def.Quote))
+		defs[i].re = regexp.MustCompile(`\\?(` + regexp.QuoteMeta(def.Quote) + `)([^\s\\]|\S[\s\S]*?[^\s\\])` + regexp.QuoteMeta(def.Quote))
 	}
 }
 
@@ -131,18 +131,17 @@ func Unescape(s string) string {
 // - The quoted text   s[loc[4]:loc[5]]
 // Returns nil if not found.
 func Find(text string) []int {
-	// Find the leftmost quoted string.
+	// This function is necessary because Go regexp does not support backreferences.
 	var match []int
 	for _, def := range defs {
-		nextMatch := def.re.FindStringSubmatchIndex(text)
-		if nextMatch == nil {
+		allMatch := def.re.FindAllStringSubmatchIndex(text, -1)
+		if allMatch == nil {
 			continue
 		}
-		if nextMatch[0] > 0 && text[nextMatch[0]-1] == '\\' {
-			continue
-		}
-		if match == nil || nextMatch[0] < match[0] {
-			match = nextMatch
+		for _, nextMatch := range allMatch {
+			if match == nil || nextMatch[0] < match[0] {
+				match = nextMatch
+			}
 		}
 	}
 	return match

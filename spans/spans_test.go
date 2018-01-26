@@ -231,6 +231,8 @@ func TestReplaceInline(t *testing.T) {
 		{"<>& _foo_", expansion.Options{Specials: true}, "&lt;&gt;&amp; _foo_"},
 		{"<>& _foo_", expansion.Options{Spans: true}, "&lt;&gt;&amp; <em>foo</em>"},
 		{"[bar boo](#qux) _foo_", expansion.Options{Spans: true}, "<a href=\"#qux\">bar boo</a> <em>foo</em>"},
+		{"\\**foo**", expansion.Options{Spans: true}, "**foo**"},
+		{`\*11 _22_\**33**44**`, expansion.Options{Spans: true}, `*11 <em>22</em>**33<strong>44</strong>`},
 	}
 	for _, tt := range tests {
 		got := ReplaceInline(tt.text, tt.opts)

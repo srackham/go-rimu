@@ -67,10 +67,9 @@ func TestFind(t *testing.T) {
 		{``, nil},
 		{`*foo*`, []int{0, 5, 0, 1, 1, 4}},
 		{`**foo**`, []int{0, 7, 0, 2, 2, 5}},
-		{`\*foo*`, nil},
+		{`\*foo*`, []int{0, 6, 1, 2, 2, 5}},
 		{`*bar* _foo_`, []int{0, 5, 0, 1, 1, 4}},
 		{`_bar_ *foo*`, []int{0, 5, 0, 1, 1, 4}},
-		{`\_bar_ *foo*`, []int{7, 12, 7, 8, 8, 11}},
 	}
 	for _, tt := range tests {
 		assert.Equal(t, tt.want, Find(tt.text))

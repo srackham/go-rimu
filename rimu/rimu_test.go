@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	_ "github.com/srackham/rimu-go/spans"
-	"github.com/stretchr/testify/assert"
 )
 
 type renderTest struct {
@@ -19,7 +18,9 @@ type renderTest struct {
 }
 
 type apiOptions struct {
-	Reset bool `json:"reset"`
+	SafeMode        int    `json:"safeMode"`
+	HtmlReplacement string `json:"htmlReplacement"`
+	Reset           bool   `json:"reset"`
 }
 
 func TestRender(t *testing.T) {
@@ -33,11 +34,18 @@ func TestRender(t *testing.T) {
 	json.Unmarshal(raw, &tests)
 	// Run test cases.
 	for _, tt := range tests {
+		// if tt.Description != "Block Attributes on Fenced Block attached to list item" {
+		// 	continue
+		// }
 		if tt.Unsupported != "" {
 			continue
 		}
-		opts := RenderOptions{Reset: tt.Options.Reset}
+		opts := RenderOptions{Reset: tt.Options.Reset, SafeMode: tt.Options.SafeMode, HtmlReplacement: tt.Options.HtmlReplacement}
+		// fmt.Println("Description: ", tt.Description)
 		got := Render(tt.Input, opts)
-		assert.Equal(t, tt.Expected, got)
+		if got != tt.Expected {
+			t.Errorf("\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n\n",
+				"description", tt.Description, "input", tt.Input, "expected", tt.Expected, "got", got)
+		}
 	}
 }

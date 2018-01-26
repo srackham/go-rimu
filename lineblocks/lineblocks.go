@@ -129,7 +129,7 @@ var defs = []Definition{
 		},
 		filter: func(match []string, _ *iotext.Reader, def Definition) string {
 			match[1] = fmt.Sprint(len(match[1])) // Replace $1 with header number.
-			if macros.IsDefined("--header-ids") && blockattributes.Id == "" {
+			if macros.IsNotBlank("--header-ids") && blockattributes.Id == "" {
 				blockattributes.Id = blockattributes.Slugify(match[2])
 			}
 			return spans.ReplaceMatch(match, def.replacement, expansion.Options{Macros: true})
@@ -199,7 +199,7 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed stringlist.Str
 		panic("premature eof")
 	}
 	for _, def := range defs {
-		if len(allowed) > 0 && allowed.Contains(def.name) {
+		if len(allowed) > 0 && !allowed.Contains(def.name) {
 			continue
 		}
 		match := def.match.FindStringSubmatch(reader.Cursor())

@@ -65,6 +65,12 @@ func Value(name string) (value string, found bool) {
 	return "", false
 }
 
+// Return true if macro value is non-blank.
+func IsNotBlank(name string) bool {
+	value, found := Value(name)
+	return found && value != ""
+}
+
 // Set named macro value or add it if it doesn't exist.
 // If the name ends with '?' then don't set the macro if it already exists.
 // `quote` is a single character: ' if a literal value, ` if an expression value.
@@ -131,7 +137,7 @@ func Render(text string, silent bool) (result string) {
 			}
 			switch params[0] {
 			case '|': // Parametrized macro.
-				paramsList := strings.Split(params[1:], "\\")
+				paramsList := strings.Split(params[1:], "|")
 				// Substitute macro parameters.
 				// Matches macro definition formal parameters [$]$<param-number>[[\]:<default-param-value>$]
 				// 1st group: [$]$
