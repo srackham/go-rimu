@@ -1,7 +1,7 @@
 [
   {
     "description": "rimuc basic test",
-    "args": "-p \"foo bar\" \"baz qux\"",
+    "args": "",
     "input": "*Hello World!*",
     "expectedOutput": "<p><em>Hello World!</em></p>",
     "predicate": "equals",

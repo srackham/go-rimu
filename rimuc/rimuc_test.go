@@ -5,14 +5,12 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
-	"strings"
 	"testing"
 
 	_ "github.com/srackham/rimu-go/spans"
-	"github.com/stretchr/testify/assert"
 )
 
-type TestCase struct {
+type rimucTest struct {
 	Description string `json:"description"`
 	Args        string `json:"args"`
 	Input       string `json:"input"`
@@ -34,25 +32,17 @@ func parseArgs(args string) []string {
 	return result
 }
 
-// ??? TODO put in local package utils/str
-func TrimQuotes(s string, quote string) string {
-	if len(s) >= 2*len(quote) && strings.HasPrefix(s, quote) && strings.HasSuffix(s, quote) {
-		return strings.TrimPrefix(strings.TrimSuffix(s, quote), quote)
-	}
-	return s
-}
-
-func TestRimuc(t *testing.T) {
+func TestMain(t *testing.T) {
 	// Read JSON test cases.
 	raw, err := ioutil.ReadFile("./testdata/rimuc-tests.json")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
-	var cases []TestCase
-	json.Unmarshal(raw, &cases)
+	var tests []rimucTest
+	json.Unmarshal(raw, &tests)
 	// Run test cases.
-	for _, c := range cases {
+	for _, tt := range tests {
 		// Save and set os.Exit mock to capture exit code
 		// (see https://stackoverflow.com/a/40801733 and https://npf.io/2015/06/testing-exec-command/).
 		exitCode := 0
@@ -62,7 +52,7 @@ func TestRimuc(t *testing.T) {
 		}
 		// Save and set command-line arguments.
 		savedArgs := os.Args
-		os.Args = append([]string{"rimuc"}, parseArgs(c.Args)...)
+		os.Args = append([]string{"rimuc"}, parseArgs(tt.Args)...)
 		// Capture sdtout (see https://stackoverflow.com/a/29339052).
 		savedStdout := os.Stdout
 		defer func() { os.Stdout = savedStdout }() // Ensures restore after a panic.
@@ -88,7 +78,14 @@ func TestRimuc(t *testing.T) {
 		os.Args = savedArgs
 		osExit = savedExit
 		// Test outputs and exit code.
-		assert.Equal(t, c.Expected, out)
-		assert.Equal(t, c.ExitCode, exitCode)
+		// assert.Equal(t, tt.Expected, out)
+		// assert.Equal(t, tt.ExitCode, exitCode)
+		if out != tt.Expected {
+			t.Errorf("\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n\n",
+				"description", tt.Description, "args", tt.Args, "input", tt.Input, "expected", tt.Expected, "got", out)
+		}
+		if exitCode != tt.ExitCode {
+			t.Errorf("\n%-15s: %d (expected %d)\n\n", "exitcode", exitCode, tt.ExitCode)
+		}
 	}
 }
