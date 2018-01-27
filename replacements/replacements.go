@@ -161,6 +161,10 @@ func SetDefinition(pattern string, flags string, replacement string) {
 		}
 
 	}
-	// Append new definition to end of defs list (custom definitons have lower precedence).
-	Defs = append(Defs, Definition{Match: regexp.MustCompile(pattern), Replacement: replacement})
+	// Append new definition to end of defs list (custom definitions have lower precedence).
+	if re, err := regexp.Compile(pattern); err != nil {
+		options.ErrorCallback("illegal replacement regular expression: " + err.Error())
+	} else {
+		Defs = append(Defs, Definition{Match: re, Replacement: replacement})
+	}
 }

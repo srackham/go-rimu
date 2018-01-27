@@ -181,7 +181,7 @@ func Render(text string, silent bool) (result string) {
 				pre, err := regexp.Compile("^" + pattern + "$")
 				if err != nil {
 					if !silent {
-						options.ErrorCallback("illegal macro regular expression: " + pattern + ": " + text)
+						options.ErrorCallback("illegal macro regular expression: " + err.Error())
 					}
 					return match[0]
 				}
