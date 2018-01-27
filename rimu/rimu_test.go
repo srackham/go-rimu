@@ -3,6 +3,7 @@ package rimu
 import (
 	"encoding/json"
 	"io/ioutil"
+	"strings"
 	"testing"
 
 	_ "github.com/srackham/rimu-go/spans"
@@ -37,7 +38,7 @@ func TestRender(t *testing.T) {
 		// if tt.Description != "Block Attributes on Fenced Block attached to list item" {
 		// 	continue
 		// }
-		if tt.Unsupported != "" {
+		if strings.Contains(tt.Unsupported, "go") {
 			continue
 		}
 		opts := RenderOptions{Reset: tt.Options.Reset, SafeMode: tt.Options.SafeMode, HtmlReplacement: tt.Options.HtmlReplacement}

@@ -324,7 +324,7 @@
 	  }
 	},
 	{
-		"unsupported":"go-rimu",
+		"unsupported":"go",
 	  "description": "inline anchors and links",
 	  "input": "Lorum <<#x1>>ipsum <#x1|lorum link> \\<<#x1>>",
 	  "expectedOutput": "<p>Lorum <span id=\"x1\"></span>ipsum <a href=\"#x1\">lorum link</a> &lt;&lt;#x1&gt;&gt;</p>",
@@ -1728,7 +1728,7 @@
 	  }
 	},
 	{
-    "unsupported":"go-rimu",
+    "unsupported":"go",
 	  "description": "deprecated <<anchor>> block anchor skipped by safeMode=5",
 	  "input": "<<#x1>>",
 	  "expectedOutput": "",
@@ -1739,7 +1739,7 @@
 	  }
 	},
 	{
-    "unsupported":"go-rimu",
+    "unsupported":"go",
 	  "description": "deprecated <<anchor>> block anchor",
 	  "input": "<<#x1>>",
 	  "expectedOutput": "<div id=\"x1\"></div>",
@@ -1749,7 +1749,7 @@
 	  }
 	},
 	{
-    "unsupported":"go-rimu",
+    "unsupported":"go",
 	  "description": "deprecated <<anchor>> inline anchor skipped by safeMode=7",
 	  "input": "Inline <<#x1>>",
 	  "expectedOutput": "<p>Inline </p>",
@@ -2116,14 +2116,14 @@
 	  }
 	},
 	{
+	  "unsupported": "go",
 	  "description": "Inline comments replacement.",
 	  "input": "/(^|\\n)\\\\?\\/\\/.*(?=\\n|$)/g = '$1'\nA paragraph\n//Comment\n//Comment\nwith inline comments.",
 	  "expectedOutput": "<p>A paragraph\n\n\nwith inline comments.</p>",
 	  "expectedCallback": "",
 	  "options": {
 		"reset": true
-	  },
-	  "unsupported": "go-rimu"
+	  }
 	},
 	{
 	  "description": "update HTML tags, test class injection and macro expansion",
@@ -2315,54 +2315,54 @@
 	  }
 	},
 	{
+	  "unsupported": "go,kt",
 	  "description": "line block macro expression value definition",
 	  "input": "{foo} = `(parseInt(40) + parseInt(2)) + 'px'`\n{foo}",
 	  "expectedOutput": "<p>42px</p>",
 	  "expectedCallback": "",
 	  "options": {
 		"reset": true
-	  },
-	  "unsupported": "rimu-kt"
+	  }
 	},
 	{
+	  "unsupported": "go,kt",
 	  "description": "multi-line macro expression value definition",
 	  "input": "{foo} = `(parseInt(40) + parseInt(2)) \n+ 'px'`\n{foo}",
 	  "expectedOutput": "<p>42px</p>",
 	  "expectedCallback": "",
 	  "options": {
 		"reset": true
-	  },
-	  "unsupported": "rimu-kt"
+	  }
 	},
 	{
+	  "unsupported": "go,kt",
 	  "description": "delimited block macro expression line continuation",
 	  "input": "{foo} = `(parseInt(40) + parseInt(2)) + ` \\\npx``\n{foo}",
 	  "expectedOutput": "<p>42\npx</p>",
 	  "expectedCallback": "",
 	  "options": {
 		"reset": true
-	  },
-	  "unsupported": "rimu-kt"
+	  }
 	},
 	{
+	  "unsupported": "go,kt",
 	  "description": "delimited block macro expression escaped line continuation",
 	  "input": "{foo} = `(parseInt(40) + parseInt(2)) + ` \\\\\npx``\n{foo}",
 	  "expectedOutput": "<p>42 px</p>",
 	  "expectedCallback": "",
 	  "options": {
 		"reset": true
-	  },
-	  "unsupported": "rimu-kt"
+	  }
 	},
 	{
+	  "unsupported": "go,kt",
 	  "description": "illegal macro expression",
 	  "input": "{foo} = `1 + x`",
 	  "expectedOutput": "",
 	  "expectedCallback": "error: illegal macro expression: x is not defined: 1 + x",
 	  "options": {
 		"reset": true
-	  },
-	  "unsupported": "rimu-kt"
+	  }
 	},
 	{
 	  "description": "escape closing brace in macro 'pattern' parameter",
