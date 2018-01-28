@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/srackham/rimu-go/api"
-	_ "github.com/srackham/rimu-go/spans"
+	"github.com/srackham/go-rimu/api"
+	_ "github.com/srackham/go-rimu/spans"
 )
 
 type rimucTest struct {

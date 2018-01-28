@@ -3,8 +3,8 @@ package lineblocks
 import (
 	"testing"
 
-	"github.com/srackham/rimu-go/iotext"
-	_ "github.com/srackham/rimu-go/spans"
+	"github.com/srackham/go-rimu/iotext"
+	_ "github.com/srackham/go-rimu/spans"
 	"github.com/stretchr/testify/assert"
 )
 

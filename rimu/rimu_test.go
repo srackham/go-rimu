@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	_ "github.com/srackham/rimu-go/spans"
+	_ "github.com/srackham/go-rimu/spans"
 )
 
 type renderTest struct {

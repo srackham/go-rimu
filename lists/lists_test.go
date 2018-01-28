@@ -3,7 +3,7 @@ package lists
 import (
 	"testing"
 
-	"github.com/srackham/rimu-go/iotext"
+	"github.com/srackham/go-rimu/iotext"
 	"github.com/stretchr/testify/assert"
 )
 

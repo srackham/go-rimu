@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/srackham/rimu-go/options"
+	"github.com/srackham/go-rimu/options"
 )
 
 // Processing priority (highest to lowest): container, skip, spans and specials.

@@ -3,7 +3,7 @@ package spans
 import (
 	"testing"
 
-	"github.com/srackham/rimu-go/expansion"
+	"github.com/srackham/go-rimu/expansion"
 	"github.com/stretchr/testify/assert"
 )
 

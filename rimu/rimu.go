@@ -1,8 +1,8 @@
 package rimu
 
 import (
-	"github.com/srackham/rimu-go/api"
-	"github.com/srackham/rimu-go/options"
+	"github.com/srackham/go-rimu/api"
+	"github.com/srackham/go-rimu/options"
 )
 
 // CallbackMessage TODO

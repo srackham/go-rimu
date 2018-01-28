@@ -15,8 +15,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/srackham/rimu-go/rimu"
-	"github.com/srackham/rimu-go/utils/stringlist"
+	"github.com/srackham/go-rimu/rimu"
+	"github.com/srackham/go-rimu/utils/stringlist"
 )
 
 var osExit = os.Exit // Mocked by tests.

@@ -4,14 +4,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/srackham/rimu-go/blockattributes"
-
-	"github.com/srackham/rimu-go/delimitedblocks"
-	"github.com/srackham/rimu-go/expansion"
-	"github.com/srackham/rimu-go/iotext"
-	"github.com/srackham/rimu-go/lineblocks"
-	"github.com/srackham/rimu-go/spans"
-	"github.com/srackham/rimu-go/utils/stringlist"
+	"github.com/srackham/go-rimu/blockattributes"
+	"github.com/srackham/go-rimu/delimitedblocks"
+	"github.com/srackham/go-rimu/expansion"
+	"github.com/srackham/go-rimu/iotext"
+	"github.com/srackham/go-rimu/lineblocks"
+	"github.com/srackham/go-rimu/spans"
+	"github.com/srackham/go-rimu/utils/stringlist"
 )
 
 type Definition struct {

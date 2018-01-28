@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/srackham/rimu-go/options"
-	"github.com/srackham/rimu-go/spans"
-	"github.com/srackham/rimu-go/utils/re"
+	"github.com/srackham/go-rimu/options"
+	"github.com/srackham/go-rimu/spans"
+	"github.com/srackham/go-rimu/utils/re"
 )
 
 func init() {

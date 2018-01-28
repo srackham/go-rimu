@@ -3,7 +3,7 @@ package options
 import (
 	"strconv"
 
-	"github.com/srackham/rimu-go/utils"
+	"github.com/srackham/go-rimu/utils"
 )
 
 // api package dependency injection.

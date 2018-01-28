@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/srackham/rimu-go/expansion"
-	"github.com/srackham/rimu-go/quotes"
-	"github.com/srackham/rimu-go/replacements"
-	"github.com/srackham/rimu-go/utils"
-	"github.com/srackham/rimu-go/utils/re"
+	"github.com/srackham/go-rimu/expansion"
+	"github.com/srackham/go-rimu/quotes"
+	"github.com/srackham/go-rimu/replacements"
+	"github.com/srackham/go-rimu/utils"
+	"github.com/srackham/go-rimu/utils/re"
 )
 
 // macros and spans package dependency injections.
