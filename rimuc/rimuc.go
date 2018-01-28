@@ -168,27 +168,29 @@ PREDEFINED MACROS
                      and h3 header id attributes.
   _______________________________________________________________
 `
-const STDIN = "/dev/stdin"
+const STDIN = "-"
 
 // rimurcPath returns path of $HOME/.rimurc file.
 // Return "" if $HOME not found.
 func rimurcPath() (result string) {
-	if user, err := user.Current(); err != nil {
+	if user, err := user.Current(); err == nil {
 		result = filepath.Join(user.HomeDir, ".rimurc")
 	}
 	return result
 }
 
+type DieError struct{} // Used by rimuc_test osExit() mock.
+
 // Helpers.
 func die(message string) {
 	if message != "" {
-		fmt.Fprint(os.Stderr, message)
+		fmt.Fprintln(os.Stderr, "error: "+message)
 	}
 	osExit(1)
 }
 
 func fileExists(name string) bool {
-	_, err := os.Stat(rimurcPath())
+	_, err := os.Stat(name)
 	return err == nil
 }
 
@@ -204,6 +206,12 @@ func importLayoutFile(name string) string {
 }
 
 func main() {
+	defer func() {
+		r, ok := recover().(DieError)
+		if !ok {
+			panic(r)
+		}
+	}()
 	args := stringlist.StringList(os.Args)
 	args.Shift() // Skip program name.
 	nextArg := func(errMsg string) string {
@@ -315,16 +323,13 @@ outer:
 	output := ""
 	errors := 0
 	var opts rimu.RenderOptions
-	// TODO: "" is legit html_replacement!
-	if html_replacement != "" {
+	if html_replacement != nil {
 		opts.HtmlReplacement = html_replacement
 	}
 	for _, infile := range files {
-		if infile == "-" {
-			infile = STDIN
-		}
-		source := ""
-		if strings.HasPrefix(infile, RESOURCE_TAG) {
+		var source string
+		switch {
+		case strings.HasPrefix(infile, RESOURCE_TAG):
 			infile = infile[len(RESOURCE_TAG):]
 			if (stringlist.StringList{"classic", "flex", "sequel", "v8"}).IndexOf(layout) >= 0 {
 				source = readResourceFile(infile)
@@ -332,18 +337,22 @@ outer:
 				source = importLayoutFile(infile)
 			}
 			opts.SafeMode = 0 // Resources are trusted.
-		} else if infile == PREPEND {
+		case infile == STDIN:
+			bytes, _ := ioutil.ReadAll(os.Stdin)
+			source = string(bytes)
+			opts.SafeMode = safe_mode
+		case infile == PREPEND:
 			source = prepend
 			opts.SafeMode = 0 // --prepend options are trusted.
-		} else {
+		default:
 			if !fileExists(infile) {
 				die("source file does not exist: " + infile)
 			}
 			bytes, err := ioutil.ReadFile(infile)
-			source = string(bytes)
 			if err != nil {
 				die(err.Error())
 			}
+			source = string(bytes)
 			// Prepended and ~/.rimurc files are trusted.
 			if prepend_files.IndexOf(infile) > -1 {
 				opts.SafeMode = 0
@@ -351,15 +360,14 @@ outer:
 				opts.SafeMode = safe_mode
 			}
 		}
-		ext := filepath.Ext(infile)
 		// Skip .html and pass-through inputs.
-		if !(ext == ".html" || (pass && infile == STDIN)) {
+		if !(strings.HasSuffix(infile, ".html") || (pass && infile == STDIN)) {
 			opts.Callback = func(message rimu.CallbackMessage) {
 				msg := message.Kind + ": " + infile + ": " + message.Text
 				if len(msg) > 120 {
 					msg = msg[:117] + "..."
 				}
-				fmt.Fprintln(os.Stderr, message)
+				fmt.Fprintln(os.Stderr, msg)
 				if message.Kind == "error" {
 					errors += 1
 				}

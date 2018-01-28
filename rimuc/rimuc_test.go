@@ -49,10 +49,11 @@ func TestMain(t *testing.T) {
 		savedExit := osExit
 		osExit = func(code int) {
 			exitCode = code
+			panic(DieError{})
 		}
 		// Save and set command-line arguments.
 		savedArgs := os.Args
-		os.Args = append([]string{"rimuc"}, parseArgs(tt.Args)...)
+		os.Args = append([]string{"rimuc", "--no-rimurc"}, parseArgs(tt.Args)...)
 		// Capture sdtout (see https://stackoverflow.com/a/29339052).
 		savedStdout := os.Stdout
 		defer func() { os.Stdout = savedStdout }() // Ensures restore after a panic.
@@ -63,6 +64,13 @@ func TestMain(t *testing.T) {
 		defer func() { os.Stderr = savedStderr }() // Ensures restore after a panic.
 		rerr, werr, _ := os.Pipe()
 		os.Stderr = werr
+		// Mock stdin.
+		savedStdin := os.Stdin
+		defer func() { os.Stdin = savedStdin }() // Ensures restore after a panic.
+		rin, win, _ := os.Pipe()
+		os.Stdin = rin
+		win.WriteString(tt.Input)
+		win.Close()
 		// Execute rimuc.
 		main()
 		// Get stdout and stderr.
@@ -73,13 +81,12 @@ func TestMain(t *testing.T) {
 		bytes, _ = ioutil.ReadAll(rerr)
 		out += string(bytes)
 		// Restore mocks.
+		os.Stdin = savedStdin
 		os.Stdout = savedStdout
 		os.Stderr = savedStderr
 		os.Args = savedArgs
 		osExit = savedExit
 		// Test outputs and exit code.
-		// assert.Equal(t, tt.Expected, out)
-		// assert.Equal(t, tt.ExitCode, exitCode)
 		if out != tt.Expected {
 			t.Errorf("\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n\n",
 				"description", tt.Description, "args", tt.Args, "input", tt.Input, "expected", tt.Expected, "got", out)

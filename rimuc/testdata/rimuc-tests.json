@@ -4,14 +4,20 @@
     "args": "",
     "input": "*Hello World!*",
     "expectedOutput": "<p><em>Hello World!</em></p>",
-    "predicate": "equals",
-    "exitCode": 0
+    "predicate": "equals"
+  },
+  {
+    "description": "rimuc --prepend",
+    "args": "--prepend \"{x}='X'\"",
+    "input": "{x}",
+    "expectedOutput": "<p>X</p>",
+    "predicate": "equals"
   },
   {
     "description": "rimuc illegal option test",
     "args": "--illegal",
     "input": "*Hello World!*",
-    "expectedOutput": "illegal option: --illegal",
+    "expectedOutput": "error: source file does not exist: --illegal\n",
     "predicate": "equals",
     "exitCode": 1
   }
