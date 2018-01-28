@@ -31,6 +31,10 @@ type LineBlockVerify = func(match []string, reader *iotext.Reader) bool // Addit
 var defs = []Definition{
 	// Prefix match with backslash to allow escaping.
 
+	// Comment line.
+	{
+		match: regexp.MustCompile(`^\\?\/{2}(.*)$`),
+	},
 	// Expand lines prefixed with a macro invocation prior to all other processing.
 	// macro name = $1, macro value = $2
 	{
@@ -134,10 +138,6 @@ var defs = []Definition{
 			}
 			return spans.ReplaceMatch(match, def.replacement, expansion.Options{Macros: true})
 		},
-	},
-	// Comment line.
-	{
-		match: regexp.MustCompile(`^\\?\/{2}(.*)$`),
 	},
 	// Block image: <image:src|alt>
 	// src = $1, alt = $2
