@@ -5,8 +5,10 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
+	"strings"
 	"testing"
 
+	"github.com/srackham/rimu-go/api"
 	_ "github.com/srackham/rimu-go/spans"
 )
 
@@ -17,6 +19,7 @@ type rimucTest struct {
 	Expected    string `json:"expectedOutput"`
 	Predicate   string `json:"predicate"`
 	ExitCode    int    `json:"exitCode"`
+	Skip        string `json:"skip"`
 }
 
 // Convert command-line arguments string to array of arguments.
@@ -43,6 +46,15 @@ func TestMain(t *testing.T) {
 	json.Unmarshal(raw, &tests)
 	// Run test cases.
 	for _, tt := range tests {
+		if tt.Predicate != "equals" {
+			continue
+		}
+		if strings.Contains(tt.Skip, "go") {
+			continue
+		}
+		tt.Expected = strings.Replace(tt.Expected, "./test/fixtures/", "./testdata/", -1)
+		tt.Args = strings.Replace(tt.Args, "./test/fixtures/", "./testdata/", -1)
+		tt.Args = strings.Replace(tt.Args, "./src/examples/example-rimurc.rmu", "./testdata/example-rimurc.rmu", -1)
 		// Save and set os.Exit mock to capture exit code
 		// (see https://stackoverflow.com/a/40801733 and https://npf.io/2015/06/testing-exec-command/).
 		exitCode := 0
@@ -72,6 +84,7 @@ func TestMain(t *testing.T) {
 		win.WriteString(tt.Input)
 		win.Close()
 		// Execute rimuc.
+		api.Init()
 		main()
 		// Get stdout and stderr.
 		wout.Close()

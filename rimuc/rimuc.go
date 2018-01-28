@@ -185,7 +185,9 @@ type MockExit struct{}
 // Helpers.
 func die(message string) {
 	if message != "" {
-		fmt.Fprintln(os.Stderr, "error: "+message)
+		// TODO: this impacts rimuc tests.
+		// fmt.Fprintln(os.Stderr, "error: "+message)
+		fmt.Fprintln(os.Stderr, message)
 	}
 	osExit(1)
 }
@@ -364,7 +366,11 @@ outer:
 		// Skip .html and pass-through inputs.
 		if !(strings.HasSuffix(infile, ".html") || (pass && infile == STDIN)) {
 			opts.Callback = func(message rimu.CallbackMessage) {
-				msg := message.Kind + ": " + infile + ": " + message.Text
+				f := infile
+				if infile == STDIN {
+					f = "/dev/stdin"
+				}
+				msg := message.Kind + ": " + f + ": " + message.Text
 				if len(msg) > 120 {
 					msg = msg[:117] + "..."
 				}
