@@ -20,6 +20,7 @@ type rimucTest struct {
 	Predicate   string `json:"predicate"`
 	ExitCode    int    `json:"exitCode"`
 	Unsupported string `json:"unsupported"`
+	Layouts     bool   `json:"layouts"`
 }
 
 // Convert command-line arguments string to array of arguments.
@@ -46,7 +47,7 @@ func TestMain(t *testing.T) {
 	json.Unmarshal(raw, &tests)
 	// Run test cases.
 	for _, tt := range tests {
-		if tt.Predicate != "equals" {
+		if tt.Layouts {
 			continue
 		}
 		if strings.Contains(tt.Unsupported, "go") {
@@ -99,9 +100,24 @@ func TestMain(t *testing.T) {
 		os.Args = savedArgs
 		osExit = savedExit
 		// Test outputs and exit code.
-		if out != tt.Expected {
-			t.Errorf("\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n\n",
-				"description", tt.Description, "args", tt.Args, "input", tt.Input, "expected", tt.Expected, "got", out)
+		passed := false
+		switch tt.Predicate {
+		case "contains":
+			passed = strings.Contains(out, tt.Expected)
+		case "!contains":
+			passed = !strings.Contains(out, tt.Expected)
+		case "equals":
+			passed = out == tt.Expected
+		case "!equals":
+			passed = out != tt.Expected
+		case "startsWith":
+			passed = strings.HasPrefix(out, tt.Expected)
+		default:
+			panic(tt.Description + ": illegal predicate: " + tt.Predicate)
+		}
+		if !passed {
+			t.Errorf("\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n\n",
+				"description", tt.Description, "args", tt.Args, "input", tt.Input, "predicate:", tt.Predicate, "expected", tt.Expected, "got", out)
 		}
 		if exitCode != tt.ExitCode {
 			t.Errorf("\n%-15s: %d (expected %d)\n\n", "exitcode", exitCode, tt.ExitCode)

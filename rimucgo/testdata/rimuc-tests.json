@@ -96,20 +96,6 @@
 	  "layouts": true
 	},
 	{
-	  "description": "rimuc --layout classic --sidebar-toc",
-	  "args": "--layout classic --sidebar-toc",
-	  "input": "",
-	  "expectedOutput": "<div id=\"toc\"",
-	  "predicate": "contains"
-	},
-	{
-	  "description": "rimuc --layout classic --dropdown-toc",
-	  "args": "--layout classic --dropdown-toc",
-	  "input": "",
-	  "expectedOutput": "<div id=\"toc-button\"",
-	  "predicate": "contains"
-	},
-	{
 	  "description": "rimuc --section-numbers",
 	  "args": "--section-numbers",
 	  "input": "",
