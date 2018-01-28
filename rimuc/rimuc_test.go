@@ -49,7 +49,7 @@ func TestMain(t *testing.T) {
 		savedExit := osExit
 		osExit = func(code int) {
 			exitCode = code
-			panic(DieError{})
+			panic(MockExit{})
 		}
 		// Save and set command-line arguments.
 		savedArgs := os.Args

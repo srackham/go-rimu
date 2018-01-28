@@ -179,7 +179,8 @@ func rimurcPath() (result string) {
 	return
 }
 
-type DieError struct{} // Used by rimuc_test osExit() mock.
+// MockExit type used by rimuc_test osExit() mock.
+type MockExit struct{}
 
 // Helpers.
 func die(message string) {
@@ -207,7 +208,7 @@ func importLayoutFile(name string) string {
 
 func main() {
 	defer func() {
-		r, ok := recover().(DieError)
+		r, ok := recover().(MockExit)
 		if !ok {
 			panic(r)
 		}
@@ -220,11 +221,11 @@ func main() {
 		}
 		return args.Shift()
 	}
-	var safe_mode interface{}
-	var html_replacement interface{}
+	var safeMode interface{}
+	var htmlReplacement interface{}
 	layout := ""
-	no_rimurc := false
-	var prepend_files stringlist.StringList
+	noRimurc := false
+	var prependFiles stringlist.StringList
 	pass := false
 	// Parse command-line options.
 	prepend := ""
@@ -246,9 +247,9 @@ outer:
 		case "--prepend", "-p":
 			prepend += nextArg("missing --prepend value") + "\n"
 		case "--prepend-file":
-			prepend_files.Push(nextArg("missing --prepend-file file name"))
+			prependFiles.Push(nextArg("missing --prepend-file file name"))
 		case "--no-rimurc":
-			no_rimurc = true
+			noRimurc = true
 		case "--safe-mode",
 			"--safeMode": // Deprecated in Rimu 7.1.0.
 			s := nextArg("missing --safe-mode value")
@@ -256,10 +257,10 @@ outer:
 			if err != nil {
 				die("illegal --safe-mode option value: " + s)
 			}
-			safe_mode = int(n)
+			safeMode = int(n)
 		case "--html-replacement",
 			"--htmlReplacement": // Deprecated in Rimu 7.1.0.
-			html_replacement = nextArg("missing --html-replacement value")
+			htmlReplacement = nextArg("missing --html-replacement value")
 		case "--styled", "-s": // Deprecated in Rimu 10.0.0
 			prepend += "{--header-ids}=\"true\"\n"
 			if layout == "" {
@@ -279,13 +280,13 @@ outer:
 			"--custom-toc",
 			"--header-ids",
 			"--header-links":
-			macro_value := ""
+			macroValue := ""
 			if strings.Contains("--lang|--title|--theme", arg) {
-				macro_value = nextArg("missing " + arg + " value")
+				macroValue = nextArg("missing " + arg + " value")
 			} else {
-				macro_value = "true"
+				macroValue = "true"
 			}
-			prepend += "{" + arg + "}=\"" + macro_value + "\"\n"
+			prepend += "{" + arg + "}=\"" + macroValue + "\"\n"
 		case "--layout",
 			"--styled-name": // Deprecated in Rimu 10.0.0
 			layout = nextArg("missing --layout value")
@@ -312,19 +313,19 @@ outer:
 		files.Push(RESOURCE_TAG + layout + "-footer.rmu")
 	}
 	// Prepend $HOME/.rimurc file if it exists.
-	if !no_rimurc && fileExists(rimurcPath()) {
-		prepend_files.Unshift(rimurcPath())
+	if !noRimurc && fileExists(rimurcPath()) {
+		prependFiles.Unshift(rimurcPath())
 	}
 	if prepend != "" {
-		prepend_files.Push(PREPEND)
+		prependFiles.Push(PREPEND)
 	}
-	files = append(prepend_files, files...)
+	files = append(prependFiles, files...)
 	// Convert Rimu source files to HTML.
 	output := ""
 	errors := 0
 	var opts rimu.RenderOptions
-	if html_replacement != nil {
-		opts.HtmlReplacement = html_replacement
+	if htmlReplacement != nil {
+		opts.HtmlReplacement = htmlReplacement
 	}
 	for _, infile := range files {
 		var source string
@@ -340,7 +341,7 @@ outer:
 		case infile == STDIN:
 			bytes, _ := ioutil.ReadAll(os.Stdin)
 			source = string(bytes)
-			opts.SafeMode = safe_mode
+			opts.SafeMode = safeMode
 		case infile == PREPEND:
 			source = prepend
 			opts.SafeMode = 0 // --prepend options are trusted.
@@ -354,10 +355,10 @@ outer:
 			}
 			source = string(bytes)
 			// Prepended and ~/.rimurc files are trusted.
-			if prepend_files.IndexOf(infile) > -1 {
+			if prependFiles.IndexOf(infile) > -1 {
 				opts.SafeMode = 0
 			} else {
-				opts.SafeMode = safe_mode
+				opts.SafeMode = safeMode
 			}
 		}
 		// Skip .html and pass-through inputs.
@@ -369,7 +370,7 @@ outer:
 				}
 				fmt.Fprintln(os.Stderr, msg)
 				if message.Kind == "error" {
-					errors += 1
+					errors++
 				}
 			}
 			source = rimu.Render(source, opts)
