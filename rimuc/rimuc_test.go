@@ -19,7 +19,7 @@ type rimucTest struct {
 	Expected    string `json:"expectedOutput"`
 	Predicate   string `json:"predicate"`
 	ExitCode    int    `json:"exitCode"`
-	Skip        string `json:"skip"`
+	Unsupported string `json:"unsupported"`
 }
 
 // Convert command-line arguments string to array of arguments.
@@ -49,12 +49,11 @@ func TestMain(t *testing.T) {
 		if tt.Predicate != "equals" {
 			continue
 		}
-		if strings.Contains(tt.Skip, "go") {
+		if strings.Contains(tt.Unsupported, "go") {
 			continue
 		}
 		tt.Expected = strings.Replace(tt.Expected, "./test/fixtures/", "./testdata/", -1)
 		tt.Args = strings.Replace(tt.Args, "./test/fixtures/", "./testdata/", -1)
-		tt.Args = strings.Replace(tt.Args, "./src/examples/example-rimurc.rmu", "./testdata/example-rimurc.rmu", -1)
 		// Save and set os.Exit mock to capture exit code
 		// (see https://stackoverflow.com/a/40801733 and https://npf.io/2015/06/testing-exec-command/).
 		exitCode := 0
