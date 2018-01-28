@@ -76,24 +76,24 @@ func (list StringList) All(f func(string) bool) bool {
 
 // Returns a new slice containing all strings in the
 // slice that satisfy the predicate `f`.
-func (list StringList) Filter(f func(string) bool) StringList {
-	result := make([]string, 0)
+func (list StringList) Filter(f func(string) bool) (result StringList) {
+	result = make([]string, 0)
 	for _, v := range list {
 		if f(v) {
 			result = append(result, v)
 		}
 	}
-	return result
+	return
 }
 
 // Returns a new slice containing the results of applying
 // the function `f` to each string in the original slice.
-func (list StringList) Map(f func(string) string) StringList {
-	result := make([]string, len(list))
+func (list StringList) Map(f func(string) string) (result StringList) {
+	result = make([]string, len(list))
 	for i, v := range list {
 		result[i] = f(v)
 	}
-	return result
+	return
 }
 
 // Returns a new slice containing the concatenation of the receiver and values.

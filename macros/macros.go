@@ -217,5 +217,5 @@ func Render(text string, silent bool) (result string) {
 		}
 		result = strings.TrimSuffix(s, "\n")
 	}
-	return result
+	return
 }

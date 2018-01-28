@@ -10,8 +10,7 @@ import (
 // Unmatched groups return a blank string.
 // Code from: http://elliot.land/post/go-replace-string-with-regular-expression-callback
 // See also:https://github.com/golang/go/issues/5690
-func ReplaceAllStringSubmatchFunc(re *regexp.Regexp, src string, repl func(match []string) string) string {
-	result := ""
+func ReplaceAllStringSubmatchFunc(re *regexp.Regexp, src string, repl func(match []string) string) (result string) {
 	lastIndex := 0
 	for _, v := range re.FindAllStringSubmatchIndex(src, -1) {
 		groups := []string{}

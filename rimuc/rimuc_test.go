@@ -21,15 +21,15 @@ type rimucTest struct {
 
 // Convert command-line arguments string to array of arguments.
 // Arguments can be double-quoted.
-func parseArgs(args string) []string {
-	result := regexp.MustCompile(`".+?"|\S+`).FindAllString(args, -1)
+func parseArgs(args string) (result []string) {
+	result = regexp.MustCompile(`".+?"|\S+`).FindAllString(args, -1)
 	// Strip double quotes.
 	for i, v := range result {
 		if len(v) >= 2 && v[0] == '"' && v[len(v)-1] == '"' {
 			result[i] = v[1 : len(v)-1]
 		}
 	}
-	return result
+	return
 }
 
 func TestMain(t *testing.T) {

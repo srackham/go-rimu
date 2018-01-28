@@ -176,7 +176,7 @@ func rimurcPath() (result string) {
 	if user, err := user.Current(); err == nil {
 		result = filepath.Join(user.HomeDir, ".rimurc")
 	}
-	return result
+	return
 }
 
 type DieError struct{} // Used by rimuc_test osExit() mock.

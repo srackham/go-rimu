@@ -77,5 +77,5 @@ func Parse(optsString string) (result Options) {
 			}
 		}
 	}
-	return result
+	return
 }

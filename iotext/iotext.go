@@ -54,8 +54,8 @@ func (r *Reader) Next() {
 // the $1 match group (if it exists).
 // Return nil if an EOF is encountered.
 // Exit with the reader pointing to the line following the match.
-func (r *Reader) ReadTo(re *regexp.Regexp) []string {
-	result := []string{}
+func (r *Reader) ReadTo(re *regexp.Regexp) (result []string) {
+	result = []string{}
 	var match []string
 	for !r.Eof() {
 		match = re.FindStringSubmatch(r.Cursor())
@@ -71,7 +71,7 @@ func (r *Reader) ReadTo(re *regexp.Regexp) []string {
 	}
 	// Blank line matches EOF.
 	if match != nil || re.String() == "^$" && r.Eof() {
-		return result
+		return
 	}
 	return nil
 }

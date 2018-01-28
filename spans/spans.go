@@ -31,17 +31,15 @@ func Render(source string) string {
 }
 
 // Converts fragments to a string.
-func defrag(frags []fragment) string {
-	result := ""
+func defrag(frags []fragment) (result string) {
 	for _, frag := range frags {
 		result += frag.text
 	}
-	return result
+	return
 }
 
 // Fragment quotes in all fragments and return resulting fragments array.
-func fragQuotes(frags []fragment) []fragment {
-	result := []fragment{}
+func fragQuotes(frags []fragment) (result []fragment) {
 	for _, frag := range frags {
 		result = append(result, fragQuote(frag)...)
 	}
@@ -51,7 +49,7 @@ func fragQuotes(frags []fragment) []fragment {
 			result[i].text = quotes.Unescape(frag.text)
 		}
 	}
-	return result
+	return
 }
 
 // Fragment quotes in a single fragment and return resulting fragments array.
@@ -109,7 +107,7 @@ func fragQuote(frag fragment) (result []fragment) {
 	result = append(result, fragment{text: def.CloseTag, done: true})
 	// Recursively process the following text.
 	result = append(result, fragQuote(fragment{text: after, done: false})...)
-	return result
+	return
 }
 
 // Stores placeholder replacement fragments saved by `preReplacements()` and restored by `postReplacements()`.
@@ -128,7 +126,7 @@ func preReplacements(text string) (result string) {
 			result += frag.text
 		}
 	}
-	return result
+	return
 }
 
 // Replace replacements placeholders with replacements text from savedReplacements[].
@@ -155,7 +153,7 @@ func fragReplacements(frags []fragment) (result []fragment) {
 		}
 		result = tmp
 	}
-	return result
+	return
 }
 
 // Fragment replacements in a single fragment for a single replacement definition.
@@ -198,7 +196,7 @@ func fragReplacement(frag fragment, def replacements.Definition) (result []fragm
 	result = append(result, fragment{text: replacement, done: true, verbatim: matched})
 	// Recursively process the remaining text.
 	result = append(result, fragReplacement(fragment{text: after, done: false}, def)...)
-	return result
+	return
 }
 
 func fragSpecials(frags []fragment) (result []fragment) {
@@ -210,7 +208,7 @@ func fragSpecials(frags []fragment) (result []fragment) {
 		}
 		result[i] = frag
 	}
-	return result
+	return
 }
 
 // Replace pattern "$1" or "$$1", "$2" or "$$2"... in `replacement` with corresponding match groups
