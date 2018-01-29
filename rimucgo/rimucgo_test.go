@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/srackham/go-rimu/api"
-	_ "github.com/srackham/go-rimu/spans"
 )
 
 type rimucTest struct {

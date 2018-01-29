@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"strings"
 	"testing"
-
-	_ "github.com/srackham/go-rimu/spans"
 )
 
 type renderTest struct {
