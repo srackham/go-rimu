@@ -197,9 +197,13 @@ func fileExists(name string) bool {
 	return err == nil
 }
 
-func readResourceFile(name string) string {
-	//TODO
-	return ""
+func readResourceFile(name string) (result string) {
+	data, err := Asset("resources/" + name)
+	if err != nil {
+		panic("missing resource file: " + name)
+	}
+	result = string(data)
+	return
 }
 
 func importLayoutFile(name string) string {
@@ -264,7 +268,7 @@ outer:
 			"--htmlReplacement": // Deprecated in Rimu 7.1.0.
 			htmlReplacement = nextArg("missing --html-replacement value")
 		case "--styled", "-s": // Deprecated in Rimu 10.0.0
-			prepend += "{--header-ids}=\"true\"\n"
+			prepend += "{--header-ids}='true'\n"
 			if layout == "" {
 				layout = "classic"
 			}
@@ -288,11 +292,11 @@ outer:
 			} else {
 				macroValue = "true"
 			}
-			prepend += "{" + arg + "}=\"" + macroValue + "\"\n"
+			prepend += "{" + arg + "}='" + macroValue + "'\n"
 		case "--layout",
 			"--styled-name": // Deprecated in Rimu 10.0.0
 			layout = nextArg("missing --layout value")
-			prepend += "{--header-ids}=\"true\"\n"
+			prepend += "{--header-ids}='true'\n"
 		default:
 			args.Unshift(arg) // argv contains source file names.
 			break outer
