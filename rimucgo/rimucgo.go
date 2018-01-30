@@ -207,7 +207,7 @@ func readResourceFile(name string) (result string) {
 }
 
 func importLayoutFile(name string) string {
-	// Imports not supported in go-rimu.
+	// External layouts not supported in go-rimu.
 	die("missing --layout: " + name)
 	return ""
 }
@@ -221,9 +221,9 @@ func main() {
 	}()
 	args := stringlist.StringList(os.Args)
 	args.Shift() // Skip program name.
-	nextArg := func(errMsg string) string {
+	nextArg := func(err string) string {
 		if len(args) == 0 {
-			die(errMsg)
+			die(err)
 		}
 		return args.Shift()
 	}
@@ -236,7 +236,6 @@ func main() {
 	// Parse command-line options.
 	prepend := ""
 	outfile := ""
-
 outer:
 	for len(args) > 0 {
 		arg := args.Shift()
