@@ -8,8 +8,8 @@ import (
 	"github.com/srackham/go-rimu/internal/expansion"
 	"github.com/srackham/go-rimu/internal/quotes"
 	"github.com/srackham/go-rimu/internal/replacements"
-	"github.com/srackham/go-rimu/internal/utils"
 	"github.com/srackham/go-rimu/internal/utils/re"
+	"github.com/srackham/go-rimu/internal/utils/str"
 )
 
 // macros and spans package dependency injections.
@@ -97,7 +97,7 @@ func fragQuote(frag fragment) (result []fragment) {
 	result = append(result, fragment{text: def.OpenTag, done: true})
 	if !def.Spans {
 		// Spans are disabled so render the quoted text verbatim.
-		quoted = utils.ReplaceSpecialChars(quoted)
+		quoted = str.ReplaceSpecialChars(quoted)
 		quoted = strings.Replace(quoted, string('\u0000'), string('\u0001'), -1) // Substitute verbatim replacement placeholder.
 		result = append(result, fragment{text: quoted, done: true})
 	} else {
@@ -137,7 +137,7 @@ func postReplacements(text string) string {
 		if match == string('\u0000') {
 			return frag.text
 		} else {
-			return utils.ReplaceSpecialChars(frag.verbatim)
+			return str.ReplaceSpecialChars(frag.verbatim)
 		}
 
 	})
@@ -184,7 +184,7 @@ func fragReplacement(frag fragment, def replacements.Definition) (result []fragm
 		replacement = matched
 	} else if strings.HasPrefix(matched, "\\") {
 		// Remove leading backslash.
-		replacement = utils.ReplaceSpecialChars(matched[1:])
+		replacement = str.ReplaceSpecialChars(matched[1:])
 	} else {
 		submatches := def.Match.FindStringSubmatch(matched)
 		if def.Filter == nil {
@@ -204,7 +204,7 @@ func fragSpecials(frags []fragment) (result []fragment) {
 	result = make([]fragment, len(frags))
 	for i, frag := range frags {
 		if !frag.done {
-			frag.text = utils.ReplaceSpecialChars(frag.text)
+			frag.text = str.ReplaceSpecialChars(frag.text)
 		}
 		result[i] = frag
 	}
@@ -239,7 +239,7 @@ func ReplaceInline(text string, opts expansion.Options) string {
 	case opts.Spans:
 		text = Render(text)
 	case opts.Specials:
-		text = utils.ReplaceSpecialChars(text)
+		text = str.ReplaceSpecialChars(text)
 	}
 	return text
 }

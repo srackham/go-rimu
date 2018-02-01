@@ -3,7 +3,7 @@ package options
 import (
 	"strconv"
 
-	"github.com/srackham/go-rimu/internal/utils"
+	"github.com/srackham/go-rimu/internal/utils/str"
 )
 
 // api package dependency injection.
@@ -110,7 +110,7 @@ func HtmlSafeModeFilter(html string) string {
 	case 2: // Replace HTML with 'htmlReplacement' option string.
 		return htmlReplacement
 	case 3: // Render HTML as text.
-		return utils.ReplaceSpecialChars(html)
+		return str.ReplaceSpecialChars(html)
 		return html
 	default:
 		return ""

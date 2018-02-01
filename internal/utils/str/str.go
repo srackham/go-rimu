@@ -2,6 +2,13 @@ package str
 
 import "strings"
 
+func ReplaceSpecialChars(s string) (result string) {
+	result = strings.Replace(s, "&", "&amp;", -1)
+	result = strings.Replace(result, ">", "&gt;", -1)
+	result = strings.Replace(result, "<", "&lt;", -1)
+	return
+}
+
 // TrimQuotes removes leading and trailing quote and returns result.
 // If string is quoted then return it unchanged.
 func TrimQuotes(s string, quote string) string {
