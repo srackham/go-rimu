@@ -1,15 +1,15 @@
 package api
 
 import (
-	"github.com/srackham/go-rimu/blockattributes"
-	"github.com/srackham/go-rimu/delimitedblocks"
-	"github.com/srackham/go-rimu/iotext"
-	"github.com/srackham/go-rimu/lineblocks"
-	"github.com/srackham/go-rimu/lists"
-	"github.com/srackham/go-rimu/macros"
-	"github.com/srackham/go-rimu/options"
-	"github.com/srackham/go-rimu/quotes"
-	"github.com/srackham/go-rimu/replacements"
+	"github.com/srackham/go-rimu/internal/blockattributes"
+	"github.com/srackham/go-rimu/internal/delimitedblocks"
+	"github.com/srackham/go-rimu/internal/iotext"
+	"github.com/srackham/go-rimu/internal/lineblocks"
+	"github.com/srackham/go-rimu/internal/lists"
+	"github.com/srackham/go-rimu/internal/macros"
+	"github.com/srackham/go-rimu/internal/options"
+	"github.com/srackham/go-rimu/internal/quotes"
+	"github.com/srackham/go-rimu/internal/replacements"
 )
 
 func init() {

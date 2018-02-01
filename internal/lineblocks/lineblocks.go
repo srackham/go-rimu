@@ -5,16 +5,16 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/srackham/go-rimu/blockattributes"
-	"github.com/srackham/go-rimu/delimitedblocks"
-	"github.com/srackham/go-rimu/expansion"
-	"github.com/srackham/go-rimu/iotext"
-	"github.com/srackham/go-rimu/macros"
-	"github.com/srackham/go-rimu/options"
-	"github.com/srackham/go-rimu/quotes"
-	"github.com/srackham/go-rimu/replacements"
-	"github.com/srackham/go-rimu/spans"
-	"github.com/srackham/go-rimu/utils/stringlist"
+	"github.com/srackham/go-rimu/internal/blockattributes"
+	"github.com/srackham/go-rimu/internal/delimitedblocks"
+	"github.com/srackham/go-rimu/internal/expansion"
+	"github.com/srackham/go-rimu/internal/iotext"
+	"github.com/srackham/go-rimu/internal/macros"
+	"github.com/srackham/go-rimu/internal/options"
+	"github.com/srackham/go-rimu/internal/quotes"
+	"github.com/srackham/go-rimu/internal/replacements"
+	"github.com/srackham/go-rimu/internal/spans"
+	"github.com/srackham/go-rimu/internal/utils/stringlist"
 )
 
 type Definition struct {

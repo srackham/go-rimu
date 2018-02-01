@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/srackham/go-rimu/api"
+	"github.com/srackham/go-rimu/internal/api"
 )
 
 type rimucTest struct {
