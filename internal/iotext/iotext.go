@@ -78,7 +78,7 @@ func (r *Reader) ReadTo(re *regexp.Regexp) (result []string) {
 
 // SkipBlankLines TODO
 func (r *Reader) SkipBlankLines() {
-	for !r.Eof() && r.Cursor() == "" {
+	for !r.Eof() && strings.TrimSpace(r.Cursor()) == "" {
 		r.Next()
 	}
 }

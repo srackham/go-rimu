@@ -2498,5 +2498,14 @@
 	  "options": {
 		"reset": true
 	  }
+	},
+	{
+	  "description": "Fuzz crash 1",
+	  "input": " ",
+	  "expectedOutput": "",
+	  "expectedCallback": "",
+	  "options": {
+		"reset": true
+	  }
 	}
   ]

@@ -146,8 +146,8 @@ var DEFAULT_DEFS = []Definition{
 	// Indented paragraph.
 	{
 		name:       "indented",
-		openMatch:  regexp.MustCompile(`^\\?(\s+.*)$`), // $1 is first line of block.
-		closeMatch: regexp.MustCompile(`^$`),           // Blank line or EOF.
+		openMatch:  regexp.MustCompile(`^\\?(\s+\S.*)$`), // $1 is first line of block.
+		closeMatch: regexp.MustCompile(`^$`),             // Blank line or EOF.
 		openTag:    "<pre><code>",
 		closeTag:   "</code></pre>",
 		options: expansion.Options{
