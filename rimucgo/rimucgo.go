@@ -384,12 +384,12 @@ outer:
 			}
 			source = rimu.Render(source, opts)
 		}
-		source = strings.Trim(source, " \n")
+		source = strings.TrimSpace(source)
 		if source != "" {
 			output += source + "\n"
 		}
 	}
-	output = strings.Trim(output, " \n")
+	output = strings.TrimSpace(output)
 	if outfile == "" || outfile == "-" {
 		fmt.Print(output)
 	} else {

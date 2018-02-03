@@ -47,7 +47,7 @@ func (to *Options) Merge(from Options) {
 // Parse block-options string and return ExpansionOptions.
 func Parse(optsString string) (result Options) {
 	if optsString != "" {
-		opts := regexp.MustCompile(`\s+`).Split(strings.Trim(optsString, " "), -1)
+		opts := regexp.MustCompile(`\s+`).Split(strings.TrimSpace(optsString), -1)
 		for _, opt := range opts {
 			if options.IsSafeModeNz() && opt == "-specials" {
 				options.ErrorCallback("-specials block option not valid in safeMode")

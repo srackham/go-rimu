@@ -112,7 +112,7 @@ var DEFAULT_DEFS = []Definition{
 		},
 		verify: func(match []string) bool {
 			// The deprecated '-' delimiter does not support appended class names.
-			return !(match[1][0] == '-' && strings.Trim(match[2], " \n") != "")
+			return !(match[1][0] == '-' && strings.TrimSpace(match[2]) != "")
 		},
 		delimiterFilter: classInjectionFilter,
 	},
@@ -320,7 +320,7 @@ func SetDefinition(name string, value string) {
 		options.ErrorCallback("illegal delimited block name: " + name + ": |" + name + "|='" + value + "'")
 		return
 	}
-	match := regexp.MustCompile(`^(?:(<[a-zA-Z].*>)\|(<[a-zA-Z/].*>))?(?:\s*)?([+-][ \w+-]+)?$`).FindStringSubmatch(strings.Trim(value, " "))
+	match := regexp.MustCompile(`^(?:(<[a-zA-Z].*>)\|(<[a-zA-Z/].*>))?(?:\s*)?([+-][ \w+-]+)?$`).FindStringSubmatch(strings.TrimSpace(value))
 	// TODO does not match should callback error (other ports to).
 	if match != nil {
 		if strings.Contains(value, "|") {
@@ -341,7 +341,7 @@ func delimiterTextFilter(match []string, _ *Definition) string {
 // delimiterFilter for code, division and quote blocks.
 // Inject $2 into block class attribute, set close delimiter to $1.
 func classInjectionFilter(match []string, def *Definition) string {
-	if p1 := strings.Trim(match[2], " \n"); p1 != "" {
+	if p1 := strings.TrimSpace(match[2]); p1 != "" {
 		blockattributes.Classes = p1
 	}
 	// closeMatch must be set at runtime so we correctly match closing delimiter

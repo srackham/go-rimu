@@ -12,17 +12,19 @@ import (
 	"github.com/srackham/go-rimu/internal/utils/stringlist"
 )
 
+var (
+	Classes    string // Space separated HTML class names.
+	Id         string // HTML element id.
+	Css        string // HTML CSS styles.
+	Attributes string // Other HTML element attributes.
+	Options    expansion.Options
+)
+
+var ids stringlist.StringList // List of allocated HTML ids.
+
 func init() {
 	Init()
 }
-
-var Classes string    // Space separated HTML class names.
-var Id string         // HTML element id.
-var Css string        // HTML CSS styles.
-var Attributes string // Other HTML element attributes.
-var Options expansion.Options
-
-var ids stringlist.StringList // List of allocated HTML ids.
 
 // Init resets options to default values.
 func Init() {
@@ -44,7 +46,7 @@ func Parse(text string) bool {
 		return false
 	}
 	for i, v := range m {
-		m[i] = strings.Trim(v, " \n")
+		m[i] = strings.TrimSpace(v)
 	}
 	if !options.SkipBlockAttributes() {
 		if m[1] != "" { // HTML element class names.
@@ -69,7 +71,7 @@ func Parse(text string) bool {
 			if Attributes != "" {
 				Attributes += " "
 			}
-			Attributes += strings.Trim(m[4][1:len(m[4])-1], " \n")
+			Attributes += strings.TrimSpace(m[4][1 : len(m[4])-1])
 		}
 		Options = expansion.Parse(m[5])
 	}
@@ -107,7 +109,7 @@ func Inject(tag string) string {
 		if regexp.MustCompile(`(?i)style=".*?"`).MatchString(tag) {
 			// Inject CSS styles into existing style attribute.
 			tag = re.ReplaceAllStringSubmatchFunc(regexp.MustCompile(`(?i)style="(.*?)"`), tag, func(match []string) string {
-				css := strings.Trim(match[1], " \n")
+				css := strings.TrimSpace(match[1])
 				if !strings.HasSuffix(css, ";") {
 					css += ";"
 				}

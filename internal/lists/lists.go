@@ -165,7 +165,7 @@ func renderListItem(item ItemInfo, reader *iotext.Reader, writer *iotext.Writer)
 		}
 	}
 	// Write item text.
-	text = strings.Trim(itemLines.String(), " \n")
+	text = strings.TrimSpace(itemLines.String())
 	text = spans.ReplaceInline(text, expansion.Options{Macros: true, Spans: true})
 	writer.Write(text)
 	// Write attachment and child list.
