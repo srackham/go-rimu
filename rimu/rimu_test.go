@@ -33,6 +33,7 @@ func TestRender(t *testing.T) {
 	json.Unmarshal(raw, &tests)
 	// Run test cases.
 	for _, tt := range tests {
+		// ioutil.WriteFile(fmt.Sprintf("./testdata/fuzz-samples/sample-%03d.txt", i), []byte(tt.Input), 0644)
 		// if tt.Description != "Block Attributes on Fenced Block attached to list item" {
 		// 	continue
 		// }
