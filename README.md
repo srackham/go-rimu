@@ -13,9 +13,11 @@ implementation](https://github.com/srackham/rimu) version 10.4.2 with
 the following exceptions:
 
   * Does not support _Expression macro values_.
+  * Does not support _Imported Layouts_.
   * Because the Go `regexp` package uses RE2 regular expressions there
-    are some limitations on Replacements definitions and
-    Inclusion/Exclusion macro invocations.
+    are some limitations on the regular expressions used in
+    Replacements definitions and Inclusion/Exclusion macro
+    invocations.
 
 
 ## Using the go-rimu library
@@ -35,7 +37,7 @@ import (
 )
 
 func main() {
-    // Prints "<p><em>Hello Rimu!</em></p>""
+    // Prints "<p><em>Hello Rimu!</em></p>"
     fmt.Println(rimu.Render("*Hello Rimu!*", rimu.RenderOptions{}))
 }
 ```
