@@ -29,10 +29,11 @@ fuzz:
 	#    go get github.com/dvyukov/go-fuzz/go-fuzz
 	#    go get github.com/dvyukov/go-fuzz/go-fuzz-build
 	#
-	# Then generate the fuzz execuatables and and working directories:
+	# Then generate the fuzz execuatables and prime the corpus.
 	#
 	#    cd rimu
 	#    go-fuzz-build github.com/srackham/go-rimu/rimu
-	#    mkdir fuzz-workdir
+	#    mkdir -p fuzz-workdir/corpus
+	#    unzip testdata/fuzz-samples.zip -d fuzz-workdir/corpus
 	#
 	go-fuzz -bin=./rimu/rimu-fuzz.zip -workdir=./rimu/fuzz-workdir
