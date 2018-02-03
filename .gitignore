@@ -3,3 +3,5 @@
 debug
 debug.test
 TODO.md
+*-fuzz.zip
+fuzz-workdir/
