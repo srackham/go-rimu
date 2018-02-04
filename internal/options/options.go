@@ -82,21 +82,23 @@ func SetOption(name string, value string) {
 	case "safeMode":
 		n, err := strconv.ParseInt(value, 10, 64)
 		if err != nil {
-			panic(err)
+			ErrorCallback("illegal safeMode API option value: " + value)
+		} else {
+			safeMode = int(n)
 		}
-		safeMode = int(n)
 	case "htmlReplacement":
 		htmlReplacement = value
 	case "reset":
 		b, err := strconv.ParseBool(value)
 		if err != nil {
-			panic(err)
-		}
-		if b {
-			ApiInit()
+			ErrorCallback("illegal reset API option value: " + value)
+		} else {
+			if b {
+				ApiInit()
+			}
 		}
 	default:
-		panic("illegal API option name: " + name)
+		ErrorCallback("illegal API option name: " + name)
 	}
 }
 

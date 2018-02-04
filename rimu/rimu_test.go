@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type renderTest struct {
@@ -40,12 +42,21 @@ func TestRender(t *testing.T) {
 		if strings.Contains(tt.Unsupported, "go") {
 			continue
 		}
-		opts := RenderOptions{Reset: tt.Options.Reset, SafeMode: tt.Options.SafeMode, HtmlReplacement: tt.Options.HtmlReplacement}
+		msg := ""
+		opts := RenderOptions{
+			Reset:           tt.Options.Reset,
+			SafeMode:        tt.Options.SafeMode,
+			HtmlReplacement: tt.Options.HtmlReplacement,
+			Callback:        func(message CallbackMessage) { msg += message.Kind + ": " + message.Text + "\n" },
+		}
 		// fmt.Println("Description: ", tt.Description)
 		got := Render(tt.Input, opts)
 		if got != tt.Expected {
 			t.Errorf("\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n\n",
 				"description", tt.Description, "input", tt.Input, "expected", tt.Expected, "got", got)
+		}
+		if tt.Callback != "" {
+			assert.Equal(t, tt.Callback, strings.TrimSpace(msg))
 		}
 	}
 }

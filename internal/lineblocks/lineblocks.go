@@ -180,10 +180,7 @@ var defs = []Definition{
 	{
 		match: regexp.MustCompile(`^\\?\.(\w+)\s*=\s*'(.*)'$`),
 		filter: func(match []string, _ *iotext.Reader, _ Definition) string {
-			switch {
-			case !regexp.MustCompile(`^(safeMode|htmlReplacement|reset)$`).MatchString(match[1]):
-				options.ErrorCallback("illegal API option: " + match[1] + ": " + match[0])
-			case !options.IsSafeModeNz():
+			if !options.IsSafeModeNz() {
 				value := spans.ReplaceInline(match[2], expansion.Options{Macros: true})
 				options.SetOption(match[1], value)
 			}

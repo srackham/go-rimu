@@ -85,7 +85,7 @@ func SetValue(name string, value string, quote string) {
 		existential = true
 	}
 	if name == "--" && value != "" {
-		options.ErrorCallback("the predefined blank \"--\" macro cannot be redefined")
+		options.ErrorCallback("the predefined blank '--' macro cannot be redefined")
 		return
 	}
 	if quote == "`" {
@@ -181,7 +181,7 @@ func Render(text string, silent bool) (result string) {
 				pre, err := regexp.Compile("^" + pattern + "$")
 				if err != nil {
 					if !silent {
-						options.ErrorCallback("illegal macro regular expression: " + err.Error())
+						options.ErrorCallback("illegal macro regular expression: " + pattern + ": " + text)
 					}
 					return match[0]
 				}
@@ -195,7 +195,8 @@ func Render(text string, silent bool) (result string) {
 					return ""
 				}
 			default:
-				panic("illegal macro syntax: " + match[0])
+				options.ErrorCallback("illegal macro syntax: " + match[0])
+				return ""
 			}
 
 		})

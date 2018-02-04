@@ -53,8 +53,6 @@ func TestSetOption(t *testing.T) {
 	Init()
 	SetOption("safeMode", "42")
 	assert.Equal(t, 42, safeMode)
-	assert.Panics(t, func() { SetOption("foo", "bar") })
-	assert.Panics(t, func() { SetOption("safeMode", "bar") })
 }
 
 func TestHtmlSafeModeFilter(t *testing.T) {

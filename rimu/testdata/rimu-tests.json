@@ -2207,6 +2207,24 @@
 	  }
 	},
 	{
+	  "description": "illegal safeMode API option",
+	  "input": ".safeMode='foobar'",
+	  "expectedOutput": "",
+	  "expectedCallback": "error: illegal safeMode API option value: foobar",
+	  "options": {
+		"reset": true
+	  }
+	},
+	{
+	  "description": "illegal safeMode API name",
+	  "input": ".foo = 'bar'",
+	  "expectedOutput": "",
+	  "expectedCallback": "error: illegal API option name: foo",
+	  "options": {
+		"reset": true
+	  }
+	},
+	{
 	  "description": "callback api: illegal delimited block name",
 	  "input": "|foobar| = '<p>|</p>'",
 	  "expectedOutput": "",
@@ -2228,12 +2246,13 @@
 	  "description": "callback api: illegal API option",
 	  "input": ".zafeMode='2'",
 	  "expectedOutput": "",
-	  "expectedCallback": "error: illegal API option: zafeMode: .zafeMode='2'",
+	  "expectedCallback": "error: illegal API option name: zafeMode",
 	  "options": {
 		"reset": true
 	  }
 	},
 	{
+	  "unsupported": "go",
 	  "description": "callback api: existential macro invocations are deprecated",
 	  "input": "{undefined?foobar}",
 	  "expectedOutput": "<p>{undefined?foobar}</p>",
