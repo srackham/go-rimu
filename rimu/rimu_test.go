@@ -33,6 +33,14 @@ func TestRender(t *testing.T) {
 	}
 	var tests []renderTest
 	json.Unmarshal(raw, &tests)
+	// Append test with invalid UTF-8 input because JSON does not support binary data (all strings are valid UTF-8)).
+	tests = append(tests, renderTest{
+		Description: "Invalid UTF-8 input",
+		Input:       string([]byte("\xbb")),
+		Expected:    "",
+		Callback:    "error: invalid UTF-8 input",
+		Options:     apiOptions{Reset: true},
+	})
 	// Run test cases.
 	for _, tt := range tests {
 		// ioutil.WriteFile(fmt.Sprintf("./testdata/fuzz-samples/sample-%03d.txt", i), []byte(tt.Input), 0644)

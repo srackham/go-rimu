@@ -3,6 +3,9 @@ package iotext
 import (
 	"regexp"
 	"strings"
+	"unicode/utf8"
+
+	"github.com/srackham/go-rimu/internal/options"
 )
 
 /*
@@ -16,6 +19,10 @@ type Reader struct {
 
 // NewReader TODO
 func NewReader(text string) *Reader {
+	if !utf8.ValidString(text) {
+		options.ErrorCallback("invalid UTF-8 input")
+		text = ""
+	}
 	r := new(Reader)
 	text = strings.Replace(text, "\u0000", " ", -1) // Used internally by macros and spans packages.
 	text = strings.Replace(text, "\u0001", " ", -1) // Used internally by macros and spans packages.
