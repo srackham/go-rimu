@@ -2507,5 +2507,14 @@
 	  "options": {
 		"reset": true
 	  }
+	},
+	{
+	  "description": "Fuzz crash 2",
+	  "input": "\u0000\u0001",
+	  "expectedOutput": "",
+	  "expectedCallback": "",
+	  "options": {
+		"reset": true
+	  }
 	}
   ]

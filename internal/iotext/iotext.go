@@ -17,6 +17,8 @@ type Reader struct {
 // NewReader TODO
 func NewReader(text string) *Reader {
 	r := new(Reader)
+	text = strings.Replace(text, "\u0000", " ", -1) // Used internally by macros and spans packages.
+	text = strings.Replace(text, "\u0001", " ", -1) // Used internally by macros and spans packages.
 	r.Lines = regexp.MustCompile(`\r\n|\r|\n`).Split(text, -1)
 	return r
 }
