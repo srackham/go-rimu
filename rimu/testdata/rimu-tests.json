@@ -1356,6 +1356,15 @@
 	  }
 	},
 	{
+	  "description": "$0 is not a valid macro parameter name",
+	  "input": "{v}='$0'\n{v|}",
+	  "expectedOutput": "<p>$0</p>",
+	  "expectedCallback": "",
+	  "options": {
+		"reset": true
+	  }
+	},
+	{
 	  "description": "double and single dollar parametrized macro arguments in HTML block element",
 	  "input": "{v}='<div>$$1 and $2</div>'\n{v|**a** b|c _d_}",
 	  "expectedOutput": "<div><strong>a</strong> b and c _d_</div>",

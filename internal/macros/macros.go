@@ -151,6 +151,9 @@ func Render(text string, silent bool) (result string) {
 					}
 					p1 := mr[1]
 					p2, _ := strconv.ParseInt(mr[2], 10, strconv.IntSize)
+					if p2 == 0 {
+						return mr[0] // $0 is not a valid parameter name.
+					}
 					p3 := mr[3]
 					p4 := mr[4]
 					var param string
