@@ -2582,7 +2582,7 @@
 	  }
 	},
 	{
-	  "description": "Fuzz crash 1",
+	  "description": "spaces",
 	  "input": " ",
 	  "expectedOutput": "",
 	  "expectedCallback": "",
@@ -2591,8 +2591,17 @@
 	  }
 	},
 	{
-	  "description": "Fuzz crash 2",
-	  "input": "\u0000\u0001",
+	  "description": "white space",
+	  "input": " \n \n",
+	  "expectedOutput": "",
+	  "expectedCallback": "",
+	  "options": {
+		"reset": true
+	  }
+	},
+	{
+	  "description": "filter out reserved characters",
+	  "input": "\u0000\u0001\u0002\u0003",
 	  "expectedOutput": "",
 	  "expectedCallback": "",
 	  "options": {
