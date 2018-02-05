@@ -124,7 +124,7 @@ func Render(text string, silent bool) (result string) {
 			}
 			if find == MATCH_SIMPLE {
 				savedSimple = append(savedSimple, value)
-				return "\u0001"
+				return "\u0002"
 			}
 			// Process non-simple macro.
 			params := match[2]
@@ -193,7 +193,7 @@ func Render(text string, silent bool) (result string) {
 					skip = !skip
 				}
 				if skip {
-					return "\u0000" // '\0' flags line for deletion.
+					return "\u0003" // '\0' flags line for deletion.
 				} else {
 					return ""
 				}
@@ -205,17 +205,17 @@ func Render(text string, silent bool) (result string) {
 		})
 	}
 	// Restore expanded Simple values.
-	result = regexp.MustCompile(`\x{0001}`).ReplaceAllStringFunc(result, func(string) string {
+	result = regexp.MustCompile(`\x{0002}`).ReplaceAllStringFunc(result, func(string) string {
 		// Pop from start of list.
 		first := savedSimple[0]
 		savedSimple = append([]string{}, savedSimple[1:]...)
 		return first
 	})
 	// Delete lines flagged by Inclusion/Exclusion macros.
-	if strings.Index(result, "\u0000") >= 0 {
+	if strings.Index(result, "\u0003") >= 0 {
 		s := ""
 		for _, line := range strings.Split(result, "\n") {
-			if !strings.Contains(line, "\u0000") {
+			if !strings.Contains(line, "\u0003") {
 				s += line + "\n"
 			}
 		}

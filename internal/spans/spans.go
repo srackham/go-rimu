@@ -98,7 +98,7 @@ func fragQuote(frag fragment) (result []fragment) {
 	if !def.Spans {
 		// Spans are disabled so render the quoted text verbatim.
 		quoted = str.ReplaceSpecialChars(quoted)
-		quoted = strings.Replace(quoted, string('\u0000'), string('\u0001'), -1) // Substitute verbatim replacement placeholder.
+		quoted = strings.Replace(quoted, "\u0000", "\u0001", -1) // Substitute verbatim replacement placeholder.
 		result = append(result, fragment{text: quoted, done: true})
 	} else {
 		// Recursively process the quoted text.

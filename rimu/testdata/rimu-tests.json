@@ -1365,6 +1365,15 @@
 	  }
 	},
 	{
+	  "description": "fails if macros \\u0002 placeholder is \\u0001 (conflicts with spans use of \\u0001",
+	  "input": "{v}='$$1'\n{v|{v}}",
+	  "expectedOutput": "<p>$$1</p>",
+	  "expectedCallback": "",
+	  "options": {
+		"reset": true
+	  }
+	},
+	{
 	  "description": "double and single dollar parametrized macro arguments in HTML block element",
 	  "input": "{v}='<div>$$1 and $2</div>'\n{v|**a** b|c _d_}",
 	  "expectedOutput": "<div><strong>a</strong> b and c _d_</div>",
