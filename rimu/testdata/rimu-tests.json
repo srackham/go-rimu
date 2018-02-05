@@ -2134,6 +2134,15 @@
 	  }
 	},
 	{
+	  "description": "replacement has undefined match group",
+	  "input": "/foo/='$2'\nfoo",
+	  "expectedOutput": "<p></p>",
+	  "expectedCallback": "error: undefined replacement group: $2",
+	  "options": {
+		"reset": true
+	  }
+	},
+	{
 	  "unsupported": "go",
 	  "description": "Inline comments replacement.",
 	  "input": "/(^|\\n)\\\\?\\/\\/.*(?=\\n|$)/g = '$1'\nA paragraph\n//Comment\n//Comment\nwith inline comments.",

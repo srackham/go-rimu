@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/srackham/go-rimu/internal/options"
+
 	"github.com/srackham/go-rimu/internal/expansion"
 	"github.com/srackham/go-rimu/internal/quotes"
 	"github.com/srackham/go-rimu/internal/replacements"
@@ -215,7 +217,7 @@ func fragSpecials(frags []fragment) (result []fragment) {
 // from `match`. If pattern starts with one "$" character add specials to `opts`,
 // if it starts with two "$" characters add spans to `opts`.
 func ReplaceMatch(match []string, replacement string, opts expansion.Options) string {
-	return re.ReplaceAllStringSubmatchFunc(regexp.MustCompile(`(\${1,2})(\d)`), replacement, func(arguments []string) string {
+	return re.ReplaceAllStringSubmatchFunc(regexp.MustCompile(`(\${1,2})(\d)`), replacement, func(arguments []string) (result string) {
 		// Replace $1, $2 ... with corresponding match groups.
 		switch {
 		case arguments[1] == "$$":
@@ -223,9 +225,13 @@ func ReplaceMatch(match []string, replacement string, opts expansion.Options) st
 		default:
 			opts.Specials = true
 		}
-		i, _ := strconv.ParseInt(arguments[2], 10, 64) // match group number.
-		text := match[i]                               // match group text.
-		return ReplaceInline(text, opts)
+		i, _ := strconv.ParseInt(arguments[2], 10, strconv.IntSize) // match group number.
+		if int(i) >= len(match) {
+			options.ErrorCallback("undefined replacement group: " + arguments[0])
+		} else {
+			result = match[i] // match group text.
+		}
+		return ReplaceInline(result, opts)
 	})
 }
 
