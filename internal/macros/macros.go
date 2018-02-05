@@ -206,6 +206,12 @@ func Render(text string, silent bool) (result string) {
 	}
 	// Restore expanded Simple values.
 	result = regexp.MustCompile(`\x{0002}`).ReplaceAllStringFunc(result, func(string) string {
+		if len(savedSimple) == 0 {
+			// This should not happen but there is a limitation: repeated macro substitution parameters
+			// ($1, $2...) cannot contain simple macro invocations.
+			options.ErrorCallback("repeated macro parameters: " + text)
+			return ""
+		}
 		// Pop from start of list.
 		first := savedSimple[0]
 		savedSimple = append([]string{}, savedSimple[1:]...)

@@ -1365,6 +1365,24 @@
 	  }
 	},
 	{
+		"description": "reordered macro parameters",
+		"input": "{v1}='foo'\n{v2}='bar'\n{v3}='$2$1'\n{v3|{v2}|{v1}}",
+		"expectedOutput": "<p>barfoo</p>",
+		"expectedCallback": "",
+		"options": {
+		  "reset": true
+		}
+	},
+	{
+		"description": "repeated macro parameter limitation (output should be '<p>foofoo</p>')",
+		"input": "{v1}='foo'\n{v2}='$1$1'\n{v2|{v1}}",
+		"expectedOutput": "<p>foo</p>",
+		"expectedCallback": "",
+		"options": {
+		  "reset": true
+		}
+	},
+	{
 	  "description": "fails if macros \\u0002 placeholder is \\u0001 (conflicts with spans use of \\u0001",
 	  "input": "{v}='$$1'\n{v|{v}}",
 	  "expectedOutput": "<p>$$1</p>",
@@ -1689,9 +1707,27 @@
 	  }
 	},
 	{
-	  "description": "Macro Line block value is macro invocation: should not recurse infinitely",
+	  "description": "Recursively defined macro in Line Macro context should not loop infinitely",
 	  "input": "{x}='\\{x}'\n{x}",
 	  "expectedOutput": "<p>{x}</p>",
+	  "expectedCallback": "",
+	  "options": {
+		"reset": true
+	  }
+	},
+	{
+	  "description": "Recursively defined macro in Line Macro context should not loop infinitely",
+	  "input": "{x}='{x}'\n{x}",
+	  "expectedOutput": "<p>{x}</p>",
+	  "expectedCallback": "",
+	  "options": {
+		"reset": true
+	  }
+	},
+	{
+	  "description": "Recursively defined macro in Line Macro context should not loop infinitely",
+	  "input": "{x}='foo\n\n{x}'\n{x}",
+	  "expectedOutput": "<p>foo\n\n{x}</p>",
 	  "expectedCallback": "",
 	  "options": {
 		"reset": true

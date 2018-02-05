@@ -46,8 +46,8 @@ var defs = []Definition{
 			}
 			// Silent because any macro expansion errors will be subsequently addressed downstream.
 			value := macros.Render(match[0], true)
-			if strings.HasPrefix(value, match[1]) {
-				// The leading macro invocation expansion failed or returned itself.
+			if strings.HasPrefix(value, match[0]) || strings.Contains(value, "\n"+match[0]) {
+				// The leading macro invocation expansion failed or contains itself.
 				// This stops infinite recursion.
 				return false
 			}
