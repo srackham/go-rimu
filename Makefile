@@ -9,7 +9,7 @@ SHELL := bash
 .SUFFIXES:
 .ONESHELL:
 
-GOFLAGS ?= $(GOFLAGS:)
+GOFLAGS ?=
 
 .PHONY: all
 all: test install
@@ -59,7 +59,7 @@ fuzz-build:
 	echo Building executables...
 	go-fuzz-build github.com/srackham/go-rimu/rimu
 
-# List fuzz crash inputs.
+# List fuzz crashes.
 .PHONY: fuzz-crashes
 fuzz-crashes:
 	@for f in rimu/fuzz-workdir/crashers/*.quoted; do
