@@ -38,7 +38,7 @@ clean:
 
 .PHONY: push
 push:
-	git push -u origin master
+	git push -u --tags origin master
 
 # Run fuzz test.
 .PHONY: fuzz
