@@ -34,7 +34,7 @@ fuzz:
 fuzz-build:
 	@set -eu
 	cd rimu
-	if [ ! -d fuzz-workdir ]; then
+	if [ ! -d fuzz-workdir/corpus ]; then
 		echo Creating workdir...
 		mkdir -p fuzz-workdir/corpus
 		unzip -q testdata/fuzz-samples.zip -d fuzz-workdir/corpus
