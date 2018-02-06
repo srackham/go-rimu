@@ -1,6 +1,5 @@
 /*
   Command-lne app to convert Rimu source to HTML.
-  Run 'node rimu.js --help' for details.
 */
 
 package main
