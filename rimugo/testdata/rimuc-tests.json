@@ -131,7 +131,7 @@
 	  "description": "rimuc --help",
 	  "args": "--help",
 	  "input": "",
-	  "expectedOutput": "\nNAME\n  rimuc",
+	  "expectedOutput": "\nNAME\n  rimu",
 	  "predicate": "startsWith"
 	},
 	{

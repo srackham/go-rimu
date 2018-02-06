@@ -14,11 +14,11 @@ GOFLAGS ?= $(GOFLAGS:)
 .PHONY: all
 all: test install
 
-./rimucgo/bindata.go: ./rimucgo/resources/*
-	cd ./rimucgo && go-bindata ./resources
+./rimugo/bindata.go: ./rimugo/resources/*
+	cd ./rimugo && go-bindata ./resources
 
 .PHONY: bindata
-bindata: ./rimucgo/bindata.go
+bindata: ./rimugo/bindata.go
 
 .PHONY: install
 install: bindata

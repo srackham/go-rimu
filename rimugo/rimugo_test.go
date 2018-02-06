@@ -70,7 +70,7 @@ func TestMain(t *testing.T) {
 			// Save and set command-line arguments.
 			savedArgs := os.Args
 			defer func() { os.Args = savedArgs }()
-			os.Args = []string{"rimuc", "--no-rimurc"}
+			os.Args = []string{"rimugo", "--no-rimurc"}
 			if layout != "" {
 				os.Args = append(os.Args, "--layout", layout)
 			}
@@ -92,7 +92,7 @@ func TestMain(t *testing.T) {
 			os.Stdin = rin
 			win.WriteString(tt.Input)
 			win.Close()
-			// Execute rimuc.
+			// Execute rimugo.
 			api.Init()
 			main()
 			// Get stdout and stderr.

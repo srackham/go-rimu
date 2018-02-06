@@ -21,12 +21,13 @@ import (
 var osExit = os.Exit // Mocked by tests.
 
 const MANPAGE = `NAME
-  rimuc - convert Rimu source to HTML
+  rimugo - convert Rimu source to HTML
 
 SYNOPSIS
-  rimuc [OPTIONS...] [FILES...]
+  rimugo [OPTIONS...] [FILES...]
 
 DESCRIPTION
+  Go port of the rimuc compiler command.
   Reads Rimu source markup from stdin, converts them to HTML
   then writes the HTML to stdout. If FILES are specified
   the Rimu source is read from FILES. The contents of files
@@ -49,8 +50,10 @@ OPTIONS
     Defaults to '<mark>replaced HTML</mark>'.
 
   --layout LAYOUT
-    Generate a styled HTML document. rimuc includes the
-    following built-in document layouts:
+
+    Generate a styled HTML document.
+
+ 	Built-in document layouts:
 
     'classic': Desktop-centric layout.
     'flex':    Flexbox mobile layout (experimental).
@@ -129,7 +132,7 @@ LAYOUT OPTIONS
                      'legend', 'graystone', 'vintage'.
   --title            HTML document title.
   _______________________________________________________________
-  These options are translated by rimuc to corresponding layout
+  These options are translated to the corresponding layout
   macro definitions using the --prepend option.
 
 LAYOUT CLASSES
@@ -178,14 +181,12 @@ func rimurcPath() (result string) {
 	return
 }
 
-// MockExit type used by rimuc_test osExit() mock.
+// MockExit type used by rimugo_test osExit() mock.
 type MockExit struct{}
 
 // Helpers.
 func die(message string) {
 	if message != "" {
-		// TODO: this impacts rimuc tests.
-		// fmt.Fprintln(os.Stderr, "error: "+message)
 		fmt.Fprintln(os.Stderr, message)
 	}
 	osExit(1)

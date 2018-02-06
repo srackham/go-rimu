@@ -51,7 +51,7 @@ func main() {
 
 
 ## Rimu compiler command
-The executable is named `rimucgo` and is functionally identical to the
+The executable is named `rimugo` and is functionally identical to the
 [JavaScript rimuc](http://rimumarkup.org/reference.html#rimuc-command)
 command-line compiler.
 
