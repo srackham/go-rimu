@@ -24,6 +24,9 @@ test: bindata
 clean:
 	go clean $(GOFLAGS) -i ./...
 
+push:
+	git push -u origin master
+
 # Run fuzz test.
 fuzz:
 	go-fuzz -bin=./rimu/rimu-fuzz.zip -workdir=./rimu/fuzz-workdir
