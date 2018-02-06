@@ -1,6 +1,6 @@
 # Rimu Markup for Go
 
-**IMPORTANT**: `go-rimu` has not yet reached 1.0 and there are no
+**IMPORTANT**: `go-rimu` has not yet reached 1.0 so there are no
 stability guarantees.
 
 _go-rimu_ is a port of the [Rimu Markup
@@ -20,11 +20,18 @@ the following exceptions:
     invocations.
 
 
-## Using the go-rimu library
-Install with:
+## Installation
+Download:
 
     go get -u github.com/srackham/go-rimu/...
 
+Build, test and install:
+
+    cd $GOPATH/src/github.com/srackham/go-rimu
+    make
+
+
+## Using the go-rimu library
 Example usage:
 
 ``` go
@@ -43,7 +50,7 @@ func main() {
 ```
 
 
-## rimuc compiler command
+## Rimu compiler command
 The executable is named `rimucgo` and is functionally identical to the
 [JavaScript rimuc](http://rimumarkup.org/reference.html#rimuc-command)
 command-line compiler.
@@ -60,3 +67,5 @@ command-line compiler.
 - Both the Go and JavaScript implementations share the same JSON
   driven test suites comprising over 250 compatibility checks.
 
+- Includes Fuzz tests (see `Makefile` targets `fuzz`, `fuzz-build` and
+  `fuzz-crashes`).
