@@ -1,6 +1,7 @@
 # Simple makefile to log workflow.
 
-.PHONY: all bindata install build test clean fuzz fuzz-build fuzz-crashes t
+.ONESHELL:
+.PHONY: all bindata install build test clean fuzz fuzz-build fuzz-crashes
 
 GOFLAGS ?= $(GOFLAGS:)
 
@@ -31,20 +32,20 @@ fuzz:
 # If the fuzz work directory does not exist it is created and the corpus is primed.
 # Requires go-fuzz package (https://github.com/dvyukov/go-fuzz):
 fuzz-build:
-	@set -e; \
-	cd rimu; \
-	if [ ! -d fuzz-workdir ]; then \
-		echo Creating workdir...; \
-		mkdir -p fuzz-workdir/corpus; \
-		unzip -q testdata/fuzz-samples.zip -d fuzz-workdir/corpus; \
-	fi; \
-	echo Building executables...; \
+	@set -eu
+	cd rimu
+	if [ ! -d fuzz-workdir ]; then
+		echo Creating workdir...
+		mkdir -p fuzz-workdir/corpus
+		unzip -q testdata/fuzz-samples.zip -d fuzz-workdir/corpus
+	fi
+	echo Building executables...
 	go-fuzz-build github.com/srackham/go-rimu/rimu
 
 # List fuzz crash inputs.
 fuzz-crashes:
-	@set -e; \
-	for f in rimu/fuzz-workdir/crashers/*.quoted; do \
-		echo $$f; \
-		cat $$f; \
+	@set -eu
+	for f in rimu/fuzz-workdir/crashers/*.quoted; do
+		echo $$f
+		cat $$f
 	done
