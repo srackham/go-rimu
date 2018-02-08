@@ -73,7 +73,9 @@ func Parse(text string) bool {
 			}
 			Attributes += strings.TrimSpace(m[4][1 : len(m[4])-1])
 		}
-		Options = expansion.Parse(m[5])
+		if m[5] != "" {
+			Options.Merge(expansion.Parse(m[5]))
+		}
 	}
 	return true
 }

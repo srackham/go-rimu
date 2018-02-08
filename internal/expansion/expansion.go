@@ -29,18 +29,23 @@ type Options struct {
 func (to *Options) Merge(from Options) {
 	if from.containerMerge {
 		to.Container = from.Container
+		to.containerMerge = true
 	}
 	if from.macrosMerge {
 		to.Macros = from.Macros
+		to.macrosMerge = true
 	}
 	if from.skipMerge {
 		to.Skip = from.Skip
+		to.skipMerge = true
 	}
 	if from.spansMerge {
 		to.Spans = from.Spans
+		to.spansMerge = true
 	}
 	if from.specialsMerge {
 		to.Specials = from.Specials
+		to.specialsMerge = true
 	}
 }
 
