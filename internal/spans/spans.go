@@ -228,9 +228,9 @@ func ReplaceMatch(match []string, replacement string, opts expansion.Options) st
 		i, _ := strconv.ParseInt(arguments[2], 10, strconv.IntSize) // match group number.
 		if int(i) >= len(match) {
 			options.ErrorCallback("undefined replacement group: " + arguments[0])
-		} else {
-			result = match[i] // match group text.
+			return ""
 		}
+		result = match[i] // match group text.
 		return ReplaceInline(result, opts)
 	})
 }
