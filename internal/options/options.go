@@ -1,6 +1,7 @@
 package options
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/srackham/go-rimu/internal/utils/str"
@@ -57,31 +58,36 @@ func SkipBlockAttributes() bool {
 	return safeMode != 0 && safeMode&0x4 != 0
 }
 
-// UpdateOptions processes non-nil ops fields. Panics if non-nil types are incorrect.
+// UpdateOptions processes non-nil opts fields.
+// Error callback option values are illegal.
 func UpdateOptions(opts RenderOptions) {
-	// Reset takes priority.
-	if opts.Reset != nil {
-		if opts.Reset.(bool) {
-			ApiInit()
-		}
-	}
-	if opts.SafeMode != nil {
-		safeMode = opts.SafeMode.(int)
-	}
-	if opts.HtmlReplacement != nil {
-		htmlReplacement = opts.HtmlReplacement.(string)
-	}
+	// Install callback first to ensure option errors are logged.
 	if opts.Callback != nil {
 		callback = opts.Callback
 	}
+	// Reset takes priority.
+	if opts.Reset != nil {
+		SetOption("reset", fmt.Sprintf("%v", opts.Reset))
+	}
+	// Install callback again in case it has been reset.
+	if opts.Callback != nil {
+		callback = opts.Callback
+	}
+	if opts.SafeMode != nil {
+		SetOption("safeMode", fmt.Sprintf("%v", opts.SafeMode))
+	}
+	if opts.HtmlReplacement != nil {
+		SetOption("htmlReplacement", fmt.Sprintf("%v", opts.HtmlReplacement))
+	}
 }
 
-// SetOption parses a named API option value. Panics if there is an error.
+// SetOption parses a named API option value.
+// Error callback if option values are illegal.
 func SetOption(name string, value string) {
 	switch name {
 	case "safeMode":
 		n, err := strconv.ParseInt(value, 10, 64)
-		if err != nil {
+		if err != nil || n < 0 || n > 15 {
 			ErrorCallback("illegal safeMode API option value: " + value)
 		} else {
 			safeMode = int(n)

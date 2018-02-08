@@ -51,8 +51,14 @@ func TestUpdateOptions(t *testing.T) {
 
 func TestSetOption(t *testing.T) {
 	Init()
+	// Illegal values do not update options.
+	SetOption("safeMode", "qux")
+	assert.Equal(t, 0, safeMode)
 	SetOption("safeMode", "42")
-	assert.Equal(t, 42, safeMode)
+	assert.Equal(t, 0, safeMode)
+	SetOption("safeMode", "1")
+	SetOption("reset", "qux")
+	assert.Equal(t, 1, safeMode)
 }
 
 func TestHtmlSafeModeFilter(t *testing.T) {
