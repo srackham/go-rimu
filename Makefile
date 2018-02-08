@@ -42,22 +42,26 @@ push:
 
 # Run fuzz test.
 .PHONY: fuzz
-fuzz:
+fuzz: fuzz-corpus fuzz-build
 	go-fuzz -bin=./rimu/rimu-fuzz.zip -workdir=./rimu/fuzz-workdir
 
 # Build fuzz executables.
-# If the fuzz work directory does not exist it is created and the corpus is primed.
-# Requires go-fuzz package (https://github.com/dvyukov/go-fuzz):
 .PHONY: fuzz-build
-fuzz-build:
+fuzz-build: ./rimu/rimu-fuzz.zip
+
+./rimu/rimu-fuzz.zip: $(shell find . -name '*.go')
+	@echo Building executables...
+	go-fuzz-build -o ./rimu/rimu-fuzz.zip github.com/srackham/go-rimu/rimu
+
+# If the fuzz corpus directory does not exist it is created and the corpus is primed.
+.PHONY: fuzz-corpus
+fuzz-corpus:
 	@cd rimu
 	if [ ! -d fuzz-workdir/corpus ]; then
 		echo Initializing corpus...
 		mkdir -p fuzz-workdir/corpus
 		unzip -q testdata/fuzz-samples.zip -d fuzz-workdir/corpus
 	fi
-	echo Building executables...
-	go-fuzz-build github.com/srackham/go-rimu/rimu
 
 # List fuzz crashes.
 .PHONY: fuzz-crashes
