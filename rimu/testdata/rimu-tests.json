@@ -2315,7 +2315,6 @@
 	  }
 	},
 	{
-	  "unsupported": "go",
 	  "description": "callback api: existential macro invocations are deprecated",
 	  "input": "{undefined?foobar}",
 	  "expectedOutput": "<p>{undefined?foobar}</p>",

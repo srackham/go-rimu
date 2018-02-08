@@ -114,6 +114,13 @@ func Render(text string, silent bool) (result string) {
 			if match[0][0] == '\\' {
 				return match[0][1:]
 			}
+			params := match[2]
+			if params != "" && params[0] == '?' { // DEPRECATED: Existential macro invocation.
+				if !silent {
+					options.ErrorCallback("existential macro invocations are deprecated: " + match[0])
+				}
+				return match[0]
+			}
 			name := match[1]
 			value, found := Value(name)
 			if !found {
@@ -127,14 +134,7 @@ func Render(text string, silent bool) (result string) {
 				return "\u0002"
 			}
 			// Process non-simple macro.
-			params := match[2]
 			params = strings.Replace(params, "\\}", "}", -1) // Unescape escaped } characters.
-			if params[0] == '?' {                            // DEPRECATED: Existential macro invocation.
-				if !silent {
-					options.ErrorCallback("existential macro invocations are deprecated: " + match[0])
-				}
-				return match[0]
-			}
 			switch params[0] {
 			case '|': // Parametrized macro.
 				paramsList := strings.Split(params[1:], "|")
