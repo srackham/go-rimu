@@ -44,7 +44,7 @@ func TestRender(t *testing.T) {
 	// Run test cases.
 	for _, tt := range tests {
 		// ioutil.WriteFile(fmt.Sprintf("./testdata/fuzz-samples/sample-%03d.txt", i), []byte(tt.Input), 0644)
-		// if tt.Description != "Block Attributes on Fenced Block attached to list item" {
+		// if tt.Description != "illegal render() safeMode value" {
 		// 	continue
 		// }
 		if strings.Contains(tt.Unsupported, "go") {
@@ -63,8 +63,11 @@ func TestRender(t *testing.T) {
 			t.Errorf("\n%-15s: %s\n%-15s: %s\n%-15s: %s\n%-15s: %s\n\n",
 				"description", tt.Description, "input", tt.Input, "expected", tt.Expected, "got", got)
 		}
-		if tt.Callback != "" {
+		switch {
+		case tt.Callback != "":
 			assert.Equal(t, tt.Callback, strings.TrimSpace(msg))
+		case msg != "":
+			t.Errorf("unexpected callback: %s", msg)
 		}
 	}
 }

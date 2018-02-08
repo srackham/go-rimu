@@ -1377,7 +1377,7 @@
 		"description": "repeated macro parameter limitation (output should be '<p>foofoo</p>')",
 		"input": "{v1}='foo'\n{v2}='$1$1'\n{v2|{v1}}",
 		"expectedOutput": "<p>foo</p>",
-		"expectedCallback": "",
+		"expectedCallback": "error: repeated macro parameters: {v2|{v1}}",
 		"options": {
 		  "reset": true
 		}
@@ -1620,7 +1620,7 @@
 	  "description": "accumulated Block Attributes",
 	  "input": ".#x1\n.foo\n.bar\n.\"color:red;\"\n.[data-duration=\"5\"]\n.-macros\n.-spans\n_foobar_ {undefined}\n\n_foobar_",
 	  "expectedOutput": "<p class=\"foo bar\" id=\"x1\" style=\"color:red;\" data-duration=\"5\">_foobar_ {undefined}</p>\n<p><em>foobar</em></p>",
-	  "expectedCallback": "",
+	  "expectedCallback": "error: undefined macro: {undefined}: _foobar_ {undefined}",
 	  "options": {
 		"reset": true
 	  }
@@ -1719,7 +1719,7 @@
 	  "description": "Recursively defined macro in Line Macro context should not loop infinitely",
 	  "input": "{x}='{x}'\n{x}",
 	  "expectedOutput": "<p>{x}</p>",
-	  "expectedCallback": "",
+	  "expectedCallback": "error: undefined macro: {x}: {x}",
 	  "options": {
 		"reset": true
 	  }
@@ -1728,7 +1728,7 @@
 	  "description": "Recursively defined macro in Line Macro context should not loop infinitely",
 	  "input": "{x}='foo\n\n{x}'\n{x}",
 	  "expectedOutput": "<p>foo\n\n{x}</p>",
-	  "expectedCallback": "",
+	  "expectedCallback": "error: undefined macro: {x}: foo\n\n{x}",
 	  "options": {
 		"reset": true
 	  }
@@ -2605,6 +2605,16 @@
 	  "expectedOutput": "",
 	  "expectedCallback": "",
 	  "options": {
+		"reset": true
+	  }
+	},
+	{
+	  "description": "illegal render() safeMode value",
+	  "input": "",
+	  "expectedOutput": "",
+	  "expectedCallback": "error: illegal safeMode API option value: -1",
+	  "options": {
+		"safeMode": -1,
 		"reset": true
 	  }
 	}
