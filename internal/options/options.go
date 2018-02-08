@@ -15,7 +15,7 @@ func init() {
 }
 
 // RenderOptions sole use is for passing options into the public API.
-// All fields can be nil so that options can be selectively updated (if nil then don't update).
+// Fields can be nil so that options can be selectively updated (if field is unspecified then do not update).
 type RenderOptions struct {
 	SafeMode        interface{} // nil or int
 	HtmlReplacement interface{} // nil or string

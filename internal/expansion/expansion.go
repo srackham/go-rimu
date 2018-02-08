@@ -17,7 +17,7 @@ type Options struct {
 	Skip      bool
 	Spans     bool // Span substitution also expands special characters.
 	Specials  bool
-	// xxxMerge specify if the Xxx field has been specified.
+	// xxxMerge specify if the Xxx field has been set.
 	containerMerge bool
 	macrosMerge    bool
 	skipMerge      bool
