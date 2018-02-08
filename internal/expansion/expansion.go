@@ -17,29 +17,29 @@ type Options struct {
 	Skip      bool
 	Spans     bool // Span substitution also expands special characters.
 	Specials  bool
-	// xxxSet specify if the Xxx field is included blockattributes.Options and only in the Merge method.
-	containerSet bool
-	macrosSet    bool
-	skipSet      bool
-	spansSet     bool
-	specialsSet  bool
+	// xxxMerge specify if the Xxx field has been specified.
+	containerMerge bool
+	macrosMerge    bool
+	skipMerge      bool
+	spansMerge     bool
+	specialsMerge  bool
 }
 
 // Merge copies expansion options that are set from from to to.
 func (to *Options) Merge(from Options) {
-	if from.containerSet {
+	if from.containerMerge {
 		to.Container = from.Container
 	}
-	if from.macrosSet {
+	if from.macrosMerge {
 		to.Macros = from.Macros
 	}
-	if from.skipSet {
+	if from.skipMerge {
 		to.Skip = from.Skip
 	}
-	if from.spansSet {
+	if from.spansMerge {
 		to.Spans = from.Spans
 	}
-	if from.specialsSet {
+	if from.specialsMerge {
 		to.Specials = from.Specials
 	}
 }
@@ -58,19 +58,19 @@ func Parse(optsString string) (result Options) {
 				switch opt[1:] {
 				case "container":
 					result.Container = value
-					result.containerSet = true
+					result.containerMerge = true
 				case "macros":
 					result.Macros = value
-					result.macrosSet = true
+					result.macrosMerge = true
 				case "skip":
 					result.Skip = value
-					result.skipSet = true
+					result.skipMerge = true
 				case "specials":
 					result.Specials = value
-					result.specialsSet = true
+					result.specialsMerge = true
 				case "spans":
 					result.Spans = value
-					result.spansSet = true
+					result.spansMerge = true
 				}
 			} else {
 				options.ErrorCallback("illegal block option: " + opt)
