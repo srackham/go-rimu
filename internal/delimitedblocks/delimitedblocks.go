@@ -321,15 +321,16 @@ func SetDefinition(name string, value string) {
 		return
 	}
 	match := regexp.MustCompile(`^(?:(<[a-zA-Z].*>)\|(<[a-zA-Z/].*>))?(?:\s*)?([+-][ \w+-]+)?$`).FindStringSubmatch(strings.TrimSpace(value))
-	// TODO does not match should callback error (other ports to).
-	if match != nil {
-		if strings.Contains(value, "|") {
-			def.openTag = match[1]
-			def.closeTag = match[2]
-		}
-		if match[3] != "" {
-			def.options.Merge(expansion.Parse(match[3]))
-		}
+	if match == nil {
+		options.ErrorCallback("illegal delimited block definition: |" + name + "|='" + value + "'")
+		return
+	}
+	if strings.Contains(value, "|") {
+		def.openTag = match[1]
+		def.closeTag = match[2]
+	}
+	if match[3] != "" {
+		def.options.Merge(expansion.Parse(match[3]))
 	}
 }
 
