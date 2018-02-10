@@ -28,7 +28,6 @@ func init() {
 
 // Init resets options to default values.
 func Init() {
-	// TODO
 	Classes = ""
 	Id = ""
 	Css = ""

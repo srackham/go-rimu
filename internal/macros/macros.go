@@ -75,7 +75,6 @@ func IsNotBlank(name string) bool {
 // If the name ends with '?' then don't set the macro if it already exists.
 // `quote` is a single character: ' if a literal value, ` if an expression value.
 func SetValue(name string, value string, quote string) {
-	// TODO: Implement this as Options.skipMacroDefs() c.f. rimu-kt
 	if options.SkipMacroDefs() {
 		return // Skip if a safe mode is set.
 	}
