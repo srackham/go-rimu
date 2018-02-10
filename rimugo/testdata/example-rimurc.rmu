@@ -9,9 +9,6 @@
 */
 // Typographic replacements.
 // NOTE: &mdash; and &rightarrow; replacements generate false positives in inline HTML comment tags.
-
-// NOTE: go-rimu does not support `(?!re)` syntax.
-// /\\?--(?!>)/ = '&mdash;'
 /\\?--/ = '&mdash;'
 /\\?\.{3}/ = '&hellip;'
 /\\?->/ = '&rightarrow;'
