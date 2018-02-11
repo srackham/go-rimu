@@ -71,3 +71,13 @@ func TestRender(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkRender(b *testing.B) {
+	text, err := ioutil.ReadFile("../README.md")
+	if err != nil {
+		panic(err.Error())
+	}
+	for n := 0; n < b.N; n++ {
+		Render(string(text), RenderOptions{})
+	}
+}

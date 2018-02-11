@@ -1,4 +1,4 @@
-# Simple makefile to log workflow.
+# Makefile to log workflow.
 
 # Set defaults (see http://clarkgrubb.com/makefile-style-guide#prologue)
 MAKEFLAGS += --warn-undefined-variables
@@ -70,3 +70,14 @@ fuzz-crashes:
 		echo $$f
 		cat $$f
 	done
+
+.PHONY: benchmark
+benchmark:
+	cd rimu
+	go test $(GOFLAGS) -bench .
+
+.PHONY: profile
+profile:
+	cd rimu
+	go test -cpuprofile cpu.out -bench .    # Create benchmark executable and profile.
+	go tool pprof -text rimu.test cpu.out   # View top profile entries.
