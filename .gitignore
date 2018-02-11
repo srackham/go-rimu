@@ -4,7 +4,6 @@ debug
 *.test
 *.out
 gitignore
-TODO.md
 
 # Fuzz test files.
 *-fuzz.zip
