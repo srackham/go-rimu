@@ -8,7 +8,6 @@ import (
 	"github.com/srackham/go-rimu/internal/expansion"
 	"github.com/srackham/go-rimu/internal/options"
 	"github.com/srackham/go-rimu/internal/spans"
-	"github.com/srackham/go-rimu/internal/utils/re"
 	"github.com/srackham/go-rimu/internal/utils/stringlist"
 )
 
@@ -110,15 +109,17 @@ func Inject(tag string) string {
 		}
 	}
 	if Css != "" {
-		if regexp.MustCompile(`(?i)style=".*?"`).MatchString(tag) {
+		m := regexp.MustCompile(`(?i)style="(.*?)"`).FindStringSubmatchIndex(tag)
+		if m != nil {
 			// Inject CSS styles into first existing style attribute.
-			tag = re.ReplaceAllStringSubmatchFunc(regexp.MustCompile(`(?i)style="(.*?)"`), tag, func(match []string) string {
-				css := strings.TrimSpace(match[1])
-				if !strings.HasSuffix(css, ";") {
-					css += ";"
-				}
-				return "style=\"" + css + " " + Css + "\""
-			}, 1)
+			before := tag[:m[2]]
+			after := tag[m[3]:]
+			css := tag[m[2]:m[3]]
+			css = strings.TrimSpace(css)
+			if !strings.HasSuffix(css, ";") {
+				css += ";"
+			}
+			tag = before + css + " " + Css + after
 		} else {
 			attrs += " style=\"" + Css + "\""
 		}
