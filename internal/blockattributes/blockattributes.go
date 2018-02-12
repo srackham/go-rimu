@@ -86,9 +86,9 @@ func Inject(tag string) string {
 	}
 	attrs := ""
 	if Classes != "" {
-		m := regexp.MustCompile(`(?i)class="`).FindStringIndex(tag)
+		m := regexp.MustCompile(`(?i)^<[^>]*class="`).FindStringIndex(tag)
 		if m != nil {
-			// Inject class names into first existing class attribute.
+			// Inject class names into first existing class attribute in first tag.
 			before := tag[:m[1]]
 			after := tag[m[1]:]
 			tag = before + Classes + " " + after
@@ -109,9 +109,9 @@ func Inject(tag string) string {
 		}
 	}
 	if Css != "" {
-		m := regexp.MustCompile(`(?i)style="(.*?)"`).FindStringSubmatchIndex(tag)
+		m := regexp.MustCompile(`(?i)^<[^<]*style="(.*?)"`).FindStringSubmatchIndex(tag)
 		if m != nil {
-			// Inject CSS styles into first existing style attribute.
+			// Inject CSS styles into first existing style attribute in first tag.
 			before := tag[:m[2]]
 			after := tag[m[3]:]
 			css := tag[m[2]:m[3]]
