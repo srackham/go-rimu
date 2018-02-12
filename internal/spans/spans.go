@@ -232,7 +232,7 @@ func ReplaceMatch(match []string, replacement string, opts expansion.Options) st
 		}
 		result = match[i] // match group text.
 		return ReplaceInline(result, opts)
-	})
+	}, -1)
 }
 
 // Replace the inline elements specified in options in text and return the result.

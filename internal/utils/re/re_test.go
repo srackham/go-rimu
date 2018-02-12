@@ -39,7 +39,7 @@ func TestReplaceAllStringSubmatchFunc(t *testing.T) {
 	}
 	for _, tt := range tests {
 		re := regexp.MustCompile(tt.re)
-		got := ReplaceAllStringSubmatchFunc(re, tt.src, tt.repl)
+		got := ReplaceAllStringSubmatchFunc(re, tt.src, tt.repl, -1)
 		if got != tt.want {
 			t.Errorf("TestReplaceAllStringSubmatchFunc(%q, %q) == %q, want %q", tt.re, tt.src, got, tt.want)
 		}

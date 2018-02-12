@@ -176,7 +176,7 @@ func Render(text string, silent bool) (result string) {
 						param = spans.Render(param)
 					}
 					return param
-				})
+				}, -1)
 				return value
 			case '!', '=': // Exclusion and Inclusion macro.
 				pattern := params[1:]
@@ -201,7 +201,7 @@ func Render(text string, silent bool) (result string) {
 				return ""
 			}
 
-		})
+		}, -1)
 	}
 	// Restore expanded Simple values.
 	result = regexp.MustCompile(`\x{0002}`).ReplaceAllStringFunc(result, func(string) string {

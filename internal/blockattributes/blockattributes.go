@@ -87,9 +87,12 @@ func Inject(tag string) string {
 	}
 	attrs := ""
 	if Classes != "" {
-		if regexp.MustCompile(`(?i)class=".*?"`).MatchString(tag) {
-			// Inject class names into existing class attribute.
-			tag = regexp.MustCompile(`(?i)class="(.*?)"`).ReplaceAllString(tag, "class=\""+Classes+" $1\"")
+		m := regexp.MustCompile(`(?i)class="`).FindStringIndex(tag)
+		if m != nil {
+			// Inject class names into first existing class attribute.
+			before := tag[:m[1]]
+			after := tag[m[1]:]
+			tag = before + Classes + " " + after
 		} else {
 			attrs = "class=\"" + Classes + "\""
 		}
@@ -108,14 +111,14 @@ func Inject(tag string) string {
 	}
 	if Css != "" {
 		if regexp.MustCompile(`(?i)style=".*?"`).MatchString(tag) {
-			// Inject CSS styles into existing style attribute.
+			// Inject CSS styles into first existing style attribute.
 			tag = re.ReplaceAllStringSubmatchFunc(regexp.MustCompile(`(?i)style="(.*?)"`), tag, func(match []string) string {
 				css := strings.TrimSpace(match[1])
 				if !strings.HasSuffix(css, ";") {
 					css += ";"
 				}
 				return "style=\"" + css + " " + Css + "\""
-			})
+			}, 1)
 		} else {
 			attrs += " style=\"" + Css + "\""
 		}
