@@ -72,8 +72,8 @@ func TestRender(t *testing.T) {
 	}
 }
 
-func BenchmarkRender(b *testing.B) {
-	text, err := ioutil.ReadFile("../README.md")
+func BenchmarkSmall(b *testing.B) {
+	text, err := ioutil.ReadFile("./testdata/benchmark-small.rmu")
 	if err != nil {
 		panic(err.Error())
 	}
