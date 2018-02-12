@@ -98,7 +98,7 @@ func Inject(tag string) string {
 	}
 	if Id != "" {
 		Id = strings.ToLower(Id)
-		has_id := regexp.MustCompile(`(?i)id=".*?"`).MatchString(tag)
+		has_id := regexp.MustCompile(`(?i)^<[^<]*id=".*?"`).MatchString(tag)
 		if has_id || ids.IndexOf(Id) >= 0 {
 			options.ErrorCallback("duplicate 'id' attribute: " + Id)
 		} else {
