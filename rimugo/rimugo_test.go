@@ -17,9 +17,9 @@ type rimucTest struct {
 	Input       string `json:"input"`
 	Expected    string `json:"expectedOutput"`
 	Predicate   string `json:"predicate"`
-	ExitCode    int    `json:"exitCode"`
-	Unsupported string `json:"unsupported"`
-	Layouts     bool   `json:"layouts"`
+	ExitCode    int    `json:"exitCode,omitempty"`
+	Unsupported string `json:"unsupported,omitempty"`
+	Layouts     bool   `json:"layouts,omitempty"`
 }
 
 // Convert command-line arguments string to array of arguments.

@@ -15,13 +15,13 @@ type renderTest struct {
 	Expected    string     `json:"expectedOutput"`
 	Callback    string     `json:"expectedCallback"`
 	Options     apiOptions `json:"options"`
-	Unsupported string     `json:"unsupported"`
+	Unsupported string     `json:"unsupported,omitempty"`
 }
 
 type apiOptions struct {
-	SafeMode        int    `json:"safeMode"`
-	HtmlReplacement string `json:"htmlReplacement"`
-	Reset           bool   `json:"reset"`
+	SafeMode        int    `json:"safeMode,omitempty"`
+	HtmlReplacement string `json:"htmlReplacement,omitempty"`
+	Reset           bool   `json:"reset,omitempty"`
 }
 
 func TestRender(t *testing.T) {
