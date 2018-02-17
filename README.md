@@ -1,23 +1,20 @@
 # Rimu Markup for Go
 
-**IMPORTANT**: `go-rimu` has not yet reached 1.0 so there are no
-stability guarantees.
-
 _go-rimu_ is a port of the [Rimu Markup
 language](http://rimumarkup.org) written in the Go language.
 
 
 ## Features
 Functionally identical to the [JavaScript
-implementation](https://github.com/srackham/rimu) version 10.4.2 with
+implementation](https://github.com/srackham/rimu) version 11.0.0 with
 the following exceptions:
 
-  * Does not support _Expression macro values_.
-  * Does not support _Imported Layouts_.
-  * Because the Go `regexp` package uses RE2 regular expressions there
-    are some limitations on the regular expressions used in
-    Replacements definitions and Inclusion/Exclusion macro
-    invocations.
+  * Does not support deprecated _Expression macro values_.
+  * Does not support deprecated _Imported Layouts_.
+  * Because the Go `regexp` package uses RE2 regular expressions there are
+    [some limitations](http://rimumarkup.org/reference.html#regular-expressions)
+    on the regular expressions used in Replacements definitions and
+    Inclusion/Exclusion macro invocations.
 
 
 ## Installation
@@ -44,16 +41,29 @@ import (
 )
 
 func main() {
-    // Prints "<p><em>Hello Rimu!</em></p>"
-    fmt.Println(rimu.Render("*Hello Rimu!*", rimu.RenderOptions{}))
+    // Prints "<p><em>Hello Rimu</em>!</p>"
+    fmt.Println(rimu.Render("*Hello Rimu*!", rimu.RenderOptions{}))
 }
 ```
+
+See Rimu
+[API documentation](http://rimumarkup.org/reference.html#api).
 
 
 ## Rimu compiler command
 The executable is named `rimugo` and is functionally identical to the
 [JavaScript rimuc](http://rimumarkup.org/reference.html#rimuc-command)
-command-line compiler.
+command.
+
+
+## Learn more
+Read the [documentation](http://rimumarkup.org/reference.html) and
+experiment with Rimu in the [Rimu
+Playground](http://srackham.github.io/rimu/rimuplayground.html).
+
+See the Rimu [Change
+Log](http://srackham.github.io/rimu/changelog.html) for the latest
+changes.
 
 
 ## Implementation
@@ -62,10 +72,5 @@ command-line compiler.
   eased porting and debugging.  This will also make it easier to
   cross-port new features and bug-fixes.
 
-- TypeScript-style namespaces are implemented as Go packages.
-
-- Both the Go and JavaScript implementations share the same JSON
-  driven test suites comprising over 250 compatibility checks.
-
-- Includes Fuzz tests (see `Makefile` targets `fuzz`, `fuzz-build` and
-  `fuzz-crashes`).
+- All Rimu implementations share the same JSON driven test suites
+  comprising over 300 compatibility checks.
