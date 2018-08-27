@@ -57,6 +57,7 @@ OPTIONS
 
     'classic': Desktop-centric layout.
     'flex':    Flexbox mobile layout (experimental).
+    'plain':   Unstyled HTML layout.
     'sequel':  Responsive cross-device layout.
 
     If only one source file is specified and the --output
@@ -214,6 +215,7 @@ func importLayoutFile(name string) string {
 
 func main() {
 	defer func() {
+		// Ignore the panic if it's a MockExit (i.e. we're running a test).
 		r, ok := recover().(MockExit)
 		if !ok {
 			panic(r)
@@ -337,7 +339,7 @@ outer:
 		switch {
 		case strings.HasPrefix(infile, RESOURCE_TAG):
 			infile = infile[len(RESOURCE_TAG):]
-			if (stringlist.StringList{"classic", "flex", "sequel", "v8"}).IndexOf(layout) >= 0 {
+			if (stringlist.StringList{"classic", "flex", "plain", "sequel", "v8"}).IndexOf(layout) >= 0 {
 				source = readResourceFile(infile)
 			} else {
 				source = importLayoutFile(infile)

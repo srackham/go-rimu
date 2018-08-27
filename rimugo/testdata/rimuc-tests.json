@@ -75,7 +75,7 @@
     "description": "rimuc --highlightjs",
     "args": "--highlightjs",
     "input": "",
-    "expectedOutput": "<script>hljs.initHighlightingOnLoad();</script>",
+    "expectedOutput": "hljs.configure({languages: []});",
     "predicate": "contains",
     "layouts": true
   },
@@ -277,7 +277,6 @@
     "predicate": "equals"
   },
   {
-    "unsupported": "go,kt",
     "description": "rimuc imported layout",
     "args": "--layout plain",
     "input": "foobar",
