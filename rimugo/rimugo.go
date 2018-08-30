@@ -20,6 +20,7 @@ import (
 
 var osExit = os.Exit // Mocked by tests.
 
+const VERSION = "11.1.0"
 const MANPAGE = `NAME
   rimugo - convert Rimu source to HTML
 
@@ -111,6 +112,9 @@ OPTIONS
     --prepend "{--section-numbers}='true'"
     --prepend "{--theme}='THEME'"
     --prepend "{--title}='TITLE'"
+
+  --version
+    Print version number.
 
 LAYOUT OPTIONS
   The following options are available when the --layout option
@@ -244,6 +248,9 @@ outer:
 		switch arg {
 		case "--help", "-h":
 			fmt.Printf("\n" + MANPAGE)
+			osExit(0)
+		case "--version":
+			fmt.Printf(VERSION + "\n")
 			osExit(0)
 		case "--lint", "-l": // Deprecated in Rimu 10.0.0
 			break
