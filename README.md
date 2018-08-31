@@ -6,7 +6,7 @@ language](http://rimumarkup.org) written in the Go language.
 
 ## Features
 Functionally identical to the [JavaScript
-implementation](https://github.com/srackham/rimu) version 11.0.0 with
+implementation](https://github.com/srackham/rimu) version 11.1.0 with
 the following exceptions:
 
   * Does not support deprecated _Expression macro values_.
