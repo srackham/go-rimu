@@ -5,10 +5,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/srackham/go-rimu/internal/expansion"
-	"github.com/srackham/go-rimu/internal/options"
-	"github.com/srackham/go-rimu/internal/spans"
-	"github.com/srackham/go-rimu/internal/utils/stringlist"
+	"github.com/srackham/go-rimu-mod/internal/expansion"
+	"github.com/srackham/go-rimu-mod/internal/options"
+	"github.com/srackham/go-rimu-mod/internal/spans"
+	"github.com/srackham/go-rimu-mod/internal/utils/stringlist"
 )
 
 var (

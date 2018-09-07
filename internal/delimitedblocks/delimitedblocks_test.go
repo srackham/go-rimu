@@ -3,7 +3,7 @@ package delimitedblocks
 import (
 	"testing"
 
-	"github.com/srackham/go-rimu/internal/iotext"
+	"github.com/srackham/go-rimu-mod/internal/iotext"
 	"github.com/stretchr/testify/assert"
 )
 

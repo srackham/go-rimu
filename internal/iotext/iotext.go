@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/srackham/go-rimu/internal/options"
+	"github.com/srackham/go-rimu-mod/internal/options"
 )
 
 /*
