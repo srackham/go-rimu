@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/srackham/go-rimu-mod/internal/options"
+	"github.com/srackham/go-rimu/internal/options"
 )
 
 func init() {

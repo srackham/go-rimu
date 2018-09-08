@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/srackham/go-rimu-mod/internal/expansion"
-	_ "github.com/srackham/go-rimu-mod/internal/macros"
+	"github.com/srackham/go-rimu/internal/expansion"
+	_ "github.com/srackham/go-rimu/internal/macros"
 )
 
 type attrs struct {

@@ -1,4 +1,4 @@
-module github.com/srackham/go-rimu-mod
+module github.com/srackham/go-rimu
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

@@ -4,13 +4,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/srackham/go-rimu-mod/internal/blockattributes"
-	"github.com/srackham/go-rimu-mod/internal/expansion"
-	"github.com/srackham/go-rimu-mod/internal/iotext"
-	"github.com/srackham/go-rimu-mod/internal/macros"
-	"github.com/srackham/go-rimu-mod/internal/options"
-	"github.com/srackham/go-rimu-mod/internal/spans"
-	"github.com/srackham/go-rimu-mod/internal/utils/stringlist"
+	"github.com/srackham/go-rimu/internal/blockattributes"
+	"github.com/srackham/go-rimu/internal/expansion"
+	"github.com/srackham/go-rimu/internal/iotext"
+	"github.com/srackham/go-rimu/internal/macros"
+	"github.com/srackham/go-rimu/internal/options"
+	"github.com/srackham/go-rimu/internal/spans"
+	"github.com/srackham/go-rimu/internal/utils/stringlist"
 )
 
 // api package dependency injection.
