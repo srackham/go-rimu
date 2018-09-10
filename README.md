@@ -18,13 +18,12 @@ the following exceptions:
 
 
 ## Installation
-Download:
+**NOTE**: Requires Go 1.11 or better.
 
-    go get -u github.com/srackham/go-rimu/...
+Download, build, test and install:
 
-Build, test and install:
-
-    cd $GOPATH/src/github.com/srackham/go-rimu
+    git clone git@github.com:srackham/go-rimu.git
+    cd go-rimu
     make
 
 
@@ -37,7 +36,7 @@ package main
 import (
     "fmt"
 
-    "github.com/srackham/go-rimu/rimu"
+    "github.com/srackham/go-rimu/v11/rimu"
 )
 
 func main() {

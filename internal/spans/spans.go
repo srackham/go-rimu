@@ -5,13 +5,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/srackham/go-rimu/internal/options"
+	"github.com/srackham/go-rimu/v11/internal/options"
 
-	"github.com/srackham/go-rimu/internal/expansion"
-	"github.com/srackham/go-rimu/internal/quotes"
-	"github.com/srackham/go-rimu/internal/replacements"
-	"github.com/srackham/go-rimu/internal/utils/re"
-	"github.com/srackham/go-rimu/internal/utils/str"
+	"github.com/srackham/go-rimu/v11/internal/expansion"
+	"github.com/srackham/go-rimu/v11/internal/quotes"
+	"github.com/srackham/go-rimu/v11/internal/replacements"
+	"github.com/srackham/go-rimu/v11/internal/utils/re"
+	"github.com/srackham/go-rimu/v11/internal/utils/str"
 )
 
 // macros and spans package dependency injections.

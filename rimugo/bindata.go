@@ -92,7 +92,7 @@ func resourcesClassicFooterRmu() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resources/classic-footer.rmu", size: 2182, mode: os.FileMode(436), modTime: time.Unix(1535753796, 0)}
+	info := bindataFileInfo{name: "resources/classic-footer.rmu", size: 2182, mode: os.FileMode(436), modTime: time.Unix(1536539276, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -112,7 +112,7 @@ func resourcesClassicHeaderRmu() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resources/classic-header.rmu", size: 11860, mode: os.FileMode(436), modTime: time.Unix(1535753796, 0)}
+	info := bindataFileInfo{name: "resources/classic-header.rmu", size: 11860, mode: os.FileMode(436), modTime: time.Unix(1536539276, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -132,7 +132,7 @@ func resourcesFlexFooterRmu() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resources/flex-footer.rmu", size: 2126, mode: os.FileMode(436), modTime: time.Unix(1535753796, 0)}
+	info := bindataFileInfo{name: "resources/flex-footer.rmu", size: 2126, mode: os.FileMode(436), modTime: time.Unix(1536539276, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -152,7 +152,7 @@ func resourcesFlexHeaderRmu() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resources/flex-header.rmu", size: 11913, mode: os.FileMode(436), modTime: time.Unix(1535753796, 0)}
+	info := bindataFileInfo{name: "resources/flex-header.rmu", size: 11913, mode: os.FileMode(436), modTime: time.Unix(1536539276, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -172,7 +172,7 @@ func resourcesPlainFooterRmu() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resources/plain-footer.rmu", size: 16, mode: os.FileMode(420), modTime: time.Unix(1535753796, 0)}
+	info := bindataFileInfo{name: "resources/plain-footer.rmu", size: 16, mode: os.FileMode(420), modTime: time.Unix(1536539276, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -192,7 +192,7 @@ func resourcesPlainHeaderRmu() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resources/plain-header.rmu", size: 306, mode: os.FileMode(420), modTime: time.Unix(1535753796, 0)}
+	info := bindataFileInfo{name: "resources/plain-header.rmu", size: 306, mode: os.FileMode(420), modTime: time.Unix(1536539276, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -212,7 +212,7 @@ func resourcesSequelFooterRmu() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resources/sequel-footer.rmu", size: 2387, mode: os.FileMode(436), modTime: time.Unix(1535753796, 0)}
+	info := bindataFileInfo{name: "resources/sequel-footer.rmu", size: 2387, mode: os.FileMode(436), modTime: time.Unix(1536539276, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -232,7 +232,7 @@ func resourcesSequelHeaderRmu() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resources/sequel-header.rmu", size: 12566, mode: os.FileMode(436), modTime: time.Unix(1535753796, 0)}
+	info := bindataFileInfo{name: "resources/sequel-header.rmu", size: 12566, mode: os.FileMode(436), modTime: time.Unix(1536539276, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -252,7 +252,7 @@ func resourcesV8FooterRmu() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resources/v8-footer.rmu", size: 2891, mode: os.FileMode(436), modTime: time.Unix(1535753796, 0)}
+	info := bindataFileInfo{name: "resources/v8-footer.rmu", size: 2891, mode: os.FileMode(436), modTime: time.Unix(1536539276, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -272,7 +272,7 @@ func resourcesV8HeaderRmu() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resources/v8-header.rmu", size: 6799, mode: os.FileMode(436), modTime: time.Unix(1535753796, 0)}
+	info := bindataFileInfo{name: "resources/v8-header.rmu", size: 6799, mode: os.FileMode(436), modTime: time.Unix(1536539276, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

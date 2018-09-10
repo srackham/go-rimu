@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/srackham/go-rimu/internal/utils/str"
+	"github.com/srackham/go-rimu/v11/internal/utils/str"
 )
 
 // api package dependency injection.
