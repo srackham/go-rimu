@@ -44,8 +44,18 @@ func main() {
     fmt.Println(rimu.Render("*Hello Rimu*!", rimu.RenderOptions{}))
 }
 ```
+To compile and run this simple application:
 
-See Rimu
+1. Copy the code above to a file named `hello-rimu.go` and put it in an empty
+   directory.
+2.  Change to the directory and run the following Go commands:
+
+        go mod init example.com/hello-rimu
+        go run hello-rimu.go
+
+**NOTE**: Requires Go 1.11 or better.
+
+See also Rimu
 [API documentation](http://rimumarkup.org/reference.html#api).
 
 
