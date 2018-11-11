@@ -22,7 +22,7 @@ the following exceptions:
 
 Download, build, test and install:
 
-    git clone git@github.com:srackham/go-rimu.git
+    git clone https://github.com/srackham/go-rimu.git
     cd go-rimu
     make
 
