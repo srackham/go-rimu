@@ -5,27 +5,21 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/srackham/go-rimu/v11/internal/expansion"
 	_ "github.com/srackham/go-rimu/v11/internal/macros"
 )
-
-type attrs struct {
-	classes, id, css, attributes string
-	options                      expansion.Options
-}
 
 func TestParse(t *testing.T) {
 	tests := []struct {
 		in   string
 		want attrs
 	}{
-		{".class #id", attrs{classes: "class", id: "id"}},
+		{".class #id", attrs{Classes: "class", ID: "id"}},
 		{".\"css\"", attrs{css: "css"}},
 	}
 	for _, tt := range tests {
 		Init()
 		Parse(tt.in)
-		got := attrs{Classes, Id, Css, Attributes, Options}
+		got := Attrs
 		assert.Equal(t, tt.want, got)
 	}
 }
@@ -42,10 +36,10 @@ func TestInject(t *testing.T) {
 	}
 	for _, tt := range tests {
 		Init()
-		Id = tt.id
-		Classes = tt.classes
-		Css = tt.css
-		Attributes = tt.attributes
+		Attrs.ID = tt.id
+		Attrs.Classes = tt.classes
+		Attrs.css = tt.css
+		Attrs.attributes = tt.attributes
 		got := Inject(tt.tag)
 		assert.Equal(t, tt.want, got)
 	}

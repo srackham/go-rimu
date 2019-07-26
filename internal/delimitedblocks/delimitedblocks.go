@@ -262,7 +262,7 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 			lines = append(lines, content...)
 			// Calculate block expansion options.
 			opts := def.options
-			opts.Merge(blockattributes.Options)
+			opts.Merge(blockattributes.Attrs.Options)
 			// Translate block.
 			if !opts.Skip {
 				text := strings.Join(lines, "\n")
@@ -276,7 +276,7 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 					opentag = blockattributes.Inject(opentag)
 				}
 				if opts.Container {
-					blockattributes.Options.Container = false // Consume before recursing.
+					blockattributes.Attrs.Options.Container = false // Consume before recursing.
 					text = ApiRender(text)
 				} else {
 					text = spans.ReplaceInline(text, opts)
@@ -295,7 +295,7 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 				}
 			}
 			// Reset consumed Block Attributes expansion options.
-			blockattributes.Options = expansion.Options{}
+			blockattributes.Attrs.Options = expansion.Options{}
 			return true
 		}
 	}
@@ -343,7 +343,7 @@ func delimiterTextFilter(match []string, _ *Definition) string {
 // Inject $2 into block class attribute, set close delimiter to $1.
 func classInjectionFilter(match []string, def *Definition) string {
 	if p1 := strings.TrimSpace(match[2]); p1 != "" {
-		blockattributes.Classes = p1
+		blockattributes.Attrs.Classes = p1
 	}
 	// closeMatch must be set at runtime so we correctly match closing delimiter
 	def.closeMatch = regexp.MustCompile("^" + regexp.QuoteMeta(match[1]) + "$")

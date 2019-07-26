@@ -133,8 +133,8 @@ var defs = []Definition{
 		},
 		filter: func(match []string, _ *iotext.Reader, def Definition) string {
 			match[1] = fmt.Sprint(len(match[1])) // Replace $1 with header number.
-			if macros.IsNotBlank("--header-ids") && blockattributes.Id == "" {
-				blockattributes.Id = blockattributes.Slugify(match[2])
+			if macros.IsNotBlank("--header-ids") && blockattributes.Attrs.ID == "" {
+				blockattributes.Attrs.ID = blockattributes.Slugify(match[2])
 			}
 			return spans.ReplaceMatch(match, def.replacement, expansion.Options{Macros: true})
 		},

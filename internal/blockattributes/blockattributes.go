@@ -11,13 +11,16 @@ import (
 	"github.com/srackham/go-rimu/v11/internal/utils/stringlist"
 )
 
-var (
+type attrs struct {
 	Classes    string // Space separated HTML class names.
-	Id         string // HTML element id.
-	Css        string // HTML CSS styles.
-	Attributes string // Other HTML element attributes.
+	ID         string // HTML element id.
+	css        string // HTML CSS styles.
+	attributes string // Other HTML element attributes.
 	Options    expansion.Options
-)
+}
+
+// Attrs TODO
+var Attrs attrs
 
 var ids stringlist.StringList // List of allocated HTML ids.
 
@@ -27,14 +30,15 @@ func init() {
 
 // Init resets options to default values.
 func Init() {
-	Classes = ""
-	Id = ""
-	Css = ""
-	Attributes = ""
-	Options = expansion.Options{}
+	Attrs.Classes = ""
+	Attrs.ID = ""
+	Attrs.css = ""
+	Attrs.attributes = ""
+	Attrs.Options = expansion.Options{}
 	ids = nil
 }
 
+// Parse TODO
 func Parse(text string) bool {
 	// Parse Block Attributes.
 	// class names = $1, id = $2, css-properties = $3, html-attributes = $4, block-options = $5
@@ -48,31 +52,31 @@ func Parse(text string) bool {
 	}
 	if !options.SkipBlockAttributes() {
 		if m[1] != "" { // HTML element class names.
-			if Classes != "" {
-				Classes += " "
+			if Attrs.Classes != "" {
+				Attrs.Classes += " "
 			}
-			Classes += m[1]
+			Attrs.Classes += m[1]
 		}
 		if m[2] != "" { // HTML element id.
-			Id = m[2][1:]
+			Attrs.ID = m[2][1:]
 		}
 		if m[3] != "" { // CSS properties.
-			if Css != "" && !strings.HasSuffix(Css, ";") {
-				Css += ";"
+			if Attrs.css != "" && !strings.HasSuffix(Attrs.css, ";") {
+				Attrs.css += ";"
 			}
-			if Css != "" {
-				Css += " "
+			if Attrs.css != "" {
+				Attrs.css += " "
 			}
-			Css += m[3]
+			Attrs.css += m[3]
 		}
 		if m[4] != "" && !options.IsSafeModeNz() { // HTML attributes.
-			if Attributes != "" {
-				Attributes += " "
+			if Attrs.attributes != "" {
+				Attrs.attributes += " "
 			}
-			Attributes += strings.TrimSpace(m[4][1 : len(m[4])-1])
+			Attrs.attributes += strings.TrimSpace(m[4][1 : len(m[4])-1])
 		}
 		if m[5] != "" {
-			Options.Merge(expansion.Parse(m[5]))
+			Attrs.Options.Merge(expansion.Parse(m[5]))
 		}
 	}
 	return true
@@ -85,30 +89,30 @@ func Inject(tag string) string {
 		return tag
 	}
 	attrs := ""
-	if Classes != "" {
+	if Attrs.Classes != "" {
 		m := regexp.MustCompile(`(?i)^<[^>]*class="`).FindStringIndex(tag)
 		if m != nil {
 			// Inject class names into first existing class attribute in first tag.
 			before := tag[:m[1]]
 			after := tag[m[1]:]
-			tag = before + Classes + " " + after
+			tag = before + Attrs.Classes + " " + after
 		} else {
-			attrs = "class=\"" + Classes + "\""
+			attrs = "class=\"" + Attrs.Classes + "\""
 		}
 	}
-	if Id != "" {
-		Id = strings.ToLower(Id)
-		has_id := regexp.MustCompile(`(?i)^<[^<]*id=".*?"`).MatchString(tag)
-		if has_id || ids.IndexOf(Id) >= 0 {
-			options.ErrorCallback("duplicate 'id' attribute: " + Id)
+	if Attrs.ID != "" {
+		Attrs.ID = strings.ToLower(Attrs.ID)
+		hasID := regexp.MustCompile(`(?i)^<[^<]*id=".*?"`).MatchString(tag)
+		if hasID || ids.IndexOf(Attrs.ID) >= 0 {
+			options.ErrorCallback("duplicate 'id' attribute: " + Attrs.ID)
 		} else {
-			ids.Push(Id)
+			ids.Push(Attrs.ID)
 		}
-		if !has_id {
-			attrs += " id=\"" + Id + "\""
+		if !hasID {
+			attrs += " id=\"" + Attrs.ID + "\""
 		}
 	}
-	if Css != "" {
+	if Attrs.css != "" {
 		m := regexp.MustCompile(`(?i)^<[^<]*style="(.*?)"`).FindStringSubmatchIndex(tag)
 		if m != nil {
 			// Inject CSS styles into first existing style attribute in first tag.
@@ -119,13 +123,13 @@ func Inject(tag string) string {
 			if !strings.HasSuffix(css, ";") {
 				css += ";"
 			}
-			tag = before + css + " " + Css + after
+			tag = before + css + " " + Attrs.css + after
 		} else {
-			attrs += " style=\"" + Css + "\""
+			attrs += " style=\"" + Attrs.css + "\""
 		}
 	}
-	if Attributes != "" {
-		attrs += " " + Attributes
+	if Attrs.attributes != "" {
+		attrs += " " + Attrs.attributes
 	}
 	attrs = strings.TrimLeft(attrs, " \n")
 	if attrs != "" {
@@ -137,13 +141,14 @@ func Inject(tag string) string {
 		}
 	}
 	// Consume the attributes.
-	Classes = ""
-	Id = ""
-	Css = ""
-	Attributes = ""
+	Attrs.Classes = ""
+	Attrs.ID = ""
+	Attrs.css = ""
+	Attrs.attributes = ""
 	return tag
 }
 
+// Slugify TODO
 func Slugify(text string) string {
 	slug := text
 	slug = regexp.MustCompile(`\W+`).ReplaceAllString(slug, "-") // Replace non-alphanumeric characters with dashes.
