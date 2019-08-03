@@ -11,13 +11,13 @@ import (
 /*
   Reader class.
 */
-// Reader TODO
+// Reader state.
 type Reader struct {
 	Lines []string
 	Pos   int // Line index of current line.
 }
 
-// NewReader TODO
+// NewReader returns a new reader for text string.
 func NewReader(text string) *Reader {
 	if !utf8.ValidString(text) {
 		options.ErrorCallback("invalid UTF-8 input")
@@ -32,12 +32,12 @@ func NewReader(text string) *Reader {
 	return r
 }
 
-// Eof TODO
+// Eof returns true is reader is at end of text.
 func (r *Reader) Eof() bool {
 	return r.Pos >= len(r.Lines)
 }
 
-// SetCursor TODO
+// SetCursor sets the reader cursor position.
 func (r *Reader) SetCursor(value string) {
 	if r.Eof() {
 		panic("unexpected eof")
@@ -45,7 +45,7 @@ func (r *Reader) SetCursor(value string) {
 	r.Lines[r.Pos] = value
 }
 
-// Cursor TODO
+// Cursor returns the cursor position.
 func (r *Reader) Cursor() string {
 	if r.Eof() {
 		panic("unexpected eof")
@@ -87,7 +87,7 @@ func (r *Reader) ReadTo(re *regexp.Regexp) (result []string) {
 	return nil
 }
 
-// SkipBlankLines TODO
+// SkipBlankLines advances cursor to next non-blank line.
 func (r *Reader) SkipBlankLines() {
 	for !r.Eof() && strings.TrimSpace(r.Cursor()) == "" {
 		r.Next()
@@ -97,12 +97,12 @@ func (r *Reader) SkipBlankLines() {
 /*
   Writer class.
 */
-// Writer TODO
+// Writer is a container for lines of text.
 type Writer struct {
 	Buffer []string // Appending an array is faster than string concatenation.
 }
 
-// NewWriter TODO
+// NewWriter return a new empty Writer.
 func NewWriter() *Writer {
 	return &Writer{}
 }

@@ -18,7 +18,7 @@ func init() {
 	delimitedblocks.ApiRender = Render
 }
 
-// Init TODO
+// Init initialises Rimu state.
 func Init() {
 	blockattributes.Init()
 	options.Init()
@@ -28,7 +28,7 @@ func Init() {
 	replacements.Init()
 }
 
-// Render TODO
+// Render source text to HTML string.
 func Render(source string) string {
 	reader := iotext.NewReader(source)
 	writer := iotext.NewWriter()

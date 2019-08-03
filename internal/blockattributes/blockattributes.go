@@ -19,7 +19,7 @@ type attrs struct {
 	Options    expansion.Options
 }
 
-// Attrs TODO
+// Attrs are those of the last parsed Block Attributes element.
 var Attrs attrs
 
 var ids stringlist.StringList // List of allocated HTML ids.
@@ -38,9 +38,8 @@ func Init() {
 	ids = nil
 }
 
-// Parse TODO
+// Parse text to Attrs block attributes.
 func Parse(text string) bool {
-	// Parse Block Attributes.
 	// class names = $1, id = $2, css-properties = $3, html-attributes = $4, block-options = $5
 	text = spans.ReplaceInline(text, expansion.Options{Macros: true})
 	m := regexp.MustCompile(`^\\?\.((?:\s*[a-zA-Z][\w\-]*)+)*(?:\s*)?(#[a-zA-Z][\w\-]*\s*)?(?:\s*)?(?:"(.+?)")?(?:\s*)?(\[.+])?(?:\s*)?([+-][ \w+-]+)?$`).FindStringSubmatch(text)
@@ -148,7 +147,7 @@ func Inject(tag string) string {
 	return tag
 }
 
-// Slugify TODO
+// Slugify converts text to a slug.
 func Slugify(text string) string {
 	slug := text
 	slug = regexp.MustCompile(`\W+`).ReplaceAllString(slug, "-") // Replace non-alphanumeric characters with dashes.

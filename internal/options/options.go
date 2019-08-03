@@ -28,7 +28,7 @@ type CallbackMessage struct {
 	Text string
 }
 
-// CallbackFunction TODO
+// CallbackFunction is the API callback function type.
 type CallbackFunction func(message CallbackMessage)
 
 // Global option values.

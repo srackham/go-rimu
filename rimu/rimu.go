@@ -5,13 +5,13 @@ import (
 	"github.com/srackham/go-rimu/v11/internal/options"
 )
 
-// CallbackMessage TODO
-type CallbackMessage = options.CallbackMessage
-
-// CallbackFunction TODO
+// CallbackFunction is the API callback function type.
 type CallbackFunction = options.CallbackFunction
 
-// RenderOptions TODO
+// CallbackMessage contains the callback message passed to the callback function.
+type CallbackMessage = options.CallbackMessage
+
+// RenderOptions contains the API render options.
 type RenderOptions = options.RenderOptions
 
 // Render is public API to translate Rimu Markup to HTML.
