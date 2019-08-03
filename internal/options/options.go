@@ -108,7 +108,7 @@ func SetOption(name string, value string) {
 	}
 }
 
-// Filter HTML based on current safeMode.
+// HtmlSafeModeFilter filters HTML based on current safeMode.
 func HtmlSafeModeFilter(html string) string {
 	switch safeMode & 0x3 {
 	case 0: // Raw HTML (default behavior).
@@ -119,7 +119,6 @@ func HtmlSafeModeFilter(html string) string {
 		return htmlReplacement
 	case 3: // Render HTML as text.
 		return str.ReplaceSpecialChars(html)
-		return html
 	default:
 		return ""
 	}
