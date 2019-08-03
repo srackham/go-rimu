@@ -65,9 +65,9 @@ var defs = []Definition{
 	},
 }
 
-const noMatch = "NO_MATCH"
+const noMatch = "NO_MATCH" // "no matching list item found" list ID constant.
 
-// noMatchItem returns "no matching item found" constant.
+// noMatchItem returns "no matching list item found" constant.
 func noMatchItem() ItemInfo { return ItemInfo{id: noMatch} }
 
 var ids []string // Stack of open list IDs.
@@ -202,23 +202,20 @@ func consumeBlockAttributes(reader *iotext.Reader, writer *iotext.Writer) int {
 // Unescape escaped list items in reader.
 // If it does not match a list related element return null.
 func matchItem(reader *iotext.Reader) ItemInfo {
-	// Check if the line matches a List definition.
-	if reader.Eof() {
-		return noMatchItem()
-	}
-	var item ItemInfo // ItemInfo factory.
-	// Check if the line matches a list item.
-	for _, def := range defs {
-		match := def.match.FindStringSubmatch(reader.Cursor())
-		if match != nil {
-			if match[0][0] == '\\' {
-				reader.SetCursor(reader.Cursor()[1:]) // Drop backslash.
-				return noMatchItem()
+	if !reader.Eof() {
+		var item ItemInfo // ItemInfo factory.
+		for _, def := range defs {
+			match := def.match.FindStringSubmatch(reader.Cursor())
+			if match != nil {
+				if match[0][0] == '\\' {
+					reader.SetCursor(reader.Cursor()[1:]) // Drop backslash.
+					break
+				}
+				item.match = match
+				item.def = def
+				item.id = match[len(match)-2] // The second to last match group is the list ID.
+				return item
 			}
-			item.match = match
-			item.def = def
-			item.id = match[len(match)-2] // The second to last match group is the list ID.
-			return item
 		}
 	}
 	return noMatchItem()
