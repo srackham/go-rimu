@@ -13,6 +13,7 @@ import (
 	"github.com/srackham/go-rimu/v11/internal/utils/stringlist"
 )
 
+// Definition of List element.
 type Definition struct {
 	match        *regexp.Regexp
 	listOpenTag  string
@@ -23,14 +24,14 @@ type Definition struct {
 	termCloseTag string // Definition lists only.
 }
 
-// Information about a matched list item element.
+// ItemInfo contains information about a matched list item element.
 type ItemInfo struct {
 	match []string
 	def   Definition
 	id    string // List ID.
 }
 
-var defs []Definition = []Definition{
+var defs = []Definition{
 	// Prefix match with backslash to allow escaping.
 
 	// Unordered lists.
@@ -64,17 +65,20 @@ var defs []Definition = []Definition{
 	},
 }
 
-// TODO: Return `ok` flag from renderList() and renderListItem() instead of this kludge.
-var NO_MATCH = ItemInfo{id: "NO_MATCH"}
+const noMatch = "NO_MATCH"
+
+// noMatchItem returns "no matching item found" constant.
+func noMatchItem() ItemInfo { return ItemInfo{id: noMatch} }
 
 var ids []string // Stack of open list IDs.
 
+// Render list item in reader to writer.
 func Render(reader *iotext.Reader, writer *iotext.Writer) bool {
 	if reader.Eof() {
 		panic("premature eof")
 	}
 	startItem := matchItem(reader)
-	if startItem.id == "NO_MATCH" {
+	if startItem.id == noMatch {
 		return false
 	}
 	ids = nil
@@ -91,7 +95,7 @@ func renderList(item ItemInfo, reader *iotext.Reader, writer *iotext.Writer) Ite
 	writer.Write(blockattributes.Inject(item.def.listOpenTag))
 	for {
 		nextItem := renderListItem(item, reader, writer)
-		if nextItem.id == "NO_MATCH" || nextItem.id != item.id {
+		if nextItem.id == noMatch || nextItem.id != item.id {
 			// End of list or next item belongs to ancestor.
 			writer.Write(item.def.listCloseTag)
 			ids = ids[:len(ids)-1] // pop
@@ -129,11 +133,11 @@ func renderListItem(item ItemInfo, reader *iotext.Reader, writer *iotext.Writer)
 		blankLines = consumeBlockAttributes(reader, attachedLines)
 		if blankLines >= 2 || blankLines == -1 {
 			// EOF or two or more blank lines terminates list.
-			nextItem = NO_MATCH
+			nextItem = noMatchItem()
 			break
 		}
 		nextItem = matchItem(reader)
-		if nextItem.id != "NO_MATCH" {
+		if nextItem.id != noMatch {
 			if stringlist.StringList(ids).IndexOf(nextItem.id) != -1 {
 				// Next item belongs to current list or a parent list.
 			} else {
@@ -200,7 +204,7 @@ func consumeBlockAttributes(reader *iotext.Reader, writer *iotext.Writer) int {
 func matchItem(reader *iotext.Reader) ItemInfo {
 	// Check if the line matches a List definition.
 	if reader.Eof() {
-		return NO_MATCH
+		return noMatchItem()
 	}
 	var item ItemInfo // ItemInfo factory.
 	// Check if the line matches a list item.
@@ -209,7 +213,7 @@ func matchItem(reader *iotext.Reader) ItemInfo {
 		if match != nil {
 			if match[0][0] == '\\' {
 				reader.SetCursor(reader.Cursor()[1:]) // Drop backslash.
-				return NO_MATCH
+				return noMatchItem()
 			}
 			item.match = match
 			item.def = def
@@ -217,5 +221,5 @@ func matchItem(reader *iotext.Reader) ItemInfo {
 			return item
 		}
 	}
-	return NO_MATCH
+	return noMatchItem()
 }
