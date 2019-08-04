@@ -106,7 +106,6 @@ func SetValue(name string, value string, quote string) {
 func Render(text string, silent bool) (result string) {
 	MATCH_COMPLEX := regexp.MustCompile(`(?s)\\?\{([\w\-]+)([!=|?](?:|.*?[^\\]))}`) // Parametrized, Inclusion and Exclusion invocations.
 	MATCH_SIMPLE := regexp.MustCompile(`\\?\{([\w\-]+)()}`)                         // Simple macro invocation.
-	var savedSimple []string
 	result = text
 	for _, find := range []*regexp.Regexp{MATCH_SIMPLE, MATCH_COMPLEX} {
 		result = re.ReplaceAllStringSubmatchFunc(find, result, func(match []string) string {
@@ -129,8 +128,7 @@ func Render(text string, silent bool) (result string) {
 				return match[0]
 			}
 			if find == MATCH_SIMPLE {
-				savedSimple = append(savedSimple, value)
-				return "\u0002"
+				return value
 			}
 			// Process non-simple macro.
 			params = strings.Replace(params, "\\}", "}", -1) // Unescape escaped } characters.
@@ -192,7 +190,7 @@ func Render(text string, silent bool) (result string) {
 					skip = !skip
 				}
 				if skip {
-					return "\u0003" // '\0' flags line for deletion.
+					return "\u0002" // Line deletion flag.
 				} else {
 					return ""
 				}
@@ -203,24 +201,11 @@ func Render(text string, silent bool) (result string) {
 
 		}, -1)
 	}
-	// Restore expanded Simple values.
-	result = regexp.MustCompile(`\x{0002}`).ReplaceAllStringFunc(result, func(string) string {
-		if len(savedSimple) == 0 {
-			// This should not happen but there is a limitation: repeated macro substitution parameters
-			// ($1, $2...) cannot contain simple macro invocations.
-			options.ErrorCallback("repeated macro parameters: " + text)
-			return ""
-		}
-		// Pop from start of list.
-		first := savedSimple[0]
-		savedSimple = append([]string{}, savedSimple[1:]...)
-		return first
-	})
 	// Delete lines flagged by Inclusion/Exclusion macros.
-	if strings.Index(result, "\u0003") >= 0 {
+	if strings.Index(result, "\u0002") >= 0 {
 		s := ""
 		for _, line := range strings.Split(result, "\n") {
-			if !strings.Contains(line, "\u0003") {
+			if !strings.Contains(line, "\u0002") {
 				s += line + "\n"
 			}
 		}

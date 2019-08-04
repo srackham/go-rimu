@@ -27,7 +27,6 @@ func NewReader(text string) *Reader {
 	text = strings.Replace(text, "\u0000", " ", -1) // Used internally by spans package.
 	text = strings.Replace(text, "\u0001", " ", -1) // Used internally by spans package.
 	text = strings.Replace(text, "\u0002", " ", -1) // Used internally by macros package.
-	text = strings.Replace(text, "\u0003", " ", -1) // Used internally by macros package.
 	r.Lines = regexp.MustCompile(`\r\n|\r|\n`).Split(text, -1)
 	return r
 }
