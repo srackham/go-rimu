@@ -17,7 +17,7 @@ func ReplaceAllStringSubmatchFunc(re *regexp.Regexp, src string, repl func(match
 		groups := []string{}
 		for i := 0; i < len(v); i += 2 {
 			if v[i] == -1 {
-				// Blank string for unmatch groups.
+				// Blank string for unmatched groups.
 				groups = append(groups, "")
 			} else {
 				groups = append(groups, src[v[i]:v[i+1]])
