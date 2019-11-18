@@ -46,6 +46,10 @@ OPTIONS
   -h, --help
     Display help message.
 
+  -s, --styled
+    Style output using default layout.
+    Shortcut for '--layout sequel --header-ids --no-toc'
+
   --html-replacement TEXT
     Embedded HTML is replaced by TEXT when --safe-mode is set to 2.
     Defaults to '<mark>replaced HTML</mark>'.
@@ -275,11 +279,6 @@ outer:
 		case "--html-replacement",
 			"--htmlReplacement": // Deprecated in Rimu 7.1.0.
 			htmlReplacement = nextArg("missing --html-replacement value")
-		case "--styled", "-s": // Deprecated in Rimu 10.0.0
-			prepend += "{--header-ids}='true'\n"
-			if layout == "" {
-				layout = "classic"
-			}
 			// Styling macro definitions shortcut options.
 		case "--highlightjs",
 			"--mathjax",
@@ -305,6 +304,10 @@ outer:
 			"--styled-name": // Deprecated in Rimu 10.0.0
 			layout = nextArg("missing --layout value")
 			prepend += "{--header-ids}='true'\n"
+		case "--styled", "-s":
+			prepend += "{--header-ids}='true'\n"
+			prepend += "{--no-toc}='true'\n"
+			layout = "sequel"
 		default:
 			args.Unshift(arg) // argv contains source file names.
 			break outer
