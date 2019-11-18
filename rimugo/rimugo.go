@@ -20,7 +20,7 @@ import (
 
 var osExit = os.Exit // Mocked by tests.
 
-const VERSION = "11.1.3"
+const VERSION = "11.1.4"
 const MANPAGE = `NAME
   rimugo - convert Rimu source to HTML
 
