@@ -59,10 +59,9 @@ See also Rimu
 [API documentation](http://rimumarkup.org/reference.html#api).
 
 
-## Rimu compiler command
-The executable is named `rimugo` and is functionally identical to the
-[JavaScript rimuc](http://rimumarkup.org/reference.html#rimuc-command)
-command.
+## Rimu CLI command
+The [Rimu CLI command](http://rimumarkup.org/reference.html#rimuc-command) is named
+`rimugo`.
 
 
 ## Learn more
