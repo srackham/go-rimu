@@ -55,7 +55,7 @@ func SkipMacroDefs() bool {
 
 // Return true if Block Attribute elements are ignored.
 func SkipBlockAttributes() bool {
-	return safeMode != 0 && safeMode&0x4 != 0
+	return safeMode&0x4 != 0
 }
 
 // UpdateOptions processes non-nil opts fields.
