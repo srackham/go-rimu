@@ -111,14 +111,15 @@ func renderListItem(item ItemInfo, reader *iotext.Reader, writer *iotext.Writer)
 	match := item.match
 	var text string
 	if len(match) == 4 { // 3 match groups => definition list.
+		attrs := blockattributes.Attrs
 		writer.Write(blockattributes.Inject(def.termOpenTag))
+		attrs.ID = ""
+		blockattributes.Attrs = attrs // Restore consumed block attributes.
 		text = spans.ReplaceInline(match[1], expansion.Options{Macros: true, Spans: true})
 		writer.Write(text)
 		writer.Write(def.termCloseTag)
-		writer.Write(def.itemOpenTag)
-	} else {
-		writer.Write(blockattributes.Inject(def.itemOpenTag))
 	}
+	writer.Write(blockattributes.Inject(def.itemOpenTag))
 	// Process item text from first line.
 	itemLines := iotext.NewWriter()
 	text = match[len(match)-1]
