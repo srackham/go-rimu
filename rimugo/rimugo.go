@@ -20,7 +20,7 @@ import (
 
 var osExit = os.Exit // Mocked by tests.
 
-const VERSION = "11.1.4"
+const VERSION = "11.1.5"
 const STDIN = "-"
 
 // rimurcPath returns path of $HOME/.rimurc file.
