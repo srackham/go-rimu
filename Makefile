@@ -8,8 +8,10 @@ SHELL := bash
 .DELETE_ON_ERROR:
 .SUFFIXES:
 .ONESHELL:
+.SILENT:
 
 GOFLAGS ?=
+VERS := $$(sed -ne 's/^const VERSION = "\([0-9a-z.]*\)"/\1/p' rimugo/rimugo.go)
 
 .PHONY: all
 all: test install
@@ -35,6 +37,13 @@ test: bindata
 .PHONY: clean
 clean:
 	go clean $(GOFLAGS) -i ./...
+	git gc --prune=now
+
+.PHONY: tag
+tag: test
+	tag=v$(VERS)
+	echo tag: $$tag
+	git tag -a -m "$$tag" "$$tag"
 
 .PHONY: push
 push:
