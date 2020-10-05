@@ -3,7 +3,7 @@
 debug
 *.test
 *.out
-gitignore
+tmp
 
 # Fuzz test files.
 *-fuzz.zip
