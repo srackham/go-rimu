@@ -1,14 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"os"
+	"os/exec"
 	"regexp"
+	"runtime"
 	"strings"
 	"testing"
-
-	"github.com/srackham/go-rimu/v11/internal/api"
 )
 
 type rimucTest struct {
@@ -59,57 +59,27 @@ func TestMain(t *testing.T) {
 			tt.Expected = strings.Replace(tt.Expected, "./test/fixtures/", "./testdata/", -1)
 			tt.Args = strings.Replace(tt.Args, "./test/fixtures/", "./testdata/", -1)
 			tt.Args = strings.Replace(tt.Args, "./examples/example-rimurc.rmu", "./testdata/example-rimurc.rmu", -1)
-			// Save and set os.Exit mock to capture exit code
-			// (see https://stackoverflow.com/a/40801733 and https://npf.io/2015/06/testing-exec-command/).
-			exitCode := 0
-			savedExit := osExit
-			defer func() { osExit = savedExit }()
-			osExit = func(code int) {
-				exitCode = code
-				panic(MockExit{})
-			}
-			// Save and set command-line arguments.
-			savedArgs := os.Args
-			defer func() { os.Args = savedArgs }()
-			os.Args = []string{"rimugo", "--no-rimurc"}
+			command := "rimugo --no-rimurc"
 			if layout != "" {
-				os.Args = append(os.Args, "--layout", layout)
+				command += " --layout " + layout
 			}
-			os.Args = append(os.Args, parseArgs(tt.Args)...)
-			// Capture sdtout (see https://stackoverflow.com/a/29339052).
-			savedStdout := os.Stdout
-			defer func() { os.Stdout = savedStdout }()
-			rout, wout, _ := os.Pipe()
-			os.Stdout = wout
-			// Capture sdterr.
-			savedStderr := os.Stderr
-			defer func() { os.Stderr = savedStderr }()
-			rerr, werr, _ := os.Pipe()
-			os.Stderr = werr
-			// Mock stdin.
-			savedStdin := os.Stdin
-			defer func() { os.Stdin = savedStdin }()
-			rin, win, _ := os.Pipe()
-			os.Stdin = rin
-			win.WriteString(tt.Input)
-			win.Close()
-			// Execute rimugo.
-			api.Init()
-			main()
-			// Get stdout and stderr.
-			wout.Close()
-			werr.Close()
-			bytes, _ := ioutil.ReadAll(rout)
-			out := string(bytes)
-			bytes, _ = ioutil.ReadAll(rerr)
-			out += string(bytes)
-			// Restore mocks.
-			os.Stdin = savedStdin
-			os.Stdout = savedStdout
-			os.Stderr = savedStderr
-			os.Args = savedArgs
-			osExit = savedExit
-			// Test outputs and exit code.
+			command += " " + tt.Args
+			var cmd *exec.Cmd
+			if runtime.GOOS == "windows" {
+				cmd = exec.Command("PowerShell.exe", "-Command", command)
+			} else {
+				cmd = exec.Command("bash", "-c", command)
+			}
+			cmd.Stdin = strings.NewReader(tt.Input)
+			var outb, errb bytes.Buffer
+			cmd.Stdout = &outb
+			cmd.Stderr = &errb
+			err := cmd.Run()
+			exitCode := 0
+			if err != nil {
+				exitCode = 1
+			}
+			out := outb.String() + errb.String()
 			passed := false
 			switch tt.Predicate {
 			case "contains":
