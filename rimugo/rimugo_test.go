@@ -85,6 +85,7 @@ func TestMain(t *testing.T) {
 				exitCode = 1
 			}
 			out := outb.String() + errb.String()
+			out = strings.Replace(out, "\r", "", -1) // Strip Windows return characters.
 			passed := false
 			switch tt.Predicate {
 			case "contains":
