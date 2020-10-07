@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"os/exec"
 	"regexp"
@@ -70,10 +71,14 @@ func TestMain(t *testing.T) {
 			} else {
 				cmd = exec.Command("bash", "-c", command)
 			}
-			cmd.Stdin = strings.NewReader(tt.Input)
 			var outb, errb bytes.Buffer
 			cmd.Stdout = &outb
 			cmd.Stderr = &errb
+			stdin, _ := cmd.StdinPipe()
+			go func() {
+				defer stdin.Close()
+				io.WriteString(stdin, tt.Input)
+			}()
 			err := cmd.Run()
 			exitCode := 0
 			if err != nil {
