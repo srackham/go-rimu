@@ -74,12 +74,15 @@ func TestMain(t *testing.T) {
 			var outb, errb bytes.Buffer
 			cmd.Stdout = &outb
 			cmd.Stderr = &errb
-			stdin, _ := cmd.StdinPipe()
+			stdin, err := cmd.StdinPipe()
+			if err != nil {
+				panic(err.Error())
+			}
 			go func() {
 				defer stdin.Close()
 				io.WriteString(stdin, tt.Input)
 			}()
-			err := cmd.Run()
+			err = cmd.Run()
 			exitCode := 0
 			if err != nil {
 				exitCode = 1
