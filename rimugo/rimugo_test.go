@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"os/exec"
-	"regexp"
 	"runtime"
 	"strings"
 	"testing"
@@ -23,23 +22,8 @@ type rimucTest struct {
 	Layouts     bool   `json:"layouts,omitempty"`
 }
 
-// Convert command-line arguments string to array of arguments.
-// Arguments can be double-quoted.
-func parseArgs(args string) (result []string) {
-	result = regexp.MustCompile(`".+?"|\S+`).FindAllString(args, -1)
-	// Strip double quotes.
-	for i, v := range result {
-		if len(v) >= 2 && v[0] == '"' && v[len(v)-1] == '"' {
-			result[i] = v[1 : len(v)-1]
-		}
-	}
-	return
-}
-
-// TestMain is a test harness for main(). It mocks stdin, stdout, stderr and os.Exit().
-// This allows debuggable tests to be run in the executable environment.
-func TestMain(t *testing.T) {
-	// Read JSON test cases.
+func TestRimuc(t *testing.T) {
+	// Execute tests specified in JSON file.
 	raw, err := ioutil.ReadFile("./testdata/rimuc-tests.json")
 	if err != nil {
 		t.Error(err.Error())

@@ -18,8 +18,6 @@ import (
 	"github.com/srackham/go-rimu/v11/rimu"
 )
 
-var osExit = os.Exit // Mocked by tests.
-
 const VERSION = "11.1.5"
 const STDIN = "-"
 
@@ -32,15 +30,12 @@ func rimurcPath() (result string) {
 	return
 }
 
-// MockExit type used by rimugo_test osExit() mock.
-type MockExit struct{}
-
 // Helpers.
 func die(message string) {
 	if message != "" {
 		fmt.Fprintln(os.Stderr, message)
 	}
-	osExit(1)
+	os.Exit(1)
 }
 
 func fileExists(name string) bool {
@@ -64,13 +59,6 @@ func importLayoutFile(name string) string {
 }
 
 func main() {
-	defer func() {
-		// Ignore the panic if it's a MockExit (i.e. we're running a test).
-		r, ok := recover().(MockExit)
-		if !ok {
-			panic(r)
-		}
-	}()
 	args := stringlist.StringList(os.Args)
 	args.Shift() // Skip program name.
 	nextArg := func(err string) string {
@@ -94,10 +82,10 @@ outer:
 		switch arg {
 		case "--help", "-h":
 			fmt.Printf("\n" + readResourceFile("manpage.txt") + "\n")
-			osExit(0)
+			os.Exit(0)
 		case "--version":
 			fmt.Printf(VERSION + "\n")
-			osExit(0)
+			os.Exit(0)
 		case "--lint", "-l": // Deprecated in Rimu 10.0.0
 			break
 		case "--output", "-o":
@@ -253,7 +241,7 @@ outer:
 		}
 	}
 	if errors > 0 {
-		osExit(1)
+		os.Exit(1)
 	}
-	osExit(0)
+	os.Exit(0)
 }
