@@ -10,7 +10,7 @@ SHELL := bash
 .ONESHELL:
 .SILENT:
 
-GOFLAGS ?=
+BUILDFLAGS := -ldflags "-s -w"
 VERS := $$(sed -ne 's/^const VERSION = "\([0-9a-z.]*\)"/\1/p' rimugo/rimugo.go)
 
 .PHONY: all
@@ -24,19 +24,19 @@ bindata: ./rimugo/bindata.go
 
 .PHONY: install
 install: bindata
-	go install $(GOFLAGS) ./...
+	go install $(BUILDFLAGS) ./...
 
 .PHONY: build
 build: bindata
-	go build $(GOFLAGS) ./...
+	go build $(BUILDFLAGS) ./...
 
 .PHONY: test
-test: bindata
-	go test $(GOFLAGS) ./...
+test: build
+	go test ./...
 
 .PHONY: clean
 clean:
-	go clean $(GOFLAGS) -i ./...
+	go clean -i ./...
 	git gc --prune=now
 
 .PHONY: tag
@@ -83,7 +83,7 @@ fuzz-crashes:
 .PHONY: benchmark
 benchmark:
 	cd rimu
-	go test $(GOFLAGS) -bench .
+	go test -bench .
 
 .PHONY: profile
 profile:
