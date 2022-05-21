@@ -32,6 +32,7 @@ build: bindata
 
 .PHONY: test
 test: build
+	go vet ./...
 	go test ./...
 
 .PHONY: clean
