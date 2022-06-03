@@ -48,9 +48,9 @@ func fileExists(name string) bool {
 var embeddedFS embed.FS
 
 func readResourceFile(name string) (result string) {
-	data, err := embeddedFS.ReadFile("resource/" + name)
+	data, err := embeddedFS.ReadFile("resources/" + name)
 	if err != nil {
-		panic(err)
+		panic("embedded file: " + err.Error())
 	}
 	result = string(data)
 	return
