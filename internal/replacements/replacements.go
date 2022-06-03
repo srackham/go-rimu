@@ -64,6 +64,13 @@ var DEFAULT_DEFS = []Definition{
 		Replacement: `<a href="mailto:$1">$1</a>`,
 	},
 
+	// Open link in new window: ^[caption](url)
+	// caption = $1, url = $2
+	{
+		Match:       regexp.MustCompile(`\\?\^\[([^[]*?)]\((\S+?)\)`),
+		Replacement: `<a href="$2" target="_blank">$$1</a>`,
+	},
+
 	// Link: [caption](url)
 	// caption = $1, url = $2
 	{
