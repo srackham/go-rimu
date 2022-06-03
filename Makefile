@@ -16,22 +16,16 @@ VERS := $$(sed -ne 's/^const VERSION = "\([0-9a-z.]*\)"/\1/p' rimugo/rimugo.go)
 .PHONY: all
 all: test install
 
-./rimugo/bindata.go: ./rimugo/resources/*
-	cd ./rimugo && go-bindata ./resources
-
-.PHONY: bindata
-bindata: ./rimugo/bindata.go
-
 .PHONY: install
-install: bindata
+install:
 	go install $(BUILDFLAGS) ./...
 
 .PHONY: build
-build: bindata
+build:
 	go build $(BUILDFLAGS) ./...
 
 .PHONY: test
-test: build
+test: build install
 	go vet ./...
 	go test ./...
 

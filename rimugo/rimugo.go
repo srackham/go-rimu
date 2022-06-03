@@ -5,6 +5,7 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -43,10 +44,13 @@ func fileExists(name string) bool {
 	return err == nil
 }
 
+//go:embed resources/**
+var embeddedFS embed.FS
+
 func readResourceFile(name string) (result string) {
-	data, err := Asset("resources/" + name)
+	data, err := embeddedFS.ReadFile("resource/" + name)
 	if err != nil {
-		panic("missing resource file: " + name)
+		panic(err)
 	}
 	result = string(data)
 	return
