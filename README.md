@@ -6,11 +6,9 @@ language](http://rimumarkup.org) written in the Go language.
 
 ## Features
 Functionally identical to the [JavaScript
-implementation](https://github.com/srackham/rimu) version 11.1 with
+implementation](https://github.com/srackham/rimu) version 11.3 with
 the following exceptions:
 
-  * Does not support deprecated _Expression macro values_.
-  * Does not support deprecated _Imported Layouts_.
   * Because the Go `regexp` package uses RE2 regular expressions there are
     [some limitations](http://rimumarkup.org/reference.html#regular-expressions)
     on the regular expressions used in Replacements definitions and
@@ -18,7 +16,7 @@ the following exceptions:
 
 
 ## Installation
-**NOTE**: Requires Go 1.11 or better.
+**NOTE**: Requires Go 1.17 or better.
 
 Download, build, test and install:
 
