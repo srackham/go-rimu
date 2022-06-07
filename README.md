@@ -49,6 +49,7 @@ To compile and run this simple application:
 2.  Change to the directory and run the following Go commands:
 
         go mod init example.com/hello-rimu
+        go mod tidy
         go run hello-rimu.go
 
 **NOTE**: Requires Go 1.11 or better.
