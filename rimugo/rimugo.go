@@ -19,7 +19,7 @@ import (
 	"github.com/srackham/go-rimu/v11/rimu"
 )
 
-const VERSION = "11.1.5"
+const VERSION = "11.3.0"
 const STDIN = "-"
 
 // rimurcPath returns path of $HOME/.rimurc file.
