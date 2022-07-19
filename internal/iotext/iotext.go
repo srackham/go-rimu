@@ -62,8 +62,8 @@ func (r *Reader) Next() {
 // ReadTo reads to the first line matching the re.
 // Return the array of lines preceding the match plus a line containing
 // the $1 match group (if it exists).
-// Return nil if an EOF is encountered.
-// Exit with the reader pointing to the line following the match.
+// If an EOF is encountered return all lines.
+// Exit with the reader pointing to the line containing the matched line.
 func (r *Reader) ReadTo(re *regexp.Regexp) (result []string) {
 	result = []string{}
 	var match []string
@@ -73,17 +73,12 @@ func (r *Reader) ReadTo(re *regexp.Regexp) (result []string) {
 			if len(match) > 1 {
 				result = append(result, match[1]) // $1
 			}
-			r.Next()
 			break
 		}
 		result = append(result, r.Cursor())
 		r.Next()
 	}
-	// Blank line matches EOF.
-	if match != nil || re.String() == "^$" && r.Eof() {
-		return
-	}
-	return nil
+	return
 }
 
 // SkipBlankLines advances cursor to next non-blank line.

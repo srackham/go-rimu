@@ -38,9 +38,12 @@ func TestReader(t *testing.T) {
 	assert.Equal(t, 1, len(lines))
 	assert.Equal(t, "Hello", lines[0])
 	assert.Equal(t, false, reader.Eof())
+	reader.Next()
 	lines = reader.ReadTo(regexp.MustCompile(`^<(.*)>$`))
 	assert.Equal(t, 3, len(lines))
 	assert.Equal(t, " Goodbye ", lines[2])
+	assert.Equal(t, false, reader.Eof())
+	reader.Next()
 	assert.Equal(t, true, reader.Eof())
 
 	reader = NewReader("\n\nHello\nWorld!")

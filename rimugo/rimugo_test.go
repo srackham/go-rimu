@@ -71,7 +71,7 @@ func TestRimuc(t *testing.T) {
 			if err != nil {
 				exitCode = 1
 			}
-			out := outb.String() + errb.String()
+			out := errb.String() + outb.String()
 			out = strings.Replace(out, "\r", "", -1) // Strip Windows return characters.
 			passed := false
 			switch tt.Predicate {

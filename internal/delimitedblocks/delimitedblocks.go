@@ -24,7 +24,7 @@ var MATCH_INLINE_TAG = regexp.MustCompile(`(?i)^(a|abbr|acronym|address|b|bdi|bd
 
 // Multi-line block element definition.
 type Definition struct {
-	name            string         // Optional unique identifier.
+	name            string         // Unique identifier.
 	openMatch       *regexp.Regexp // $1 (if defined) is prepended to block content.
 	closeMatch      *regexp.Regexp
 	openTag         string
@@ -42,6 +42,7 @@ var DEFAULT_DEFS = []Definition{
 
 	// Multi-line macro literal value definition.
 	{
+		name:       "macro-definition",
 		openMatch:  macros.LITERAL_DEF_OPEN, // $1 is first line of macro.
 		closeMatch: macros.LITERAL_DEF_CLOSE,
 		openTag:    "",
@@ -53,7 +54,9 @@ var DEFAULT_DEFS = []Definition{
 		contentFilter:   macroDefContentFilter,
 	},
 	// Multi-line macro expression value definition.
+	// DEPRECATED as of 11.0.0.
 	{
+		name:       "deprecated-macro-expression",
 		openMatch:  macros.EXPRESSION_DEF_OPEN, // $1 is first line of macro.
 		closeMatch: macros.EXPRESSION_DEF_CLOSE,
 		openTag:    "",
@@ -91,7 +94,7 @@ var DEFAULT_DEFS = []Definition{
 	// Quote block.
 	{
 		name:      "quote",
-		openMatch: regexp.MustCompile(`^\\?("{2,})([\w\s-]*)$`), // $1 is delimiter text, $2 is optional class names.
+		openMatch: regexp.MustCompile(`^\\?("{2,}|>{2,})([\w\s-]*)$`), // $1 is delimiter text, $2 is optional class names.
 		openTag:   "<blockquote>",
 		closeTag:  "</blockquote>",
 		options: expansion.Options{
@@ -123,7 +126,7 @@ var DEFAULT_DEFS = []Definition{
 		// $1 is first line of block.
 		// $2 is the alphanumeric tag name.
 		openMatch:  regexp.MustCompile(`(?i)^(<!--.*|<!DOCTYPE(?:\s.*)?|<\/?([a-z][a-z0-9]*)(?:[\s>].*)?)$`),
-		closeMatch: regexp.MustCompile(`^$`), // Blank line or EOF.
+		closeMatch: regexp.MustCompile(`^$`),
 		openTag:    "",
 		closeTag:   "",
 		options: expansion.Options{
@@ -147,7 +150,7 @@ var DEFAULT_DEFS = []Definition{
 	{
 		name:       "indented",
 		openMatch:  regexp.MustCompile(`^\\?(\s+\S.*)$`), // $1 is first line of block.
-		closeMatch: regexp.MustCompile(`^$`),             // Blank line or EOF.
+		closeMatch: regexp.MustCompile(`^$`),
 		openTag:    "<pre><code>",
 		closeTag:   "</code></pre>",
 		options: expansion.Options{
@@ -173,7 +176,7 @@ var DEFAULT_DEFS = []Definition{
 	{
 		name:       "quote-paragraph",
 		openMatch:  regexp.MustCompile(`^\\?(>.*)$`), // $1 is first line of block.
-		closeMatch: regexp.MustCompile(`^$`),         // Blank line or EOF.
+		closeMatch: regexp.MustCompile(`^$`),
 		openTag:    "<blockquote><p>",
 		closeTag:   "</p></blockquote>",
 		options: expansion.Options{
@@ -197,7 +200,7 @@ var DEFAULT_DEFS = []Definition{
 	{
 		name:       "paragraph",
 		openMatch:  regexp.MustCompile(`(.*)`), // $1 is first line of block.
-		closeMatch: regexp.MustCompile(`^$`),   // Blank line or EOF.
+		closeMatch: regexp.MustCompile(`^$`),
 		openTag:    "<p>",
 		closeTag:   "</p>",
 		options: expansion.Options{
@@ -256,9 +259,10 @@ func Render(reader *iotext.Reader, writer *iotext.Writer, allowed []string) bool
 			// Read content up to the closing delimiter.
 			reader.Next()
 			content := reader.ReadTo(def.closeMatch)
-			if content == nil {
-				options.ErrorCallback("unterminated delimited block: " + match[0])
+			if reader.Eof() && stringlist.StringList([]string{"code", "comment", "division", "quote"}).IndexOf(def.name) > -1 {
+				options.ErrorCallback("unterminated " + def.name + " block: " + match[0])
 			}
+			reader.Next() // Skip closing delimiter.
 			lines = append(lines, content...)
 			// Calculate block expansion options.
 			opts := def.options
