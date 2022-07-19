@@ -1,7 +1,7 @@
 # Rimu Markup for Go
 
 _go-rimu_ is a port of the [Rimu Markup
-language](http://rimumarkup.org) written in the Go language.
+language](https://github.com/srackham/rimu) written in the Go language.
 
 
 ## Features
