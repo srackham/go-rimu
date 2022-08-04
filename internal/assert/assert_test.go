@@ -1,0 +1,26 @@
+package assert
+
+import (
+	"testing"
+)
+
+func TestAssertFunctions(t *testing.T) {
+	Equal(t, 1, 1)
+	NotEqual(t, 1, 2)
+	Equal(t, "hello", "hello")
+	True(t, true)
+	False(t, false)
+	EqualValues(t, []string{"one", "two"}, []string{"one", "two"})
+	Panics(t, func() { panic("panics test") })
+
+	/* Uncomment to see failures: */
+	// Equal(t, "hello", "Grace")
+	// True(t, false)
+	// EqualValues(t, []string{"one", "two"}, []string{"one"})
+	// EqualValues(t, []string{"one", "two"}, []string{"one", "two", "three"})
+	// EqualValues(t, []string{"one", "two"}, []string{})
+	// Panics(t, func() {})
+
+	/* Uncomment to see the compilation error: */
+	// Equal(t, 1, "1")
+}
