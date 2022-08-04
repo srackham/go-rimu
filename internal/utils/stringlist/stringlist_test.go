@@ -3,7 +3,7 @@ package stringlist
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/srackham/go-rimu/v11/internal/assert"
 )
 
 func TestStackMutators(t *testing.T) {
@@ -31,8 +31,8 @@ func TestCollectionFunctions(t *testing.T) {
 	assert.EqualValues(t, []string{"y", "z"}, got)
 	got = got.Map(func(s string) string { return s + s })
 	assert.EqualValues(t, []string{"yy", "zz"}, got)
-	assert.EqualValues(t, 2, list.IndexOf("z"))
-	assert.EqualValues(t, -1, list.IndexOf("XXX"))
+	assert.Equal(t, 2, list.IndexOf("z"))
+	assert.Equal(t, -1, list.IndexOf("XXX"))
 	assert.True(t, !list.Contains("XXX"))
 	assert.True(t, !list.Any(func(s string) bool { return s == "XXX" }))
 	assert.True(t, list.Any(func(s string) bool { return s == "z" }))

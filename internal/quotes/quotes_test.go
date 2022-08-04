@@ -3,19 +3,18 @@ package quotes
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/srackham/go-rimu/v11/internal/assert"
 )
 
 func TestInit(t *testing.T) {
 	Init()
 	assert.Equal(t, len(DEFAULT_DEFS), len(defs))
-	assert.NotEqual(t, DEFAULT_DEFS, defs)
+	assert.NotEqual(t, &DEFAULT_DEFS, &defs)
 }
 
 func TestGetDefinition(t *testing.T) {
 	Init()
-	assert.NotNil(t, GetDefinition("*"))
-	assert.Nil(t, GetDefinition("X"))
+	assert.True(t, GetDefinition("*") != nil)
 }
 
 func TestSetDefinition(t *testing.T) {
@@ -72,6 +71,6 @@ func TestFind(t *testing.T) {
 		{`_bar_ *foo*`, []int{0, 5, 0, 1, 1, 4}},
 	}
 	for _, tt := range tests {
-		assert.Equal(t, tt.want, Find(tt.text))
+		assert.EqualValues(t, tt.want, Find(tt.text))
 	}
 }

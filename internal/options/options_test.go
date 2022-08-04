@@ -3,14 +3,14 @@ package options
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/srackham/go-rimu/v11/internal/assert"
 )
 
 func TestInit(t *testing.T) {
 	Init()
 	assert.Equal(t, 0, safeMode)
 	assert.Equal(t, "<mark>replaced HTML</mark>", htmlReplacement)
-	assert.Nil(t, callback)
+	assert.True(t, callback == nil)
 
 }
 

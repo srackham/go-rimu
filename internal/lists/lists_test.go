@@ -3,8 +3,8 @@ package lists
 import (
 	"testing"
 
+	"github.com/srackham/go-rimu/v11/internal/assert"
 	"github.com/srackham/go-rimu/v11/internal/iotext"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestRender(t *testing.T) {

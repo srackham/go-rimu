@@ -3,7 +3,7 @@ package api
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/srackham/go-rimu/v11/internal/assert"
 )
 
 func TestInit(t *testing.T) {

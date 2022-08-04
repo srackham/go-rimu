@@ -3,13 +3,13 @@ package replacements
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/srackham/go-rimu/v11/internal/assert"
 )
 
 func TestInit(t *testing.T) {
 	Init()
 	assert.Equal(t, len(DEFAULT_DEFS), len(Defs))
-	assert.NotEqual(t, DEFAULT_DEFS, Defs)
+	assert.NotEqual(t, &DEFAULT_DEFS, &Defs)
 }
 
 func TestSetDefinition(t *testing.T) {

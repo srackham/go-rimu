@@ -3,14 +3,14 @@ package delimitedblocks
 import (
 	"testing"
 
+	"github.com/srackham/go-rimu/v11/internal/assert"
 	"github.com/srackham/go-rimu/v11/internal/iotext"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestInit(t *testing.T) {
 	Init()
 	assert.Equal(t, len(DEFAULT_DEFS), len(defs))
-	assert.NotEqual(t, DEFAULT_DEFS, defs)
+	assert.NotEqual(t, &DEFAULT_DEFS, &defs)
 }
 
 func TestRender(t *testing.T) {
@@ -36,7 +36,7 @@ func TestGetDefinition(t *testing.T) {
 	def := GetDefinition("paragraph")
 	assert.Equal(t, "<p>", def.openTag)
 	def = GetDefinition("foo")
-	assert.Nil(t, def)
+	assert.True(t, def == nil)
 }
 
 func TestSetDefinition(t *testing.T) {

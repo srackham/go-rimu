@@ -3,7 +3,7 @@ package spans
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/srackham/go-rimu/v11/internal/assert"
 )
 
 func TestRender(t *testing.T) {

@@ -3,7 +3,7 @@ package macros
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/srackham/go-rimu/v11/internal/assert"
 )
 
 func TestValues(t *testing.T) {

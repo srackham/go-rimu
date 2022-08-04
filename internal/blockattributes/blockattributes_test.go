@@ -3,7 +3,7 @@ package blockattributes
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/srackham/go-rimu/v11/internal/assert"
 
 	_ "github.com/srackham/go-rimu/v11/internal/macros"
 )
