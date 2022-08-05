@@ -12,6 +12,14 @@ func TestAssertFunctions(t *testing.T) {
 	False(t, false)
 	EqualValues(t, []string{"one", "two"}, []string{"one", "two"})
 	Panics(t, func() { panic("panics test") })
+	var p *int
+	Equal(t, p, (*int)(nil))
+	Equal(t, p, nil)
+	True(t, p == nil)
+	n := 42
+	p = &n
+	True(t, p != nil)
+	Contains(t, "foobar", "bar")
 
 	/* Uncomment to see failures: */
 	// Equal(t, "hello", "Grace")
@@ -20,6 +28,7 @@ func TestAssertFunctions(t *testing.T) {
 	// EqualValues(t, []string{"one", "two"}, []string{"one", "two", "three"})
 	// EqualValues(t, []string{"one", "two"}, []string{})
 	// Panics(t, func() {})
+	// Contains(t, "foobar", "\"baz")
 
 	/* Uncomment to see the compilation error: */
 	// Equal(t, 1, "1")
