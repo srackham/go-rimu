@@ -16,12 +16,14 @@ func TestAssertFunctions(t *testing.T) {
 	Equal(t, p, (*int)(nil))
 	Equal(t, p, nil)
 	True(t, p == nil)
+	PassIf(t, p == nil, "p should be nil")
 	n := 42
 	p = &n
 	True(t, p != nil)
 	Contains(t, "foobar", "bar")
 
 	/* Uncomment to see failures: */
+	// PassIf(t, false, "the criteria is not met")
 	// Equal(t, "hello", "Grace")
 	// True(t, false)
 	// EqualValues(t, []string{"one", "two"}, []string{"one"})
