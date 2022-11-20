@@ -13,6 +13,8 @@ func TestParse(t *testing.T) {
 	}{
 		{"", Options{}},
 		{"+skip +macros +container +specials +spans", Options{true, true, true, true, true, true, true, true, true, true}},
+		{"+skip +macros +container +specials", Options{true, true, true, false, true, true, true, true, false, true}},
+		{"-skip +macros +container +specials", Options{true, true, false, false, true, true, true, true, false, true}},
 	}
 	for _, tt := range tests {
 		got := Parse(tt.opts)
