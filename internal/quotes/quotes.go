@@ -123,15 +123,14 @@ func Unescape(s string) string {
 	return s
 }
 
-// Find looks for the first quote in `text` starting from `start`.
+// Find looks for the first quote in `text`.
 // Quotes prefixed with a backslash are ignored.
-// Returns slice holding thre index pairs identifying:
+// Returns slice holding three index pairs identifying:
 // - The entire match: s[loc[0]:loc[1]]
 // - The left quote    s[loc[2]:loc[3]]
 // - The quoted text   s[loc[4]:loc[5]]
 // Returns nil if not found.
 func Find(text string) []int {
-	// This function is necessary because Go regexp does not support backreferences.
 	var match []int
 	for _, def := range defs {
 		allMatch := def.re.FindAllStringSubmatchIndex(text, -1)

@@ -36,7 +36,7 @@ func (r *Reader) Eof() bool {
 	return r.Pos >= len(r.Lines)
 }
 
-// SetCursor sets the reader cursor position.
+// SetCursor sets the reader cursor line.
 func (r *Reader) SetCursor(value string) {
 	if r.Eof() {
 		panic("unexpected eof")
@@ -44,7 +44,7 @@ func (r *Reader) SetCursor(value string) {
 	r.Lines[r.Pos] = value
 }
 
-// Cursor returns the cursor position.
+// Cursor returns the cursor line.
 func (r *Reader) Cursor() string {
 	if r.Eof() {
 		panic("unexpected eof")
