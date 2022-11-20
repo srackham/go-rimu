@@ -7,7 +7,7 @@ import (
 	"github.com/srackham/go-rimu/v11/internal/utils/str"
 )
 
-// api package dependency injection.
+// document package dependency injection.
 var ApiInit func()
 
 func init() {

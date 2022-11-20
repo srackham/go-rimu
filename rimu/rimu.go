@@ -1,7 +1,7 @@
 package rimu
 
 import (
-	"github.com/srackham/go-rimu/v11/internal/api"
+	"github.com/srackham/go-rimu/v11/internal/document"
 	"github.com/srackham/go-rimu/v11/internal/options"
 )
 
@@ -17,5 +17,5 @@ type RenderOptions = options.RenderOptions
 // Render is public API to translate Rimu Markup to HTML.
 func Render(text string, opts RenderOptions) string {
 	options.UpdateOptions(opts)
-	return api.Render(text)
+	return document.Render(text)
 }

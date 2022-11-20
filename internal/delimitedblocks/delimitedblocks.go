@@ -13,7 +13,7 @@ import (
 	"github.com/srackham/go-rimu/v11/internal/utils/stringlist"
 )
 
-// api package dependency injection.
+// document package dependency injection.
 var ApiRender func(source string) string
 
 func init() {

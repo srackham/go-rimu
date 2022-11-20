@@ -1,4 +1,4 @@
-package api
+package document
 
 import (
 	"github.com/srackham/go-rimu/v11/internal/blockattributes"
@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	// Dependency injectiion so we can use api functions in imported packages without incuring import cycle errors.
+	// Dependency injectiion so we can use document functions in imported packages without incuring import cycle errors.
 	options.ApiInit = Init
 	delimitedblocks.ApiRender = Render
 }
