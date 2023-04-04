@@ -1,5 +1,5 @@
 /*
-	Assertions package.
+	Simple assertions package.
 */
 
 package assert
@@ -13,19 +13,23 @@ import (
 // PassIf fails and prints formatted message if not ok.
 func PassIf(t *testing.T, ok bool, format string, args ...any) {
 	t.Helper()
+	if strings.Contains(format, "%s") {
+		t.Logf("use '%%#v' instead of '%%s' to report possibly nil values: '%s'", format)
+		t.FailNow()
+	}
 	if !ok {
 		t.Errorf(format, args...)
 	}
 }
 
-func Equal[T comparable](t *testing.T, want, got T) {
+func Equal[T comparable](t *testing.T, wanted, got T) {
 	t.Helper()
-	PassIf(t, got == want, "got %v, want %v", want, got)
+	PassIf(t, got == wanted, "wanted %#v, got %#v", wanted, got)
 }
 
-func NotEqual[T comparable](t *testing.T, want, got T) {
+func NotEqual[T comparable](t *testing.T, wanted, got T) {
 	t.Helper()
-	PassIf(t, got != want, "did not want %v", got)
+	PassIf(t, wanted != got, "should not be %#v", got)
 }
 
 func True(t *testing.T, got bool) {
@@ -38,11 +42,11 @@ func False(t *testing.T, got bool) {
 	PassIf(t, !got, "should be false")
 }
 
-func EqualValues[T comparable](t *testing.T, want, got []T) {
+func EqualValues[T comparable](t *testing.T, wanted, got []T) {
 	t.Helper()
-	PassIf(t, len(got) == len(want), "got %v, want %v", want, got)
+	PassIf(t, len(got) == len(wanted), "wanted %#v, got %#v", wanted, got)
 	for k := range got {
-		PassIf(t, got[k] == want[k], "got %v, want %v", want, got)
+		PassIf(t, got[k] == wanted[k], "wanted %#v, got %#v", wanted, got)
 	}
 }
 
