@@ -42,7 +42,7 @@ func Init() {
 func Parse(text string) bool {
 	// class names = $1, id = $2, css-properties = $3, html-attributes = $4, block-options = $5
 	text = spans.ReplaceInline(text, expansion.Options{Macros: true})
-	m := regexp.MustCompile(`^\\?\.((?:\s*[a-zA-Z][\w\-]*)+)*(?:\s*)?(#[a-zA-Z][\w\-]*\s*)?(?:\s*)?(?:"(.+?)")?(?:\s*)?(\[.+])?(?:\s*)?([+-][ \w+-]+)?$`).FindStringSubmatch(text)
+	m := regexp.MustCompile(`^\\?\.((?:[a-zA-Z][\w-]*\s*)+)?(#[a-zA-Z][\w-]*)?(?:\s*"([^"]+?)")?(?:\s*\[([^\]]+)\])?(\s*[+-][\w\s+-]+)?$`).FindStringSubmatch(text)
 	if m == nil {
 		return false
 	}
@@ -72,7 +72,7 @@ func Parse(text string) bool {
 			if Attrs.attributes != "" {
 				Attrs.attributes += " "
 			}
-			Attrs.attributes += strings.TrimSpace(m[4][1 : len(m[4])-1])
+			Attrs.attributes += m[4]
 		}
 		if m[5] != "" {
 			Attrs.Options.Merge(expansion.Parse(m[5]))
