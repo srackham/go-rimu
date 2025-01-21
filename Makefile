@@ -30,9 +30,15 @@ test: build install
 	go test ./...
 
 .PHONY: clean
-clean:
+clean: fmt
+	go mod verify
+	go mod tidy
 	go clean -i ./...
 	git gc --prune=now
+
+.PHONY: fmt
+fmt:
+	gofmt -w -s $$(find . -name '*.go')
 
 .PHONY: tag
 tag: test
