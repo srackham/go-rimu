@@ -7,7 +7,7 @@ package main
 import (
 	"embed"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"os/user"
 	"path"
@@ -190,7 +190,7 @@ outer:
 			}
 			opts.SafeMode = 0 // Resources are trusted.
 		case infile == STDIN:
-			bytes, _ := ioutil.ReadAll(os.Stdin)
+			bytes, _ := io.ReadAll(os.Stdin)
 			source = string(bytes)
 			opts.SafeMode = safeMode
 		case infile == PREPEND:
@@ -200,7 +200,7 @@ outer:
 			if !fileExists(infile) {
 				die("source file does not exist: " + infile)
 			}
-			bytes, err := ioutil.ReadFile(infile)
+			bytes, err := os.ReadFile(infile)
 			if err != nil {
 				die(err.Error())
 			}
@@ -239,7 +239,7 @@ outer:
 	if outfile == "" || outfile == "-" {
 		fmt.Print(output)
 	} else {
-		err := ioutil.WriteFile(outfile, []byte(output), 0644)
+		err := os.WriteFile(outfile, []byte(output), 0644)
 		if err != nil {
 			die(err.Error())
 		}

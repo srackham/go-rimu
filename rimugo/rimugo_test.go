@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"io/ioutil"
+	"os"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -24,7 +24,7 @@ type rimucTest struct {
 
 func TestRimuc(t *testing.T) {
 	// Execute tests specified in JSON file.
-	raw, err := ioutil.ReadFile("./testdata/rimuc-tests.json")
+	raw, err := os.ReadFile("./testdata/rimuc-tests.json")
 	if err != nil {
 		t.Error(err.Error())
 		return
